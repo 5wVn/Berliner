@@ -39,7 +39,19 @@ VALUES
   ('u0000000-0000-0000-0000-000000esgi09', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'l.paulus@berliner.fr', crypt('berliner2024', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{}', now(), now()),
   ('u0000000-0000-0000-0000-000000esgi10', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'l.poirier@berliner.fr', crypt('berliner2024', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{}', now(), now()),
   ('u0000000-0000-0000-0000-000000esgi11', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 's.taouni@berliner.fr', crypt('berliner2024', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{}', now(), now()),
-  ('u0000000-0000-0000-0000-000000esgi12', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 's.dieudonne@berliner.fr', crypt('berliner2024', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{}', now(), now())
+  ('u0000000-0000-0000-0000-000000esgi12', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 's.dieudonne@berliner.fr', crypt('berliner2024', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{}', now(), now()),
+  -- Professors
+  ('u0000000-0000-0000-0000-000000prof01', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'a.aubert@berliner.fr', crypt('berliner2024', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{}', now(), now()),
+  ('u0000000-0000-0000-0000-000000prof02', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'c.bruneau@berliner.fr', crypt('berliner2024', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{}', now(), now()),
+  ('u0000000-0000-0000-0000-000000prof03', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'r.casagrande@berliner.fr', crypt('berliner2024', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{}', now(), now()),
+  ('u0000000-0000-0000-0000-000000prof04', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'd.chainet@berliner.fr', crypt('berliner2024', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{}', now(), now()),
+  ('u0000000-0000-0000-0000-000000prof05', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'j.dear@berliner.fr', crypt('berliner2024', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{}', now(), now()),
+  ('u0000000-0000-0000-0000-000000prof06', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'v.duflot@berliner.fr', crypt('berliner2024', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{}', now(), now()),
+  ('u0000000-0000-0000-0000-000000prof07', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'b.lacombat@berliner.fr', crypt('berliner2024', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{}', now(), now()),
+  ('u0000000-0000-0000-0000-000000prof08', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'f.marotte@berliner.fr', crypt('berliner2024', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{}', now(), now()),
+  ('u0000000-0000-0000-0000-000000prof09', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'p.martin@berliner.fr', crypt('berliner2024', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{}', now(), now()),
+  ('u0000000-0000-0000-0000-000000prof10', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'k.nge@berliner.fr', crypt('berliner2024', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{}', now(), now()),
+  ('u0000000-0000-0000-0000-000000prof11', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'n.quere@berliner.fr', crypt('berliner2024', gen_salt('bf')), now(), '{"provider":"email","providers":["email"]}', '{}', now(), now())
 ON CONFLICT (id) DO NOTHING;
 
 -- 2. Establishments
@@ -72,7 +84,19 @@ VALUES
   ('u0000000-0000-0000-0000-000000esgi09', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'l.paulus@berliner.fr', 'student', 'L.', 'Paulus'),
   ('u0000000-0000-0000-0000-000000esgi10', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'l.poirier@berliner.fr', 'student', 'L.', 'Poirier'),
   ('u0000000-0000-0000-0000-000000esgi11', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 's.taouni@berliner.fr', 'student', 'S.', 'Taouni'),
-  ('u0000000-0000-0000-0000-000000esgi12', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 's.dieudonne@berliner.fr', 'student', 'S.', 'Dieudonne')
+  ('u0000000-0000-0000-0000-000000esgi12', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 's.dieudonne@berliner.fr', 'student', 'S.', 'Dieudonne'),
+  -- Professors
+  ('u0000000-0000-0000-0000-000000prof01', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a.aubert@berliner.fr', 'teacher', 'Antoine', 'AUBERT'),
+  ('u0000000-0000-0000-0000-000000prof02', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'c.bruneau@berliner.fr', 'teacher', 'Christophe', 'BRUNEAU'),
+  ('u0000000-0000-0000-0000-000000prof03', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'r.casagrande@berliner.fr', 'teacher', 'Romain', 'CASAGRANDE'),
+  ('u0000000-0000-0000-0000-000000prof04', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'd.chainet@berliner.fr', 'teacher', 'David', 'CHAINET'),
+  ('u0000000-0000-0000-0000-000000prof05', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'j.dear@berliner.fr', 'teacher', 'Jacqueline', 'DEAR'),
+  ('u0000000-0000-0000-0000-000000prof06', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'v.duflot@berliner.fr', 'teacher', 'Valentin', 'DUFLOT'),
+  ('u0000000-0000-0000-0000-000000prof07', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'b.lacombat@berliner.fr', 'teacher', 'Benoit', 'LACOMBAT'),
+  ('u0000000-0000-0000-0000-000000prof08', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'f.marotte@berliner.fr', 'teacher', 'Fabien', 'MAROTTE'),
+  ('u0000000-0000-0000-0000-000000prof09', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'p.martin@berliner.fr', 'teacher', 'Paul-Ernest', 'MARTIN'),
+  ('u0000000-0000-0000-0000-000000prof10', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'k.nge@berliner.fr', 'teacher', 'Kim', 'NGE'),
+  ('u0000000-0000-0000-0000-000000prof11', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'n.quere@berliner.fr', 'teacher', 'Nicolas', 'QUERE')
 ON CONFLICT (id) DO NOTHING;
 
 -- 4. Programs
