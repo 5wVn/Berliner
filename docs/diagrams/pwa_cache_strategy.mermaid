@@ -1,0 +1,10 @@
+﻿flowchart TD
+  A[Request] --> B{Route type?}
+  B -- Planning / Notes --> C[Cache First]
+  C --> D{Cache hit?}
+  D -- Yes --> E[Serve from cache]
+  D -- No --> F[Fetch network]
+  F --> G[Update cache (TTL 24h)]
+  B -- Auth / Mutations --> H[Network Only]
+  B -- Static assets --> I[Stale While Revalidate]
+  B -- Other pages --> J[Network First]

@@ -1,0 +1,17 @@
+﻿erDiagram
+  establishments ||--o{ profiles : has
+  establishments ||--o{ programs : has
+  programs ||--o{ classes : has
+  programs ||--o{ subjects : has
+  classes ||--o{ class_subjects : has
+  subjects ||--o{ class_subjects : has
+  profiles ||--o{ class_subjects : teaches
+  class_subjects ||--o{ sessions : schedules
+  class_subjects ||--o{ evaluations : evaluates
+  evaluations ||--o{ grades : grades
+  profiles ||--o{ enrollments : enrolls
+  classes ||--o{ enrollments : contains
+  sessions ||--o{ attendance_records : records
+  profiles ||--o{ attendance_records : attends
+  profiles ||--o{ documents : owns
+  profiles ||--|| student_records : has

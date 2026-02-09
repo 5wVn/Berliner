@@ -1,0 +1,8 @@
+﻿flowchart LR
+  A[Client request] --> B[Server Action]
+  B --> C[Supabase PostgREST]
+  C --> D[(PostgreSQL)]
+  D --> E{RLS policy}
+  E -->|uses auth.user_establishment_id()| F[Compare establishment_id]
+  F -->|match| G[Return rows]
+  F -->|no match| H[Empty or denied]
