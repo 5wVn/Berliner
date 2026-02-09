@@ -1,0 +1,14 @@
+﻿flowchart TD
+  A[User opens app] --> B{Session exists?}
+  B -- Yes --> C[Load profile]
+  C --> D{Role?}
+  D -- student --> E[Redirect /student]
+  D -- teacher --> F[Redirect /teacher]
+  D -- registrar --> G[Redirect /registrar]
+  D -- academic_head --> H[Redirect /academic-head]
+  D -- company --> I[Redirect /company]
+  B -- No --> J[Login form]
+  J --> K[Supabase Auth]
+  K --> L{Success?}
+  L -- No --> M[Show error]
+  L -- Yes --> C

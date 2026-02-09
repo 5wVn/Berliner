@@ -1,0 +1,19 @@
+﻿flowchart LR
+  subgraph Client
+    A[Browser / PWA]
+    SW[Service Worker]
+  end
+
+  A <--> SW
+  A -->|HTTPS| V[Vercel Edge + Serverless]
+  V --> N[Next.js App Router]
+  N --> SA[Server Actions]
+  SA --> S[Supabase]
+
+  subgraph S[Supabase]
+    PG[(PostgreSQL + RLS)]
+    AUTH[Auth]
+    ST[Storage]
+  end
+
+  N -->|SSR / Streaming| A
