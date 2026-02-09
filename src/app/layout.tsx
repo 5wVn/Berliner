@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Belanosima } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/shared/providers/AuthProvider";
 
 const belanosima = Belanosima({
   weight: ["400", "600", "700"],
@@ -11,19 +12,20 @@ const belanosima = Belanosima({
 
 export const metadata: Metadata = {
   title: "Berliner - Portail Etudiant",
-  description: "Portail étudiant multi-établissements, mobile-first.",
+  description: "Portail etudiant multi-etablissements, mobile-first.",
   manifest: "/manifest.json",
-  themeColor: "#4F46E5",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: "Berliner",
   },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: "#4F46E5",
 };
 
 export default function RootLayout({
@@ -34,7 +36,7 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${belanosima.variable}`}>
       <body className="font-sans antialiased bg-slate-50 text-slate-900">
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );
