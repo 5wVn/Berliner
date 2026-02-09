@@ -147,6 +147,53 @@ BEGIN;
   INSERT INTO class_subjects (id, establishment_id, class_id, subject_id, teacher_id)
   VALUES ('cs_esgi5_ml', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'esgi5-99-9c0b-4ef8-bb6d-6bb9bd38esg5', 's3eebc99-9c0b-4ef8-bb6d-6bb9bd380s33', 'u3eebc99-9c0b-4ef8-bb6d-6bb9bd380u33')
   ON CONFLICT (id) DO NOTHING;
+
+  -- ESGI 1 Class Subjects (T1)
+  INSERT INTO class_subjects (id, establishment_id, class_id, subject_id, teacher_id)
+  VALUES 
+    -- Anglais -> J. Dear
+    ('cs_esgi1_t1_01', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'esgi1-99-9c0b-4ef8-bb6d-6bb9bd38esg1', 's_esgi1_t1_01', 'u0000000-0000-0000-0000-000000prof05'),
+    -- Com -> J. Dear
+    ('cs_esgi1_t1_02', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'esgi1-99-9c0b-4ef8-bb6d-6bb9bd38esg1', 's_esgi1_t1_02', 'u0000000-0000-0000-0000-000000prof05'),
+    -- VBA -> D. Chainet
+    ('cs_esgi1_t1_03', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'esgi1-99-9c0b-4ef8-bb6d-6bb9bd38esg1', 's_esgi1_t1_03', 'u0000000-0000-0000-0000-000000prof04'),
+    -- MGT -> P. Martin
+    ('cs_esgi1_t1_04', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'esgi1-99-9c0b-4ef8-bb6d-6bb9bd38esg1', 's_esgi1_t1_04', 'u0000000-0000-0000-0000-000000prof09'),
+    -- Perso -> P. Martin
+    ('cs_esgi1_t1_05', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'esgi1-99-9c0b-4ef8-bb6d-6bb9bd38esg1', 's_esgi1_t1_05', 'u0000000-0000-0000-0000-000000prof09'),
+    -- Algo 1 -> N. Quere
+    ('cs_esgi1_t1_06', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'esgi1-99-9c0b-4ef8-bb6d-6bb9bd38esg1', 's_esgi1_t1_06', 'u0000000-0000-0000-0000-000000prof11'),
+    -- BDD -> V. Duflot
+    ('cs_esgi1_t1_07', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'esgi1-99-9c0b-4ef8-bb6d-6bb9bd38esg1', 's_esgi1_t1_07', 'u0000000-0000-0000-0000-000000prof06'),
+    -- IHM -> V. Duflot
+    ('cs_esgi1_t1_08', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'esgi1-99-9c0b-4ef8-bb6d-6bb9bd38esg1', 's_esgi1_t1_08', 'u0000000-0000-0000-0000-000000prof06'),
+    -- Web 1 -> B. Lacombat
+    ('cs_esgi1_t1_09', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'esgi1-99-9c0b-4ef8-bb6d-6bb9bd38esg1', 's_esgi1_t1_09', 'u0000000-0000-0000-0000-000000prof07'),
+    -- C 1 -> A. Aubert
+    ('cs_esgi1_t1_10', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'esgi1-99-9c0b-4ef8-bb6d-6bb9bd38esg1', 's_esgi1_t1_10', 'u0000000-0000-0000-0000-000000prof01'),
+    -- Res 1 -> C. Bruneau
+    ('cs_esgi1_t1_11', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'esgi1-99-9c0b-4ef8-bb6d-6bb9bd38esg1', 's_esgi1_t1_11', 'u0000000-0000-0000-0000-000000prof02'),
+
+    -- ESGI 1 Class Subjects (T2)
+    -- Algo 2 -> N. Quere
+    ('cs_esgi1_t2_01', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'esgi1-99-9c0b-4ef8-bb6d-6bb9bd38esg1', 's_esgi1_t2_01', 'u0000000-0000-0000-0000-000000prof11'),
+    -- SQL -> V. Duflot
+    ('cs_esgi1_t2_02', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'esgi1-99-9c0b-4ef8-bb6d-6bb9bd38esg1', 's_esgi1_t2_02', 'u0000000-0000-0000-0000-000000prof06'),
+    -- Web 2 -> B. Lacombat
+    ('cs_esgi1_t2_03', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'esgi1-99-9c0b-4ef8-bb6d-6bb9bd38esg1', 's_esgi1_t2_03', 'u0000000-0000-0000-0000-000000prof07'),
+    -- C 2 -> A. Aubert
+    ('cs_esgi1_t2_04', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'esgi1-99-9c0b-4ef8-bb6d-6bb9bd38esg1', 's_esgi1_t2_04', 'u0000000-0000-0000-0000-000000prof01'),
+    -- Projet -> F. Marotte
+    ('cs_esgi1_t2_05', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'esgi1-99-9c0b-4ef8-bb6d-6bb9bd38esg1', 's_esgi1_t2_05', 'u0000000-0000-0000-0000-000000prof08'),
+    -- Res 2 -> C. Bruneau
+    ('cs_esgi1_t2_06', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'esgi1-99-9c0b-4ef8-bb6d-6bb9bd38esg1', 's_esgi1_t2_06', 'u0000000-0000-0000-0000-000000prof02'),
+    -- Archi Ordi -> R. Casagrande
+    ('cs_esgi1_t2_07', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'esgi1-99-9c0b-4ef8-bb6d-6bb9bd38esg1', 's_esgi1_t2_07', 'u0000000-0000-0000-0000-000000prof03'),
+    -- Linux -> K. Nge
+    ('cs_esgi1_t2_08', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'esgi1-99-9c0b-4ef8-bb6d-6bb9bd38esg1', 's_esgi1_t2_08', 'u0000000-0000-0000-0000-000000prof10'),
+    -- Virt -> K. Nge
+    ('cs_esgi1_t2_09', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'esgi1-99-9c0b-4ef8-bb6d-6bb9bd38esg1', 's_esgi1_t2_09', 'u0000000-0000-0000-0000-000000prof10')
+  ON CONFLICT (id) DO NOTHING;
 COMMIT;
 
 -- 8. Enrollments
