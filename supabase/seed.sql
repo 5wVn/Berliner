@@ -123,7 +123,31 @@ INSERT INTO subjects (id, establishment_id, program_id, name, code, credits)
 VALUES
   ('s1eebc99-9c0b-4ef8-bb6d-6bb9bd380s11', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Développement Web Avancé', 'WEB3', 4),
   ('s2eebc99-9c0b-4ef8-bb6d-6bb9bd380s22', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Architecture Logicielle', 'ARCH', 3),
-  ('s3eebc99-9c0b-4ef8-bb6d-6bb9bd380s33', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a2eebc99-9c0b-4ef8-bb6d-6bb9bd380a22', 'Machine Learning', 'IA-ML', 6)
+  ('s3eebc99-9c0b-4ef8-bb6d-6bb9bd380s33', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a2eebc99-9c0b-4ef8-bb6d-6bb9bd380a22', 'Machine Learning', 'IA-ML', 6),
+
+  -- ESGI 1 Subjects (Trimester 1)
+  ('s_esgi1_t1_01', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Anglais', 'ENG1', 2),
+  ('s_esgi1_t1_02', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Expression orale et écrite', 'COM1', 2),
+  ('s_esgi1_t1_03', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Développement VBA Excel', 'VBA1', 2),
+  ('s_esgi1_t1_04', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Gestion du travail de groupe', 'MGT1', 2),
+  ('s_esgi1_t1_05', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Méthodologie et dév. personnel', 'PERS1', 1),
+  ('s_esgi1_t1_06', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Algorithmique et structures 1', 'ALG1', 4),
+  ('s_esgi1_t1_07', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Modélisation bases de données', 'BDD1', 3),
+  ('s_esgi1_t1_08', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Modélisation et IHM', 'IHM1', 3),
+  ('s_esgi1_t1_09', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Dév. Web 1 (HTML/CSS/PHP)', 'WEB1', 4),
+  ('s_esgi1_t1_10', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Langage C 1', 'C1', 4),
+  ('s_esgi1_t1_11', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Architecture des réseaux 1', 'RES1', 3),
+
+  -- ESGI 1 Subjects (Trimester 2)
+  ('s_esgi1_t2_01', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Algorithmique et structures 2', 'ALG2', 4),
+  ('s_esgi1_t2_02', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Langage SQL', 'SQL1', 3),
+  ('s_esgi1_t2_03', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Dév. Web 2 (HTML/CSS/PHP)', 'WEB2', 4),
+  ('s_esgi1_t2_04', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Langage C 2', 'C2', 4),
+  ('s_esgi1_t2_05', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Projet Annuel', 'PROJ1', 6),
+  ('s_esgi1_t2_06', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Architecture des réseaux 2', 'RES2', 3),
+  ('s_esgi1_t2_07', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Circuits logiques / Archi Ordi', 'ARCH_ORD', 3),
+  ('s_esgi1_t2_08', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Linux utilisation avancée', 'LIN1', 3),
+  ('s_esgi1_t2_09', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 'Virtualisation et gestion parcs', 'VIRT1', 3)
 ON CONFLICT (id) DO NOTHING;
 
 -- 7. Class Subjects
