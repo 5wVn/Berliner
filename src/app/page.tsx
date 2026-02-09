@@ -2,64 +2,67 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <main className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-primary-50 to-transparent -z-10" />
+
+      <div className="w-full max-w-md flex flex-col gap-8">
+        {/* Header */}
+        <div className="text-center space-y-2">
+          <div className="w-16 h-16 bg-primary-600 rounded-2xl mx-auto flex items-center justify-center shadow-lg shadow-primary-600/20 mb-6">
+            <span className="text-3xl font-bold text-white">B</span>
+          </div>
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
+            Berliner
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-slate-500 text-lg">
+            Votre portail étudiant, simplifié.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Login Form Card */}
+        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-slate-700 ml-1"
+              >
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                placeholder="etudiant@ecole.com"
+                className="w-full px-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+              />
+            </div>
+            <div className="space-y-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-slate-700 ml-1"
+              >
+                Mot de passe
+              </label>
+              <input
+                type="password"
+                id="password"
+                placeholder="••••••••"
+                className="w-full px-4 py-3.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all"
+              />
+            </div>
+          </div>
+
+          <button className="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-4 rounded-xl shadow-lg shadow-primary-600/20 active:scale-[0.98] transition-all text-lg">
+            Se connecter
+          </button>
         </div>
-      </main>
-    </div>
+
+        {/* Footer */}
+        <p className="text-center text-slate-400 text-sm">
+          © 2026 Berliner Campus
+        </p>
+      </div>
+    </main>
   );
 }

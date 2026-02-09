@@ -1,21 +1,29 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Belanosima } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const belanosima = Belanosima({
+  weight: ["400", "600", "700"],
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: "--font-belanosima",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Portail Etudiant",
-  description:
-    "Portail etudiant multi-etablissements, mobile-first et offline-first.",
+  title: "Berliner - Portail Etudiant",
+  description: "Portail étudiant multi-établissements, mobile-first.",
+  manifest: "/manifest.json",
+  themeColor: "#4F46E5",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Berliner",
+  },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+  },
 };
 
 export default function RootLayout({
@@ -24,10 +32,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html lang="fr" className={`${belanosima.variable}`}>
+      <body className="font-sans antialiased bg-slate-50 text-slate-900">
         {children}
       </body>
     </html>
