@@ -113,7 +113,7 @@ Promise<{ ok: true; data?: T } | { ok: false; error: ActionError }>
 ## Design System
 
 **Typography:**
-- **Font:** Belanosima (geometric, Google Font)
+- **Fonts:** Fira Sans (Headings - Bold Italic), Montserrat (Body)
 - **Base size:** 17px (optimized for mobile readability)
 - **Scale:** H1 28px Bold, H2 24px SemiBold, H3 20px Medium, Body 17px Regular
 

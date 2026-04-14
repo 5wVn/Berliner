@@ -9,15 +9,17 @@ import {
   useState,
 } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { supabase } from "@/shared/lib/supabaseClient";
+import { supabase } from "@/shared/lib/supabase/client";
 import { UserRole } from "@/shared/types/auth";
 
 type Profile = {
   id: string;
+  establishment_id: string;
   email: string;
   role: UserRole;
   first_name: string;
   last_name: string;
+  phone: string | null;
 };
 
 type AuthContextValue = {
@@ -25,7 +27,7 @@ type AuthContextValue = {
   session: Session | null;
   profile: Profile | null;
   authError: string | null;
-  isAdmin: boolean;
+  canSwitchDashboard: boolean;
   selectedRole: UserRole | null;
   setSelectedRole: (role: UserRole | null) => void;
   refreshProfile: () => Promise<void>;
@@ -47,7 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setAuthError(null);
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, email, role, first_name, last_name")
+      .select("id, establishment_id, email, role, first_name, last_name, phone")
       .eq("id", userId)
       .maybeSingle();
 
@@ -61,9 +63,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const refreshProfile = useCallback(async () => {
-    if (!session?.user?.id) return;
-    await fetchProfile(session.user.id);
-  }, [fetchProfile, session?.user?.id]);
+    // Re-read the session from Supabase first so that newly-set cookies
+    // (e.g. from a Server Action login) are picked up before fetching the
+    // profile. Without this, refreshProfile would short-circuit whenever
+    // the in-memory session is still null.
+    const { data } = await supabase.auth.getSession();
+    const nextSession = data.session ?? null;
+    setSession(nextSession);
+
+    if (!nextSession?.user?.id) {
+      setProfile(null);
+      return;
+    }
+
+    await fetchProfile(nextSession.user.id);
+  }, [fetchProfile]);
 
   const setSelectedRole = useCallback((role: UserRole | null) => {
     setSelectedRoleState(role);
@@ -123,7 +137,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!profile) return;
-    if (profile.role !== "academic_head") {
+    if (profile.role !== "academic_head" && profile.role !== "super_admin") {
       setSelectedRole(null);
     }
   }, [profile, setSelectedRole]);
@@ -139,7 +153,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       session,
       profile,
       authError,
-      isAdmin: profile?.role === "academic_head",
+      canSwitchDashboard:
+        profile?.role === "academic_head" || profile?.role === "super_admin",
       selectedRole,
       setSelectedRole,
       refreshProfile,

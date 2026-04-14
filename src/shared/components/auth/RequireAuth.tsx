@@ -4,17 +4,23 @@ import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/shared/providers/AuthProvider";
 import { UserRole } from "@/shared/types/auth";
+import { roleToDashboardPath } from "@/shared/lib/roles";
 
 interface RequireAuthProps {
   children: React.ReactNode;
   requiredRole?: UserRole;
-  adminOnly?: boolean;
+  /**
+   * When true, the route is only accessible to users with the dashboard
+   * switcher capability (currently academic_head). Other users get bounced
+   * back to their own role's dashboard.
+   */
+  requireDashboardSwitcher?: boolean;
 }
 
 export function RequireAuth({
   children,
   requiredRole,
-  adminOnly = false,
+  requireDashboardSwitcher = false,
 }: RequireAuthProps) {
   const router = useRouter();
   const {
@@ -22,7 +28,7 @@ export function RequireAuth({
     session,
     profile,
     authError,
-    isAdmin,
+    canSwitchDashboard,
     selectedRole,
     setSelectedRole,
   } = useAuth();
@@ -30,12 +36,26 @@ export function RequireAuth({
   const isReady = useMemo(() => {
     if (loading) return false;
     if (!session || !profile) return false;
-    if (adminOnly && !isAdmin) return false;
-    if (!adminOnly && requiredRole && !isAdmin && profile.role !== requiredRole)
+    if (requireDashboardSwitcher && !canSwitchDashboard) return false;
+    if (
+      !requireDashboardSwitcher &&
+      requiredRole &&
+      !canSwitchDashboard &&
+      profile.role !== requiredRole
+    )
       return false;
-    if (isAdmin && !selectedRole && !adminOnly) return false;
+    if (canSwitchDashboard && !selectedRole && !requireDashboardSwitcher)
+      return false;
     return true;
-  }, [adminOnly, isAdmin, loading, profile, requiredRole, selectedRole, session]);
+  }, [
+    requireDashboardSwitcher,
+    canSwitchDashboard,
+    loading,
+    profile,
+    requiredRole,
+    selectedRole,
+    session,
+  ]);
 
   useEffect(() => {
     if (loading) return;
@@ -47,14 +67,14 @@ export function RequireAuth({
 
     if (!profile) return;
 
-    if (adminOnly && !isAdmin) {
-      router.replace(`/${profile.role}/dashboard`);
+    if (requireDashboardSwitcher && !canSwitchDashboard) {
+      router.replace(roleToDashboardPath(profile.role));
       return;
     }
 
-    if (isAdmin) {
+    if (canSwitchDashboard) {
       if (!selectedRole) {
-        if (!adminOnly) {
+        if (!requireDashboardSwitcher) {
           router.replace("/choose-dashboard");
         }
         return;
@@ -66,11 +86,11 @@ export function RequireAuth({
     }
 
     if (requiredRole && profile.role !== requiredRole) {
-      router.replace(`/${profile.role}/dashboard`);
+      router.replace(roleToDashboardPath(profile.role));
     }
   }, [
-    adminOnly,
-    isAdmin,
+    requireDashboardSwitcher,
+    canSwitchDashboard,
     loading,
     profile,
     requiredRole,
@@ -82,15 +102,15 @@ export function RequireAuth({
 
   if (authError) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-slate-500">
-        Erreur d'authentification: {authError}
+      <div className="min-h-screen flex items-center justify-center text-slate-600 dark:text-slate-400">
+        Erreur d&apos;authentification: {authError}
       </div>
     );
   }
 
   if (!isReady) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-slate-500">
+      <div className="min-h-screen flex items-center justify-center text-slate-600 dark:text-slate-400">
         Chargement...
       </div>
     );

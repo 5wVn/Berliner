@@ -10,14 +10,22 @@ if (!supabaseUrl || !serviceKey) {
   process.exit(1);
 }
 
-const email = process.env.ADMIN_EMAIL || "swan.dieu@gmail.com";
-const password = process.env.ADMIN_PASSWORD || "admin";
+const allowDefaults = process.env.ALLOW_DEFAULT_ADMIN === "true";
+const email = process.env.ADMIN_EMAIL || (allowDefaults ? "admin@example.com" : null);
+const password = process.env.ADMIN_PASSWORD || (allowDefaults ? "admin" : null);
 const role = process.env.ADMIN_ROLE || "academic_head";
 const firstName = process.env.ADMIN_FIRST_NAME || "Swan";
 const lastName = process.env.ADMIN_LAST_NAME || "Dieu";
 const establishmentName =
   process.env.ADMIN_ESTABLISHMENT_NAME || "Etablissement Principal";
 const establishmentSlug = process.env.ADMIN_ESTABLISHMENT_SLUG || "principal";
+
+if (!email || !password) {
+  console.error(
+    "Missing ADMIN_EMAIL or ADMIN_PASSWORD. Set ALLOW_DEFAULT_ADMIN=true to use local defaults."
+  );
+  process.exit(1);
+}
 
 const supabase = createClient(supabaseUrl, serviceKey, {
   auth: { autoRefreshToken: false, persistSession: false }

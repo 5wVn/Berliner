@@ -1,79 +1,102 @@
 "use client"
 
-import { AlertCircle, ArrowRight } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { format } from "date-fns"
 import { fr } from "date-fns/locale"
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/Card"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/Card"
 import { Button } from "@/shared/components/ui/Button"
 import { Badge } from "@/shared/components/ui/Badge"
 import { Skeleton } from "@/shared/components/ui/Skeleton"
-import { mockPendingAttendance } from "../_data/mock"
+import { DashboardCardLink } from "@/shared/components/ui/DashboardCardLink"
+import type { PendingAttendanceSession } from "@/shared/lib/teacherData"
 
 interface PendingAttendanceWidgetProps {
   loading?: boolean
+  pending?: PendingAttendanceSession[] | null
+  error?: string | null
 }
 
-export function PendingAttendanceWidget({ loading = false }: PendingAttendanceWidgetProps) {
+export function PendingAttendanceWidget({
+  loading = false,
+  pending = null,
+  error = null,
+}: PendingAttendanceWidgetProps) {
   if (loading) {
     return (
-      <Card className="h-full border-amber-200 bg-amber-50/30">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-5 w-32 bg-amber-200" />
-            <Skeleton className="h-5 w-8 rounded-full bg-amber-200" />
+      <Card className="h-full border-rose-200 bg-rose-50/70 dark:border-rose-500/30 dark:bg-rose-500/10">
+        <CardHeader className="space-y-0 pb-4">
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-6 w-32" />
+            <Skeleton className="h-6 w-8 rounded-full" />
           </div>
-          <Skeleton className="h-4 w-4 rounded-full bg-amber-200" />
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-             {[1, 2].map((i) => (
-                <div key={i} className="flex items-center justify-between rounded-md bg-white p-2 shadow-sm border border-amber-100">
-                  <div className="space-y-2 flex-1">
-                     <Skeleton className="h-4 w-32" />
-                     <Skeleton className="h-3 w-24" />
-                  </div>
-                  <Skeleton className="h-9 w-9 rounded-md ml-2" />
+          <div className="divide-y divide-rose-200/60 dark:divide-rose-500/20">
+            {[1, 2].map((i) => (
+              <div key={i} className="flex items-center justify-between py-4">
+                <div className="space-y-2 flex-1">
+                  <Skeleton className="h-5 w-32" />
+                  <Skeleton className="h-4 w-24" />
                 </div>
-             ))}
+                <Skeleton className="h-10 w-10 rounded-md ml-2" />
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
     )
   }
 
-  const pendingCount = mockPendingAttendance.length
+  if (error) {
+    return (
+      <Card className="h-full border-rose-200 bg-rose-50/70 dark:border-rose-500/30 dark:bg-rose-500/10 shadow-none">
+        <CardHeader className="space-y-0 pb-4">
+          <CardTitle className="text-xl font-bold italic text-rose-800 dark:text-rose-200">Appels en attente</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p>
+        </CardContent>
+      </Card>
+    )
+  }
 
-  if (pendingCount === 0) return null
+  const items = pending ?? []
+  if (items.length === 0) return null
 
   return (
-    <Card className="h-full border-amber-200 bg-amber-50/30">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <div className="flex items-center gap-2">
-          <CardTitle className="text-base font-medium text-amber-900">Appels en attente</CardTitle>
-          <Badge variant="warning" className="bg-amber-100 text-amber-700 hover:bg-amber-100">
-            {pendingCount}
+    <Card className="h-full border-rose-200 bg-rose-50/70 dark:border-rose-500/30 dark:bg-rose-500/10 shadow-none">
+      <CardHeader className="space-y-0 pb-4">
+        <div className="flex items-center gap-3">
+          <CardTitle className="text-xl font-bold italic text-rose-800 dark:text-rose-200">Appels en attente</CardTitle>
+          <Badge variant="error" className="bg-rose-100 text-rose-800 hover:bg-rose-200 dark:bg-rose-500/20 dark:text-rose-200 dark:hover:bg-rose-500/30">
+            {items.length}
           </Badge>
         </div>
-        <AlertCircle className="h-4 w-4 text-amber-600" />
       </CardHeader>
       <CardContent>
-        <div className="space-y-3">
-          {mockPendingAttendance.map((pending) => (
-            <div key={pending.id} className="flex items-center justify-between rounded-md bg-white p-2 shadow-sm border border-amber-100">
-              <div className="space-y-0.5">
-                <p className="text-xs font-semibold text-slate-900">{pending.class_name}</p>
-                <p className="text-[10px] text-slate-500">
-                  {format(new Date(pending.date), "dd MMM à HH:mm", { locale: fr })}
+        <div className="divide-y divide-rose-200/60 dark:divide-rose-500/20">
+          {items.map((item) => (
+            <div key={item.id} className="flex items-center justify-between py-4">
+              <div className="space-y-1">
+                <p className="text-base font-bold text-slate-900 dark:text-slate-50">{item.class_name}</p>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                  {format(new Date(item.date), "dd MMM à HH:mm", { locale: fr })}
                 </p>
               </div>
-              <Button size="sm" variant="ghost" className="h-9 w-9 p-0 text-amber-600 hover:text-amber-700 hover:bg-amber-50">
+              <Button size="icon" variant="ghost" className="h-10 w-10 rounded-xl text-rose-600 hover:text-rose-700 hover:bg-rose-100 dark:text-rose-300 dark:hover:text-rose-200 dark:hover:bg-rose-500/20">
                 <ArrowRight className="h-5 w-5" />
-                <span className="sr-only">Faire l'appel</span>
+                <span className="sr-only">Faire l&apos;appel</span>
               </Button>
             </div>
           ))}
         </div>
       </CardContent>
+      <CardFooter className="justify-end pt-0">
+        <DashboardCardLink
+          href="/teacher/classes"
+          className="border-rose-200 text-rose-700 hover:bg-rose-100 hover:text-rose-800 dark:border-rose-500/40 dark:text-rose-200 dark:hover:bg-rose-500/20"
+        />
+      </CardFooter>
     </Card>
   )
 }
