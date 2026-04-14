@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation"
 import { DashboardLayout } from "@/shared/components/layouts/DashboardLayout"
-import { CardStack } from "@/shared/components/ui/CardStack"
 import { KPIsWidget } from "../_components/KPIsWidget"
 import { AttendanceOverviewWidget } from "../_components/AttendanceOverviewWidget"
 import { GradeDistributionWidget } from "../_components/GradeDistributionWidget"
@@ -63,22 +62,22 @@ export default async function AcademicHeadDashboardPage() {
       userName={userName}
       showDashboardSwitcher
     >
-      <div className="space-y-6 pb-6">
-        <div className="flex flex-col gap-3">
-          <h1 className="text-3xl font-heading font-bold italic text-slate-900 dark:text-slate-50">
-            Bonjour, <span className="text-indigo-600">{userName}</span>
+      <div className="flex flex-col gap-6 pb-6">
+        <div className="flex max-w-3xl flex-col gap-3">
+          <h1 className="font-heading text-balance text-3xl font-bold text-foreground">
+            Bonjour, <span className="break-words text-primary">{userName}</span>
           </h1>
-          <p className="text-lg text-slate-600 dark:text-slate-400">
-            Pilotage pédagogique de l&apos;établissement.
+          <p className="text-base text-muted-foreground sm:text-lg">
+            Pilotage pedagogique de l&apos;etablissement.
           </p>
         </div>
 
-        <CardStack>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:gap-6">
           <KPIsWidget kpis={kpis} error={kpisError} />
           <AttendanceOverviewWidget overview={overview} error={overviewError} />
           <GradeDistributionWidget distribution={distribution} error={distributionError} />
           <ProgramsSummaryWidget programs={programs} error={programsError} />
-        </CardStack>
+        </div>
       </div>
     </DashboardLayout>
   )

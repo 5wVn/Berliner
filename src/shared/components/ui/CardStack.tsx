@@ -7,11 +7,11 @@ import { Skeleton } from "@/shared/components/ui/Skeleton"
 
 const EXPAND_ANIMATION_MS = 480
 const MOBILE_CARD_BACKGROUNDS = [
-  "bg-white dark:bg-slate-900",
-  "bg-indigo-100 dark:bg-slate-800",
-  "bg-indigo-600 dark:bg-indigo-900",
+  "bg-card",
+  "bg-muted",
+  "bg-primary",
 ] as const
-const MOBILE_CARD_VARIANTS = ["slate", "indigo", "indigo"] as const
+const MOBILE_CARD_VARIANTS = ["default", "muted", "primary"] as const
 type MobileCardVariant = (typeof MOBILE_CARD_VARIANTS)[number]
 
 interface CardStackProps {
@@ -120,67 +120,27 @@ export function CardStack({
   )
 
   return (
-    <div
-      className={cn(
-        "flex flex-col pb-0 md:pb-32",
-        desktopGridClassName,
-        className
-      )}
+      <div
+        className={cn(
+          "flex flex-col overflow-x-hidden pb-0 md:pb-32",
+          desktopGridClassName,
+          className
+        )}
       onClickCapture={handleCardLinkClick}
     >
-      {/* 
-        This style block overrides the inner Card component styles.
-      */}
       <style dangerouslySetInnerHTML={{__html: `
-        .card-stack-override .card-corners {
+        .card-stack-override > div > * {
           background: transparent !important;
           border: none !important;
           box-shadow: none !important;
           border-radius: inherit !important;
-          backdrop-filter: none !important;
         }
-        /* Remove gradient/vignette overlay on cards */
-        .card-stack-override .card-corners::before {
-          display: none !important;
+        .card-stack-override.stack-card-primary,
+        .card-stack-override.stack-card-primary * {
+          color: var(--primary-foreground) !important;
         }
-
-        /* 
-         Overrides for the Primary Card (Index 2 - 3rd Card) 
-         Use specificity to override Tailwind utility classes on inner elements
-        */
-        .card-stack-override.stack-card-primary .text-slate-900,
-        .card-stack-override.stack-card-primary .text-slate-600,
-        .card-stack-override.stack-card-primary .text-indigo-600,
-        .card-stack-override.stack-card-primary .text-indigo-700,
-        .card-stack-override.stack-card-primary .text-indigo-500 {
-           color: white !important;
-        }
-        
-        .card-stack-override.stack-card-primary .bg-indigo-50 {
-           background-color: rgba(255, 255, 255, 0.1) !important;
-           border-color: rgba(255, 255, 255, 0.2) !important;
-        }
-
-        .card-stack-override.stack-card-primary .text-slate-500 {
-           color: rgba(255, 255, 255, 0.7) !important;
-        }
-        
-        /* Specific override for the date/time box in ScheduleWidget */
-        .card-stack-override.stack-card-primary .bg-indigo-50 .text-indigo-700 {
-            color: white !important;
-        }
-        .card-stack-override.stack-card-primary .bg-indigo-50 .text-indigo-400 {
-            color: rgba(255, 255, 255, 0.8) !important;
-        }
-
-        .card-stack-override.stack-card-primary .dashboard-card-link {
-          color: white !important;
-          border-color: rgba(255, 255, 255, 0.4) !important;
-          background-color: rgba(255, 255, 255, 0.08) !important;
-        }
-
-        .card-stack-override.stack-card-primary .dashboard-card-link:hover {
-          background-color: rgba(255, 255, 255, 0.16) !important;
+        .card-stack-override.stack-card-primary .text-muted-foreground {
+          color: oklch(from var(--primary-foreground) l c h / 0.7) !important;
         }
       `}} />
 
@@ -203,30 +163,16 @@ export function CardStack({
             className={cn(
               "card-stack-override",
               isPrimary ? "stack-card-primary" : "",
-              isLast ? "overflow-hidden max-h-[72svh] rounded-none md:overflow-visible md:max-h-none md:rounded-2xl" : "",
-              // Mobile Styles
-              "relative border border-slate-200 shadow-sm dark:border-slate-800",
-              "rounded-none", 
-              isOddIndex ? "transform skew-y-2" : "transform -skew-y-2", // Alternating tilt
-              
-              // Edges Logic: Restore internal padding (outer container handles bleed)
-              "-mx-4 px-4",
-
-              // Overlap logic:
-              // -mt-24 pulls this card UP to cover the bottom of the previous card
-              // first:mt-0 removes margin from the first card so it starts naturally in flow
-              "-mt-24 first:mt-0", 
-              
-              // Expand bottom logic:
-              // pb-20 adds extra space at the bottom of the card content
-              // last:pb-24 adds space below the "Voir plus" button of the last card
+              isLast ? "overflow-hidden rounded-none md:overflow-visible md:rounded-2xl" : "",
+              "relative border-2 border-border",
+              "rounded-none",
+              isOddIndex ? "transform skew-y-2" : "transform -skew-y-2",
+              "mx-0 px-0",
+              "-mt-24 first:mt-0",
               "pb-20 last:pb-24",
-              
               mobileBgClass,
-              
-              // Desktop Styles (Reset)
-              "md:static md:mt-0 md:rounded-2xl md:bg-white/80 md:backdrop-blur-md md:dark:bg-transparent md:transform-none",
-              "md:border-slate-200 md:dark:border-transparent md:shadow-sm md:dark:shadow-none md:pb-0 md:mx-0 md:px-0"
+              "md:static md:mt-0 md:rounded-2xl md:bg-card md:transform-none",
+              "md:border-border md:pb-0 md:mx-0 md:px-0"
             )}
             style={{
               zIndex: index,
@@ -246,19 +192,19 @@ export function CardStack({
         <div
           aria-hidden="true"
           className={cn(
-            "fixed z-[70] overflow-hidden border border-slate-200 bg-white shadow-2xl dark:border-slate-800 dark:bg-slate-950",
+            "fixed z-[70] overflow-hidden border-2 border-border bg-card shadow-2xl",
             "transition-[top,left,width,height,border-radius] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
             isExpanded ? "rounded-none" : "rounded-2xl",
             MOBILE_CARD_BACKGROUNDS[expandedCard.index % MOBILE_CARD_BACKGROUNDS.length]
           )}
           data-skeleton-variant={expandedCard.variant}
-          style={{
-            top: isExpanded ? 0 : expandedCard.rect.top,
-            left: isExpanded ? 0 : expandedCard.rect.left,
-            width: isExpanded ? "100vw" : expandedCard.rect.width,
-            height: isExpanded ? "100vh" : expandedCard.rect.height,
-          }}
-        >
+            style={{
+              top: isExpanded ? 0 : expandedCard.rect.top,
+              left: isExpanded ? 0 : expandedCard.rect.left,
+              width: isExpanded ? "100vw" : expandedCard.rect.width,
+              height: isExpanded ? "100dvh" : expandedCard.rect.height,
+            }}
+          >
           <div className="h-full w-full">
             <div className="p-6 space-y-5">
               <Skeleton className="h-6 w-40" />

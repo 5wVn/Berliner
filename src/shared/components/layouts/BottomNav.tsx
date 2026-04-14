@@ -51,6 +51,12 @@ const NAV_CONFIG: Record<UserRole, NavItem[]> = {
     { label: "Documents", href: "/company/documents", icon: FileText },
     { label: "Profil", href: "/company/profile", icon: User },
   ],
+  super_admin: [
+    { label: "Accueil", href: "/academic-head", icon: Home },
+    { label: "Analytique", href: "/academic-head/analytics", icon: BarChart },
+    { label: "Rapports", href: "/academic-head/reports", icon: FileText },
+    { label: "Profil", href: "/academic-head/profile", icon: User },
+  ],
 }
 
 interface BottomNavProps {
@@ -69,8 +75,11 @@ export function BottomNav({ role }: BottomNavProps) {
       .sort((a, b) => b.length - a.length)[0] || ""
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 bg-white/90 backdrop-blur-lg pb-[env(safe-area-inset-bottom)] dark:border-slate-800 dark:bg-slate-900/90 shadow-2xl">
-      <div className="flex h-20 items-center justify-around px-4">
+    <nav
+      aria-label="Navigation principale"
+      className="fixed bottom-0 left-0 right-0 z-50 border-t-2 border-border bg-card/95 pb-[env(safe-area-inset-bottom)] shadow-2xl backdrop-blur-lg"
+    >
+      <div className="mx-auto flex h-[var(--bottom-nav-height)] max-w-md items-center justify-around gap-1 px-2 touch-manipulation sm:max-w-none sm:px-4">
         {items.map((item) => {
           const isActive = item.href === activeHref
           const Icon = item.icon
@@ -80,16 +89,22 @@ export function BottomNav({ role }: BottomNavProps) {
               key={item.href}
               href={item.href}
               className={cn(
-                "group flex flex-col items-center justify-center space-y-1 rounded-2xl px-4 py-2 transition-all duration-300",
+                "group flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-2xl px-2 py-2 text-center transition-all duration-300",
                 isActive
-                  ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400 scale-105"
-                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                  ? "bg-muted text-primary scale-105"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
-              <Icon 
-                className={cn("h-7 w-7 transition-all duration-300", isActive ? "stroke-[2.5px]" : "stroke-[1.5px]")} 
+              <Icon
+                aria-hidden="true"
+                className={cn("h-7 w-7 shrink-0 transition-all duration-300", isActive ? "stroke-[2.5px]" : "stroke-[1.5px]")}
               />
-              <span className={cn("text-[11px] font-bold", isActive ? "opacity-100" : "opacity-80")}>
+              <span
+                className={cn(
+                  "max-w-full truncate text-[10px] leading-tight font-bold sm:text-[11px]",
+                  isActive ? "opacity-100" : "opacity-80"
+                )}
+              >
                 {item.label}
               </span>
             </Link>

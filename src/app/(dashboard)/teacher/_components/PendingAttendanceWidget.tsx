@@ -23,22 +23,22 @@ export function PendingAttendanceWidget({
 }: PendingAttendanceWidgetProps) {
   if (loading) {
     return (
-      <Card className="h-full border-rose-200 bg-rose-50/70 dark:border-rose-500/30 dark:bg-rose-500/10">
-        <CardHeader className="space-y-0 pb-4">
-          <div className="flex items-center gap-3">
+      <Card className="h-full border-destructive/40 bg-destructive/10">
+        <CardHeader className="pb-4">
+          <div className="flex flex-wrap items-center gap-3">
             <Skeleton className="h-6 w-32" />
             <Skeleton className="h-6 w-8 rounded-full" />
           </div>
         </CardHeader>
         <CardContent>
-          <div className="divide-y divide-rose-200/60 dark:divide-rose-500/20">
+          <div className="divide-y-2 divide-destructive/20">
             {[1, 2].map((i) => (
-              <div key={i} className="flex items-center justify-between py-4">
-                <div className="space-y-2 flex-1">
+              <div key={i} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-1 flex-col gap-2">
                   <Skeleton className="h-5 w-32" />
                   <Skeleton className="h-4 w-24" />
                 </div>
-                <Skeleton className="h-10 w-10 rounded-md ml-2" />
+                <Skeleton className="h-10 w-full rounded-md sm:w-10" />
               </div>
             ))}
           </div>
@@ -49,12 +49,12 @@ export function PendingAttendanceWidget({
 
   if (error) {
     return (
-      <Card className="h-full border-rose-200 bg-rose-50/70 dark:border-rose-500/30 dark:bg-rose-500/10 shadow-none">
-        <CardHeader className="space-y-0 pb-4">
-          <CardTitle className="text-xl font-bold italic text-rose-800 dark:text-rose-200">Appels en attente</CardTitle>
+      <Card className="h-full border-destructive/40 bg-destructive/10">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-destructive">Appels en attente</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p>
+          <p className="text-sm text-destructive">{error}</p>
         </CardContent>
       </Card>
     )
@@ -64,26 +64,28 @@ export function PendingAttendanceWidget({
   if (items.length === 0) return null
 
   return (
-    <Card className="h-full border-rose-200 bg-rose-50/70 dark:border-rose-500/30 dark:bg-rose-500/10 shadow-none">
-      <CardHeader className="space-y-0 pb-4">
-        <div className="flex items-center gap-3">
-          <CardTitle className="text-xl font-bold italic text-rose-800 dark:text-rose-200">Appels en attente</CardTitle>
-          <Badge variant="error" className="bg-rose-100 text-rose-800 hover:bg-rose-200 dark:bg-rose-500/20 dark:text-rose-200 dark:hover:bg-rose-500/30">
-            {items.length}
-          </Badge>
+    <Card className="h-full border-destructive/40 bg-destructive/10">
+      <CardHeader className="pb-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <CardTitle className="text-destructive">Appels en attente</CardTitle>
+          <Badge variant="error">{items.length}</Badge>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="divide-y divide-rose-200/60 dark:divide-rose-500/20">
+        <div className="divide-y-2 divide-destructive/20">
           {items.map((item) => (
-            <div key={item.id} className="flex items-center justify-between py-4">
-              <div className="space-y-1">
-                <p className="text-base font-bold text-slate-900 dark:text-slate-50">{item.class_name}</p>
-                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                  {format(new Date(item.date), "dd MMM à HH:mm", { locale: fr })}
+            <div key={item.id} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0 flex flex-col gap-1">
+                <p className="break-words text-base font-bold text-foreground">{item.class_name}</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  {format(new Date(item.date), "dd MMM a HH:mm", { locale: fr })}
                 </p>
               </div>
-              <Button size="icon" variant="ghost" className="h-10 w-10 rounded-xl text-rose-600 hover:text-rose-700 hover:bg-rose-100 dark:text-rose-300 dark:hover:text-rose-200 dark:hover:bg-rose-500/20">
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-10 w-full rounded-xl text-destructive hover:bg-destructive/20 sm:w-10"
+              >
                 <ArrowRight className="h-5 w-5" />
                 <span className="sr-only">Faire l&apos;appel</span>
               </Button>
@@ -92,10 +94,7 @@ export function PendingAttendanceWidget({
         </div>
       </CardContent>
       <CardFooter className="justify-end pt-0">
-        <DashboardCardLink
-          href="/teacher/classes"
-          className="border-rose-200 text-rose-700 hover:bg-rose-100 hover:text-rose-800 dark:border-rose-500/40 dark:text-rose-200 dark:hover:bg-rose-500/20"
-        />
+        <DashboardCardLink href="/teacher/classes" />
       </CardFooter>
     </Card>
   )

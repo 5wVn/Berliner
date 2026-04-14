@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation"
 import { DashboardLayout } from "@/shared/components/layouts/DashboardLayout"
-import { CardStack } from "@/shared/components/ui/CardStack"
 import { PendingEnrollmentsWidget } from "../_components/PendingEnrollmentsWidget"
 import { DocumentRequestsWidget } from "../_components/DocumentRequestsWidget"
 import { AttendanceAlertsWidget } from "../_components/AttendanceAlertsWidget"
@@ -63,22 +62,22 @@ export default async function RegistrarDashboardPage() {
       userName={userName}
       showDashboardSwitcher={role === "academic_head" || role === "super_admin"}
     >
-      <div className="space-y-6 pb-6">
-        <div className="flex flex-col gap-3">
-          <h1 className="text-3xl font-heading font-bold italic text-slate-900 dark:text-slate-50">
-            Bonjour, <span className="text-indigo-600">{userName}</span>
+      <div className="flex flex-col gap-6 pb-6">
+        <div className="flex max-w-3xl flex-col gap-3">
+          <h1 className="font-heading text-balance text-3xl font-bold text-foreground">
+            Bonjour, <span className="break-words text-primary">{userName}</span>
           </h1>
-          <p className="text-lg text-slate-600 dark:text-slate-400">
-            Aperçu de l&apos;administration scolaire.
+          <p className="text-base text-muted-foreground sm:text-lg">
+            Apercu de l&apos;administration scolaire.
           </p>
         </div>
 
-        <CardStack>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:gap-6">
           <StatsWidget stats={stats} error={statsError} />
           <PendingEnrollmentsWidget enrollments={enrollments} error={enrollmentsError} />
           <DocumentRequestsWidget requests={requests} error={requestsError} />
           <AttendanceAlertsWidget alerts={alerts} error={alertsError} />
-        </CardStack>
+        </div>
       </div>
     </DashboardLayout>
   )

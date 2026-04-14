@@ -20,35 +20,32 @@ export function DocumentRequestsWidget({
 
   return (
     <Card className="h-full">
-      <CardHeader className="space-y-0 pb-4">
-        <CardTitle className="text-xl font-bold italic">Demandes de documents</CardTitle>
+      <CardHeader className="pb-4">
+        <CardTitle>Demandes de documents</CardTitle>
       </CardHeader>
       <CardContent>
         {error ? (
-          <p className="text-sm text-rose-500">{error}</p>
+          <p className="text-sm text-destructive">{error}</p>
         ) : items.length === 0 ? (
-          <div className="text-base text-slate-600 dark:text-slate-400 font-medium text-center py-4">
+          <div className="py-4 text-center text-base font-medium text-muted-foreground">
             Aucune demande en attente
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="flex flex-col gap-6">
             {items.map((request) => (
-              <div key={request.id} className="flex items-start justify-between border-b border-slate-100 pb-4 last:border-0 last:pb-0 dark:border-slate-800">
-                <div className="space-y-1">
-                  <p className="text-base font-bold text-slate-900 dark:text-slate-50">
+              <div key={request.id} className="flex flex-col gap-3 border-b-2 border-border pb-4 last:border-0 last:pb-0 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0 flex flex-col gap-1">
+                  <p className="break-words text-base font-bold text-foreground">
                     {request.document_type}
                   </p>
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                  <p className="break-words text-sm font-medium text-muted-foreground">
                     {request.student_name}
                   </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    {format(new Date(request.request_date), "dd MMM à HH:mm", { locale: fr })}
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {format(new Date(request.request_date), "dd MMM a HH:mm", { locale: fr })}
                   </p>
                 </div>
-                <Badge
-                  variant={request.status === "processing" ? "info" : "warning"}
-                  className="capitalize"
-                >
+                <Badge variant={request.status === "processing" ? "info" : "warning"} className="w-fit">
                   {request.status === "processing" ? "En cours" : "En attente"}
                 </Badge>
               </div>

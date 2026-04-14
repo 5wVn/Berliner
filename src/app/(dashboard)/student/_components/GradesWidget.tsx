@@ -19,15 +19,15 @@ export function GradesWidget({
   if (loading) {
     return (
       <Card className="h-full">
-        <CardHeader className="space-y-0 pb-2">
+        <CardHeader className="pb-2">
           <Skeleton className="h-5 w-24" />
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col items-center pb-4 space-y-2">
+          <div className="flex flex-col items-center gap-2 pb-4">
             <Skeleton className="h-10 w-16" />
             <Skeleton className="h-3 w-24" />
           </div>
-          <div className="space-y-3">
+          <div className="flex flex-col gap-3">
             {[1, 2, 3].map((i) => (
               <div key={i} className="flex items-center justify-between">
                 <Skeleton className="h-4 w-24" />
@@ -49,47 +49,44 @@ export function GradesWidget({
 
   return (
     <Card className="h-full">
-      <CardHeader className="space-y-0 pb-4">
-        <CardTitle className="text-xl font-bold italic">Notes récentes</CardTitle>
+      <CardHeader className="pb-4">
+        <CardTitle>Notes recentes</CardTitle>
       </CardHeader>
       <CardContent>
         {error ? (
-          <p className="text-sm text-rose-500">{error}</p>
+          <p className="text-sm text-destructive">{error}</p>
         ) : (
           <>
             <div className="flex flex-col items-center pb-6">
-              <span className="text-6xl font-black text-indigo-600 dark:text-indigo-400 tracking-tight">
+              <span className="text-5xl font-black tracking-tight text-primary sm:text-6xl">
                 {globalAverage}
               </span>
-              <span className="text-base font-medium text-slate-500 dark:text-slate-400 mt-1">
-                Moyenne générale
+              <span className="mt-1 text-base font-medium text-muted-foreground">
+                Moyenne generale
               </span>
             </div>
             {displaySubjects.length === 0 ? (
-              <p className="text-sm text-slate-500 dark:text-slate-400 text-center">
+              <p className="text-center text-sm text-muted-foreground">
                 Aucune note disponible.
               </p>
             ) : (
-              <div className="divide-y divide-slate-100 dark:divide-slate-800">
+              <div className="divide-y-2 divide-border">
                 {displaySubjects.map((grade, index) => {
                   const score = grade.average ?? 0
-                  let colorClass = "text-slate-700 dark:text-slate-200"
-                  if (score >= 15) colorClass = "text-teal-600 dark:text-teal-400"
-                  else if (score >= 10) colorClass = "text-violet-600 dark:text-violet-400"
-                  else colorClass = "text-rose-600 dark:text-rose-400"
+                  let colorClass = "text-foreground"
+                  if (score >= 15) colorClass = "text-primary"
+                  else if (score < 10) colorClass = "text-destructive"
 
                   return (
-                    <div key={`${grade.id}-${index}`} className="flex items-center justify-between py-4">
-                      <span className="text-base font-semibold text-slate-800 dark:text-slate-200">
+                    <div key={`${grade.id}-${index}`} className="flex items-center justify-between gap-3 py-4">
+                      <span className="min-w-0 break-words text-base font-semibold text-foreground">
                         {grade.name}
                       </span>
-                      <div className="flex items-center space-x-2">
-                        <span className={`text-lg font-bold tabular-nums ${colorClass}`}>
-                          {grade.average !== null && grade.average !== undefined
-                            ? grade.average.toFixed(1)
-                            : "--"}
-                        </span>
-                      </div>
+                      <span className={`shrink-0 text-lg font-bold tabular-nums ${colorClass}`}>
+                        {grade.average !== null && grade.average !== undefined
+                          ? grade.average.toFixed(1)
+                          : "--"}
+                      </span>
                     </div>
                   )
                 })}

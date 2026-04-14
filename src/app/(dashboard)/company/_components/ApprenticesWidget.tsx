@@ -19,15 +19,15 @@ export function ApprenticesWidget({
   if (loading) {
     return (
       <Card className="h-full">
-        <CardHeader className="space-y-0 pb-4">
+        <CardHeader className="pb-4">
           <Skeleton className="h-6 w-32" />
         </CardHeader>
         <CardContent>
-          <div className="space-y-4 pt-2">
+          <div className="flex flex-col gap-4 pt-2">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-center space-x-4 border-b border-slate-100 pb-4 last:border-0 last:pb-0 dark:border-slate-800">
+              <div key={i} className="flex items-center gap-4 border-b-2 border-border pb-4 last:border-0 last:pb-0">
                 <Skeleton className="h-12 w-12 rounded-full" />
-                <div className="space-y-2 flex-1">
+                <div className="flex flex-1 flex-col gap-2">
                   <Skeleton className="h-5 w-1/2" />
                   <Skeleton className="h-4 w-3/4" />
                 </div>
@@ -43,26 +43,24 @@ export function ApprenticesWidget({
 
   return (
     <Card className="h-full">
-      <CardHeader className="space-y-0 pb-4">
-        <CardTitle className="text-xl font-bold italic">Mes Apprentis</CardTitle>
+      <CardHeader className="pb-4">
+        <CardTitle>Mes apprentis</CardTitle>
       </CardHeader>
       <CardContent>
         {error ? (
-          <p className="text-sm text-rose-500">{error}</p>
+          <p className="text-sm text-destructive">{error}</p>
         ) : items.length === 0 ? (
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Aucun apprenti rattaché.
-          </p>
+          <p className="text-sm text-muted-foreground">Aucun apprenti rattache.</p>
         ) : (
-          <div className="space-y-6 pt-2">
+          <div className="flex flex-col gap-6 pt-2">
             {items.map((apprentice) => (
-              <div key={apprentice.id} className="flex items-center space-x-4 border-b border-slate-100 pb-4 last:border-0 last:pb-0 dark:border-slate-800">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50 text-base font-bold text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-200 shadow-sm border border-indigo-100 dark:border-indigo-500/20">
+              <div key={apprentice.id} className="flex items-center gap-4 border-b-2 border-border pb-4 last:border-0 last:pb-0">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-border bg-muted text-base font-bold text-primary">
                   {apprentice.initials}
                 </div>
-                <div className="space-y-1">
-                  <p className="text-base font-bold text-slate-900 dark:text-slate-50">{apprentice.name}</p>
-                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{apprentice.program}</p>
+                <div className="min-w-0 flex flex-col gap-1">
+                  <p className="break-words text-base font-bold text-foreground">{apprentice.name}</p>
+                  <p className="break-words text-sm font-medium text-muted-foreground">{apprentice.program}</p>
                 </div>
               </div>
             ))}

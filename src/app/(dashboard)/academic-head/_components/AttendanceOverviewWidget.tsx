@@ -20,34 +20,34 @@ export function AttendanceOverviewWidget({
   const trendValue = overview?.trend_value ?? 0
 
   let TrendIcon = Minus
-  let trendColor = "text-slate-500 dark:text-slate-400"
+  let trendColor = "text-muted-foreground"
 
   if (trend === "up") {
     TrendIcon = TrendingUp
-    trendColor = "text-teal-600 dark:text-teal-400"
+    trendColor = "text-primary"
   } else if (trend === "down") {
     TrendIcon = TrendingDown
-    trendColor = "text-rose-600 dark:text-rose-400"
+    trendColor = "text-destructive"
   }
 
-  let rateColor = "text-teal-600 dark:text-teal-400"
-  if (rate < 90) rateColor = "text-amber-600 dark:text-amber-400"
-  if (rate < 80) rateColor = "text-rose-600 dark:text-rose-400"
+  let rateColor = "text-primary"
+  if (rate < 90) rateColor = "text-warning"
+  if (rate < 80) rateColor = "text-destructive"
 
   return (
     <Card className="h-full">
-      <CardHeader className="space-y-0 pb-4">
-        <CardTitle className="text-xl font-bold italic">Assiduité Globale</CardTitle>
+      <CardHeader className="pb-4">
+        <CardTitle>Assiduite globale</CardTitle>
       </CardHeader>
       <CardContent>
         {error ? (
-          <p className="text-sm text-rose-500">{error}</p>
+          <p className="text-sm text-destructive">{error}</p>
         ) : (
-          <div className="flex flex-col items-center justify-center py-4 space-y-4">
-            <div className="relative flex items-center justify-center h-40 w-40">
+          <div className="flex flex-col items-center justify-center gap-4 py-4">
+            <div className="relative flex h-32 w-32 items-center justify-center sm:h-40 sm:w-40">
               <svg className="absolute h-full w-full -rotate-90" viewBox="0 0 100 100">
                 <circle
-                  className="text-slate-100 dark:text-slate-800"
+                  className="text-muted"
                   strokeWidth="8"
                   stroke="currentColor"
                   fill="transparent"
@@ -73,12 +73,10 @@ export function AttendanceOverviewWidget({
               </div>
             </div>
 
-            <div className="flex items-center gap-1.5 text-sm bg-slate-50 px-3 py-1.5 rounded-full dark:bg-slate-800">
-              <TrendIcon className={cn("h-4 w-4", trendColor)} />
-              <span className={cn("font-bold", trendColor)}>
-                {trendValue}%
-              </span>
-              <span className="text-slate-500 font-medium dark:text-slate-400">vs mois dernier</span>
+            <div className="flex flex-wrap items-center justify-center gap-1.5 rounded-full border-2 border-border bg-muted px-3 py-1.5 text-center text-sm">
+              <TrendIcon className={cn("h-4 w-4 shrink-0", trendColor)} />
+              <span className={cn("font-bold", trendColor)}>{trendValue}%</span>
+              <span className="font-medium text-muted-foreground">vs mois dernier</span>
             </div>
           </div>
         )}

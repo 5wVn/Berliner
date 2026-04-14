@@ -19,36 +19,36 @@ export function ApprenticesAttendanceWidget({
 
   return (
     <Card className="h-full">
-      <CardHeader className="space-y-0 pb-4">
-        <CardTitle className="text-xl font-bold italic">Suivi Assiduité</CardTitle>
+      <CardHeader className="pb-4">
+        <CardTitle>Suivi assiduite</CardTitle>
       </CardHeader>
       <CardContent>
         {error ? (
-          <p className="text-sm text-rose-500">{error}</p>
+          <p className="text-sm text-destructive">{error}</p>
         ) : apprentices.length === 0 ? (
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Aucune donnée d&apos;assiduité disponible.
+          <p className="text-sm text-muted-foreground">
+            Aucune donnee d&apos;assiduite disponible.
           </p>
         ) : (
-          <div className="flex flex-col space-y-6">
+          <div className="flex flex-col gap-6">
             <div className="flex flex-col items-center justify-center py-2">
-              <span className="text-5xl font-black text-slate-900 dark:text-slate-50 tracking-tight">{globalRate}%</span>
-              <span className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">Moyenne globale</span>
+              <span className="text-5xl font-black tracking-tight text-foreground">{globalRate}%</span>
+              <span className="mt-1 text-sm font-medium text-muted-foreground">Moyenne globale</span>
             </div>
 
-            <div className="space-y-4">
+            <div className="flex flex-col gap-4">
               {apprentices.map((apprentice) => {
-                let colorClass = "bg-teal-500"
-                if (apprentice.rate < 90) colorClass = "bg-amber-500"
-                if (apprentice.rate < 75) colorClass = "bg-rose-500"
+                let colorClass = "bg-primary"
+                if (apprentice.rate < 90) colorClass = "bg-warning"
+                if (apprentice.rate < 75) colorClass = "bg-destructive"
 
                 return (
-                  <div key={apprentice.id} className="space-y-1.5">
-                    <div className="flex justify-between text-sm">
-                      <span className="font-semibold text-slate-800 dark:text-slate-200">{apprentice.name}</span>
-                      <span className="font-bold text-slate-600 dark:text-slate-400">{apprentice.rate}%</span>
+                  <div key={apprentice.id} className="flex flex-col gap-1.5">
+                    <div className="flex items-start justify-between gap-3 text-sm">
+                      <span className="min-w-0 break-words font-semibold text-foreground">{apprentice.name}</span>
+                      <span className="shrink-0 font-bold text-muted-foreground">{apprentice.rate}%</span>
                     </div>
-                    <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                    <div className="h-2.5 w-full overflow-hidden rounded-full bg-muted">
                       <div
                         className={cn("h-full rounded-full transition-all duration-300", colorClass)}
                         style={{ width: `${apprentice.rate}%` }}
