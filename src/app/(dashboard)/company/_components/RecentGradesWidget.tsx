@@ -19,35 +19,32 @@ export function RecentGradesWidget({
 
   return (
     <Card className="h-full">
-      <CardHeader className="space-y-0 pb-4">
-        <CardTitle className="text-xl font-bold italic">Dernières Notes</CardTitle>
+      <CardHeader className="pb-4">
+        <CardTitle>Dernieres notes</CardTitle>
       </CardHeader>
       <CardContent>
         {error ? (
-          <p className="text-sm text-rose-500">{error}</p>
+          <p className="text-sm text-destructive">{error}</p>
         ) : items.length === 0 ? (
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Aucune note récente.
-          </p>
+          <p className="text-sm text-muted-foreground">Aucune note recente.</p>
         ) : (
-          <div className="space-y-6">
+          <div className="flex flex-col gap-6">
             {items.map((gradeItem) => {
               const gradeVal = Number(gradeItem.grade)
-              let badgeColor = "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200"
-              if (gradeVal >= 15) badgeColor = "bg-teal-50 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300 border border-teal-100 dark:border-teal-800"
-              else if (gradeVal >= 10) badgeColor = "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-800"
-              else badgeColor = "bg-rose-50 text-rose-700 dark:bg-rose-900/20 dark:text-rose-300 border border-rose-100 dark:border-rose-800"
+              let badgeClass = "border-2 border-border bg-muted text-foreground"
+              if (gradeVal >= 15) badgeClass = "border-2 border-primary/40 bg-primary/15 text-primary"
+              else if (gradeVal < 10) badgeClass = "border-2 border-destructive/40 bg-destructive/15 text-destructive"
 
               return (
-                <div key={gradeItem.id} className="flex items-center justify-between border-b border-slate-100 pb-4 last:border-0 last:pb-0 dark:border-slate-800">
-                  <div className="space-y-1">
-                    <p className="text-base font-bold text-slate-900 dark:text-slate-50">{gradeItem.subject}</p>
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">{gradeItem.apprentice_name}</p>
-                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                <div key={gradeItem.id} className="flex flex-col gap-3 border-b-2 border-border pb-4 last:border-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="min-w-0 flex flex-col gap-1">
+                    <p className="break-words text-base font-bold text-foreground">{gradeItem.subject}</p>
+                    <p className="break-words text-sm font-medium text-muted-foreground">{gradeItem.apprentice_name}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
                       {format(new Date(gradeItem.date), "d MMM yyyy", { locale: fr })}
                     </p>
                   </div>
-                  <div className={`flex h-10 w-10 items-center justify-center rounded-xl text-sm font-bold shadow-sm ${badgeColor}`}>
+                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-sm font-bold ${badgeClass}`}>
                     {gradeItem.grade}
                   </div>
                 </div>

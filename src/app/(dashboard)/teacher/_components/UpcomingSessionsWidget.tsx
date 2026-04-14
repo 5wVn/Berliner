@@ -19,36 +19,38 @@ export function UpcomingSessionsWidget({
 
   return (
     <Card className="h-full">
-      <CardHeader className="space-y-0 pb-4">
-        <CardTitle className="text-xl font-bold italic">Prochaines sessions</CardTitle>
+      <CardHeader className="pb-4">
+        <CardTitle>Prochaines sessions</CardTitle>
       </CardHeader>
       <CardContent>
         {error ? (
-          <p className="text-sm text-rose-500">{error}</p>
+          <p className="text-sm text-destructive">{error}</p>
         ) : items.length === 0 ? (
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Aucune session à venir.
-          </p>
+          <p className="text-sm text-muted-foreground">Aucune session a venir.</p>
         ) : (
-          <div className="space-y-6">
+          <div className="flex flex-col gap-6">
             {items.map((session) => {
               const startDate = new Date(session.start_time)
 
               return (
-                <div key={session.id} className="flex items-start space-x-4 border-b border-slate-100 pb-4 last:border-0 last:pb-0 dark:border-slate-800">
-                  <div className="flex flex-col items-center justify-center rounded-xl bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700 w-16 shadow-sm border border-slate-100 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700">
+                <div key={session.id} className="flex items-start gap-4 border-b-2 border-border pb-4 last:border-0 last:pb-0">
+                  <div className="flex w-16 shrink-0 flex-col items-center justify-center rounded-xl border-2 border-border bg-muted px-3 py-2 text-sm font-bold text-foreground">
                     <span className="text-lg">{format(startDate, "dd")}</span>
-                    <span className="text-[10px] uppercase text-slate-500 dark:text-slate-400">{format(startDate, "MMM", { locale: fr })}</span>
+                    <span className="text-[10px] uppercase text-muted-foreground">
+                      {format(startDate, "MMM", { locale: fr })}
+                    </span>
                   </div>
-                  <div className="space-y-1 w-full">
-                    <div className="flex items-center justify-between">
-                      <p className="text-base font-bold leading-none text-slate-900 dark:text-slate-50">
+                  <div className="min-w-0 flex flex-1 flex-col gap-1">
+                    <div className="flex flex-col gap-1 min-[420px]:flex-row min-[420px]:items-start min-[420px]:justify-between">
+                      <p className="break-words text-base font-bold text-foreground">
                         {session.class_name}
                       </p>
-                      <span className="text-sm font-medium text-slate-500 dark:text-slate-400">{format(startDate, "HH:mm")}</span>
+                      <span className="shrink-0 text-sm font-medium text-muted-foreground">
+                        {format(startDate, "HH:mm")}
+                      </span>
                     </div>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
-                      {session.subject} • <span className="font-semibold text-teal-600 dark:text-teal-400">{session.room}</span>
+                    <p className="break-words text-sm text-muted-foreground">
+                      {session.subject} • <span className="font-semibold text-primary">{session.room}</span>
                     </p>
                   </div>
                 </div>

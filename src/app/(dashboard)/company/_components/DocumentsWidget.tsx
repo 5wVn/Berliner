@@ -23,18 +23,18 @@ export function DocumentsWidget({
   if (loading) {
     return (
       <Card className="h-full">
-        <CardHeader className="space-y-0 pb-4">
+        <CardHeader className="pb-4">
           <Skeleton className="h-6 w-32" />
         </CardHeader>
         <CardContent>
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+          <div className="divide-y-2 divide-border">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-center justify-between py-4">
-                <div className="space-y-2 flex-1">
+              <div key={i} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-1 flex-col gap-2">
                   <Skeleton className="h-5 w-3/4" />
                   <Skeleton className="h-4 w-1/2" />
                 </div>
-                <Skeleton className="h-10 w-10 rounded-md ml-2" />
+                <Skeleton className="h-10 w-full rounded-md sm:w-10" />
               </div>
             ))}
           </div>
@@ -47,32 +47,34 @@ export function DocumentsWidget({
 
   return (
     <Card className="h-full">
-      <CardHeader className="space-y-0 pb-4">
-        <CardTitle className="text-xl font-bold italic">Documents</CardTitle>
+      <CardHeader className="pb-4">
+        <CardTitle>Documents</CardTitle>
       </CardHeader>
       <CardContent>
         {error ? (
-          <p className="text-sm text-rose-500">{error}</p>
+          <p className="text-sm text-destructive">{error}</p>
         ) : items.length === 0 ? (
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Aucun document disponible.
-          </p>
+          <p className="text-sm text-muted-foreground">Aucun document disponible.</p>
         ) : (
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+          <div className="divide-y-2 divide-border">
             {items.map((doc) => (
-              <div key={doc.id} className="flex items-center justify-between py-4">
-                <div className="space-y-1">
-                  <p className="text-base font-bold text-slate-900 truncate max-w-[180px] sm:max-w-[220px] dark:text-slate-50">
+              <div key={doc.id} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0 flex flex-col gap-1">
+                  <p className="break-words text-base font-bold text-foreground">
                     {doc.type}
                   </p>
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">{doc.apprentice_name}</p>
-                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
-                    Ajouté le {format(new Date(doc.date), "d MMM yyyy", { locale: fr })}
+                  <p className="break-words text-sm font-medium text-muted-foreground">{doc.apprentice_name}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Ajoute le {format(new Date(doc.date), "d MMM yyyy", { locale: fr })}
                   </p>
                 </div>
-                <Button size="icon" variant="ghost" className="h-10 w-10 rounded-xl text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 dark:text-slate-400 dark:hover:text-indigo-300 dark:hover:bg-indigo-900/20">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-10 w-full rounded-xl text-muted-foreground hover:bg-muted hover:text-primary sm:w-10"
+                >
                   <Download className="h-5 w-5" />
-                  <span className="sr-only">Télécharger</span>
+                  <span className="sr-only">Telecharger</span>
                 </Button>
               </div>
             ))}

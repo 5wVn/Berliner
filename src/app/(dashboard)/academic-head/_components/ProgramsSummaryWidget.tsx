@@ -17,23 +17,23 @@ export function ProgramsSummaryWidget({
 
   return (
     <Card className="h-full">
-      <CardHeader className="space-y-0 pb-4">
-        <CardTitle className="text-xl font-bold italic">Programmes</CardTitle>
+      <CardHeader className="pb-4">
+        <CardTitle>Programmes</CardTitle>
       </CardHeader>
       <CardContent>
         {error ? (
-          <p className="text-sm text-rose-500">{error}</p>
+          <p className="text-sm text-destructive">{error}</p>
         ) : items.length === 0 ? (
-          <p className="text-sm text-slate-500 dark:text-slate-400">Aucun programme.</p>
+          <p className="text-sm text-muted-foreground">Aucun programme.</p>
         ) : (
-          <div className="space-y-6">
+          <div className="flex flex-col gap-6">
             {items.map((program) => (
-              <div key={program.id} className="flex items-center justify-between border-b border-slate-100 pb-4 last:border-0 last:pb-0 dark:border-slate-800">
-                <div className="space-y-1">
-                  <p className="text-base font-bold text-slate-900 dark:text-slate-50">{program.name}</p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">{program.classes} classes ouvertes</p>
+              <div key={program.id} className="flex flex-col gap-2 border-b-2 border-border pb-4 last:border-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0 flex flex-col gap-1">
+                  <p className="break-words text-base font-bold text-foreground">{program.name}</p>
+                  <p className="text-sm text-muted-foreground">{program.classes} classes ouvertes</p>
                 </div>
-                <span className="inline-flex items-center rounded-xl bg-violet-50 px-3 py-1 text-xs font-bold text-violet-700 dark:bg-violet-900/20 dark:text-violet-300 border border-violet-100 dark:border-violet-800">
+                <span className="inline-flex w-fit items-center rounded-xl border-2 border-border bg-muted px-3 py-1 text-xs font-bold text-primary">
                   {program.students} inscrits
                 </span>
               </div>

@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation"
 import { DashboardLayout } from "@/shared/components/layouts/DashboardLayout"
-import { CardStack } from "@/shared/components/ui/CardStack"
 import { ApprenticesWidget } from "../_components/ApprenticesWidget"
 import { ApprenticesAttendanceWidget } from "../_components/ApprenticesAttendanceWidget"
 import { RecentGradesWidget } from "../_components/RecentGradesWidget"
@@ -65,22 +64,22 @@ export default async function CompanyDashboardPage() {
       userName={userName}
       showDashboardSwitcher={role === "academic_head" || role === "super_admin"}
     >
-      <div className="space-y-6 pb-6">
-        <div className="flex flex-col gap-3">
-          <h1 className="text-3xl font-heading font-bold italic text-slate-900 dark:text-slate-50">
-            Espace Entreprise
+      <div className="flex flex-col gap-6 pb-6">
+        <div className="flex max-w-3xl flex-col gap-3">
+          <h1 className="font-heading text-balance text-3xl font-bold text-foreground">
+            Espace entreprise
           </h1>
-          <p className="text-lg text-slate-600 dark:text-slate-400">
-            Suivi de vos {apprenticeCount} apprentis en temps réel.
+          <p className="text-base text-muted-foreground sm:text-lg">
+            Suivi de vos {apprenticeCount} apprentis en temps reel.
           </p>
         </div>
 
-        <CardStack>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:gap-6">
           <ApprenticesWidget apprentices={apprentices} error={apprenticesError} />
           <ApprenticesAttendanceWidget overview={attendanceOverview} error={attendanceError} />
           <RecentGradesWidget grades={grades} error={gradesError} />
           <DocumentsWidget documents={documents} error={documentsError} />
-        </CardStack>
+        </div>
       </div>
     </DashboardLayout>
   )

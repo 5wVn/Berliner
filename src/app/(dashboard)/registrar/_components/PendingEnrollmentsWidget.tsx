@@ -22,18 +22,18 @@ export function PendingEnrollmentsWidget({
   if (loading) {
     return (
       <Card className="h-full">
-        <CardHeader className="space-y-0 pb-4">
+        <CardHeader className="pb-4">
           <Skeleton className="h-6 w-40" />
         </CardHeader>
         <CardContent>
-          <div className="space-y-6">
+          <div className="flex flex-col gap-6">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-center justify-between border-b border-slate-100 pb-4 last:border-0 last:pb-0 dark:border-slate-800">
-                <div className="space-y-2 flex-1">
+              <div key={i} className="flex flex-col gap-3 border-b-2 border-border pb-4 last:border-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-1 flex-col gap-2">
                   <Skeleton className="h-5 w-32" />
                   <Skeleton className="h-4 w-48" />
                 </div>
-                <Skeleton className="h-10 w-20 rounded-xl ml-4" />
+                <Skeleton className="h-10 w-full rounded-xl sm:w-20" />
               </div>
             ))}
           </div>
@@ -46,31 +46,33 @@ export function PendingEnrollmentsWidget({
 
   return (
     <Card className="h-full">
-      <CardHeader className="space-y-0 pb-4">
-        <CardTitle className="text-xl font-bold italic">Inscriptions en attente</CardTitle>
+      <CardHeader className="pb-4">
+        <CardTitle>Inscriptions en attente</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-6">
+        <div className="flex flex-col gap-6">
           {error ? (
-            <p className="text-sm text-rose-500">{error}</p>
+            <p className="text-sm text-destructive">{error}</p>
           ) : items.length > 0 ? (
             items.map((enrollment) => (
-              <div key={enrollment.id} className="flex items-center justify-between border-b border-slate-100 pb-4 last:border-0 last:pb-0 dark:border-slate-800">
-                <div className="space-y-1">
-                  <p className="text-base font-bold leading-none text-slate-900 dark:text-slate-50">
+              <div key={enrollment.id} className="flex flex-col gap-3 border-b-2 border-border pb-4 last:border-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0 flex flex-col gap-1">
+                  <p className="break-words text-base font-bold text-foreground">
                     {enrollment.student_name}
                   </p>
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                  <p className="break-words text-sm font-medium text-muted-foreground">
                     {enrollment.program} • {format(new Date(enrollment.request_date), "dd MMM", { locale: fr })}
                   </p>
                 </div>
-                <Button size="sm" variant="outline" className="h-10 text-sm px-4 min-w-[80px] rounded-xl hover:bg-teal-50 hover:text-teal-700 hover:border-teal-200">
+                <Button size="sm" variant="outline" className="h-10 w-full rounded-xl px-4 text-sm sm:w-auto sm:min-w-[80px]">
                   Voir
                 </Button>
               </div>
             ))
           ) : (
-            <div className="text-base text-slate-600 dark:text-slate-400 font-medium text-center py-4">Aucune inscription en attente</div>
+            <div className="py-4 text-center text-base font-medium text-muted-foreground">
+              Aucune inscription en attente
+            </div>
           )}
         </div>
       </CardContent>

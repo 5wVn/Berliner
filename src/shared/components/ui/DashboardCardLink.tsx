@@ -24,7 +24,7 @@ export function DashboardCardLink({
       data-href={href}
       className={cn(
         buttonVariants({ variant: "outline", size: "sm" }),
-        "dashboard-card-link group gap-2",
+        "dashboard-card-link group w-full gap-2 sm:w-auto",
         className
       )}
       {...props}

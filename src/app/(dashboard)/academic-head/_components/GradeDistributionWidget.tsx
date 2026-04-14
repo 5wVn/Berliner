@@ -17,31 +17,30 @@ export function GradeDistributionWidget({
 
   return (
     <Card className="h-full">
-      <CardHeader className="space-y-0 pb-4">
-        <CardTitle className="text-xl font-bold italic">Distribution des Notes</CardTitle>
+      <CardHeader className="pb-4">
+        <CardTitle>Distribution des notes</CardTitle>
       </CardHeader>
       <CardContent>
         {error ? (
-          <p className="text-sm text-rose-500">{error}</p>
+          <p className="text-sm text-destructive">{error}</p>
         ) : items.length === 0 ? (
-          <p className="text-sm text-slate-500 dark:text-slate-400">Aucune note disponible.</p>
+          <p className="text-sm text-muted-foreground">Aucune note disponible.</p>
         ) : (
-          <div className="space-y-6 pt-2">
+          <div className="flex flex-col gap-6 pt-2">
             {items.map((item, index) => {
-              let barColor = "bg-indigo-600"
-              if (index === 0) barColor = "bg-teal-500" // Top: ≥16
-              if (index === 1) barColor = "bg-indigo-500" // 14-16
-              if (index === 2) barColor = "bg-indigo-500" // 12-14
-              if (index === 3) barColor = "bg-amber-500" // 10-12
-              if (index === 4) barColor = "bg-rose-500" // <10
+              let barColor = "bg-primary"
+              if (index === 3) barColor = "bg-warning"
+              if (index === 4) barColor = "bg-destructive"
 
               return (
-                <div key={index} className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-bold text-slate-700 dark:text-slate-200">{item.range}</span>
-                    <span className="text-slate-500 dark:text-slate-400 font-medium">{item.count} étudiants ({item.percentage}%)</span>
+                <div key={index} className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-1 text-sm sm:flex-row sm:items-center sm:justify-between">
+                    <span className="font-bold text-foreground">{item.range}</span>
+                    <span className="font-medium text-muted-foreground">
+                      {item.count} etudiants ({item.percentage}%)
+                    </span>
                   </div>
-                  <div className="h-3 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                  <div className="h-3 w-full overflow-hidden rounded-full bg-muted">
                     <div
                       className={`h-full rounded-full transition-all duration-500 ${barColor}`}
                       style={{ width: `${item.percentage}%` }}

@@ -21,15 +21,15 @@ export function ScheduleWidget({
   if (loading) {
     return (
       <Card className="h-full">
-        <CardHeader className="space-y-0 pb-4">
+        <CardHeader className="pb-4">
           <Skeleton className="h-6 w-40" />
         </CardHeader>
         <CardContent>
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+          <div className="divide-y-2 divide-border">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-start space-x-4 py-4">
+              <div key={i} className="flex items-start gap-4 py-4">
                 <Skeleton className="h-12 w-16 rounded-xl" />
-                <div className="space-y-3 flex-1">
+                <div className="flex flex-1 flex-col gap-3">
                   <Skeleton className="h-5 w-3/4" />
                   <Skeleton className="h-4 w-1/2" />
                 </div>
@@ -45,37 +45,35 @@ export function ScheduleWidget({
 
   return (
     <Card className="h-full">
-      <CardHeader className="space-y-0 pb-4">
-        <CardTitle className="text-xl font-bold italic">Prochains cours</CardTitle>
+      <CardHeader className="pb-4">
+        <CardTitle>Prochains cours</CardTitle>
       </CardHeader>
       <CardContent>
         {error ? (
-          <p className="text-sm text-rose-500">{error}</p>
+          <p className="text-sm text-destructive">{error}</p>
         ) : items.length === 0 ? (
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Aucun cours à venir.
-          </p>
+          <p className="text-sm text-muted-foreground">Aucun cours a venir.</p>
         ) : (
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+          <div className="divide-y-2 divide-border">
             {items.map((session) => {
               const startDate = new Date(session.start_time)
 
               return (
-                <div key={session.id} className="flex items-center space-x-4 py-4">
-                  <div className="flex h-14 w-16 flex-col items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 shadow-sm border border-indigo-100 dark:border-indigo-800/50">
+                <div key={session.id} className="flex items-start gap-4 py-4">
+                  <div className="flex h-14 w-16 shrink-0 flex-col items-center justify-center rounded-xl border-2 border-border bg-muted text-foreground">
                     <span className="text-lg font-bold leading-none">{format(startDate, "HH:mm")}</span>
-                    <span className="text-[10px] uppercase font-bold text-indigo-400 dark:text-indigo-400 mt-1">
+                    <span className="mt-1 text-[10px] font-bold uppercase text-muted-foreground">
                       {format(startDate, "dd MMM", { locale: fr })}
                     </span>
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-base font-semibold leading-tight text-slate-900 dark:text-slate-50">
+                  <div className="min-w-0 flex flex-1 flex-col gap-1">
+                    <p className="break-words text-base font-semibold leading-tight text-foreground">
                       {session.subject_name}
                     </p>
-                    <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                    <p className="break-words text-sm font-medium text-muted-foreground">
                       {session.teacher_name ?? "Enseignant"} •{" "}
-                      <span className="text-indigo-600 dark:text-indigo-400">
-                        {session.location ?? "Salle à définir"}
+                      <span className="text-primary">
+                        {session.location ?? "Salle a definir"}
                       </span>
                     </p>
                   </div>
