@@ -1,33 +1,53 @@
 "use client"
 
-import { Users } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/Card"
-import { mockClassesSummary } from "../_data/mock"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/Card"
+import { DashboardCardLink } from "@/shared/components/ui/DashboardCardLink"
+import type { TeacherClassSummary } from "@/shared/lib/teacherData"
 
-export function ClassesSummaryWidget() {
+interface ClassesSummaryWidgetProps {
+  classes?: TeacherClassSummary[] | null
+  error?: string | null
+}
+
+export function ClassesSummaryWidget({
+  classes = null,
+  error = null,
+}: ClassesSummaryWidgetProps) {
+  const items = classes ?? []
+
   return (
     <Card className="h-full">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-base font-medium">Mes Classes</CardTitle>
-        <Users className="h-4 w-4 text-slate-500" />
+      <CardHeader className="space-y-0 pb-4">
+        <CardTitle className="text-xl font-bold italic">Mes Classes</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {mockClassesSummary.map((cls) => (
-            <div key={cls.id} className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-50 text-xs font-bold text-indigo-600">
-                  {cls.name.substring(0, 2)}
+        {error ? (
+          <p className="text-sm text-rose-500">{error}</p>
+        ) : items.length === 0 ? (
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Aucune classe assignée.
+          </p>
+        ) : (
+          <div className="space-y-6">
+            {items.map((cls) => (
+              <div key={cls.id} className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-200 shadow-sm">
+                    {cls.name.substring(0, 2)}
+                  </div>
+                  <span className="text-base font-semibold text-slate-800 dark:text-slate-200">{cls.name}</span>
                 </div>
-                <span className="text-sm font-medium text-slate-700">{cls.name}</span>
+                <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                  {cls.student_count} étu.
+                </span>
               </div>
-              <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
-                {cls.student_count} étu.
-              </span>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </CardContent>
+      <CardFooter className="justify-end pt-0">
+        <DashboardCardLink href="/teacher/classes" />
+      </CardFooter>
     </Card>
   )
 }

@@ -1,91 +1,134 @@
-# Charte Graphique & Design System - Berliner
+# Charte Graphique & Design System - Berliner (v2.0 - Airy & Vibrant)
 
-## 1. Vision & Identité
-**"Berliner"** adopte une esthétique **"Swiss Style" (Style Typographique International)** modernisée : propre, lisible, structurée par des grilles, et centrée sur le contenu. L'objectif est l'efficacité et la clarté pour une utilisation mobile quotidienne.
+Cette charte définit la nouvelle identité visuelle de **Berliner** : une interface **aérée, colorée et accessible**, conçue pour être agréable au quotidien tout en restant professionnelle.
 
-*   **Mots-clés :** Clarté, Efficacité, Modernité, Robustesse.
-*   **Approche :** Mobile-First, Contenu avant tout, Navigation au pouce.
+## 1. Philosophie Design : "Airy & Vibrant"
 
----
+Nous nous éloignons du style purement utilitaire pour aller vers quelque chose de plus **organique et accueillant**.
 
-## 2. Typographie (Police)
-Nous avons choisi une typographie avec une forte personnalité géométrique.
-
-**Police Principale : [Belanosima](https://fonts.google.com/specimen/Belanosima)**
-*   **Pourquoi ?** Géométrique, moderne et lisible. Elle offre un caractère distinctif tout en restant très claire sur les interfaces mobiles.
-*   **Usage :**
-    *   **Titres :** Belanosima (Bold 700) - Pour une structure visuelle forte.
-    *   **Corps :** Belanosima (Regular 400) - Pour le contenu.
-
-**Échelle Typographique :**
-*   H1: 28px (Bold)
-*   H2: 24px (SemiBold)
-*   H3: 20px (Medium)
-*   Body: 17px (Regular) - *Base 17px pour la lisibilité*
-*   Caption: 15px (Regular)
+*   **Aéré (Airy) :** L'espace vide est une fonctionnalité. On laisse respirer le contenu. On augmente les marges, les paddings et l'interlignage.
+*   **Vibrant & Harmonieux :** Le "Light Mode" n'est pas gris triste. Il est vivant, avec des touches de couleurs (Teal, Violet, Rose) qui s'harmonisent avec notre Indigo identitaire.
+*   **Gros & Accessible (Big & Bold) :** Les éléments interactifs sont grands, faciles à toucher. Les textes sont lisibles. On ne plisse pas les yeux.
+*   **Profondeur Subtile (Glassy) :** Utilisation de transparences légères et de flous (`backdrop-blur`) pour créer une hiérarchie sans lourdeur.
 
 ---
 
-## 3. Palette de Couleurs
-Une palette neutre et contrastée, conçue pour supporter le "Dark Mode" et l'accessibilité (WCAG AA).
+## 2. Palette de Couleurs "Harmonie Indigo"
 
-### Couleurs Primaires (Identité)
-*   **Brand Primary (Indigo) :** `#4F46E5` (Indigo 600)
-    *   *Usage :* Boutons principaux, liens actifs, éléments de marque.
-*   **Brand Surface (Dark Navy) :** `#0F172A` (Slate 900)
-    *   *Usage :* En-têtes, navigation, contraste fort.
+Notre base reste l'Indigo, mais elle est enrichie par des couleurs analogues et complémentaires douces.
 
-### Couleurs Neutres (Structure)
-*   **Background (Light) :** `#F8FAFC` (Slate 50) - *Pas de blanc pur pour éviter l'éblouissement.*
-*   **Surface (Card) :** `#FFFFFF` (White)
-*   **Border :** `#E2E8F0` (Slate 200)
-*   **Text Primary :** `#1E293B` (Slate 800)
-*   **Text Secondary :** `#64748B` (Slate 500)
+### Couleurs Principales
+*   **Primary (Indigo)**
+    *   `Indigo-600 (#4F46E5)` : Action principale, Marque forte.
+    *   `Indigo-500 (#6366F1)` : Hover, Accents vifs.
+    *   `Indigo-50 (#EEF2FF)` : Fonds subtils, zones actives légères.
 
-### Couleurs Sémantiques (Feedback)
-*   **Success (Validé, Présent) :** `#10B981` (Emerald 500)
-*   **Warning (En attente) :** `#F59E0B` (Amber 500)
-*   **Error (Refusé, Absent) :** `#EF4444` (Red 500)
-*   **Info (Information) :** `#3B82F6` (Blue 500)
+### Accents (La touche "Vibrant")
+Ces couleurs sont utilisées pour dynamiser l'interface (badges, graphiques, indicateurs, fonds décoratifs).
+*   **Teal (Turquoise) - L'énergie calme**
+    *   `Teal-500 (#14b8a6)` : Succès, Validation, Éléments positifs.
+    *   `Teal-50 (#f0fdfa)` : Fonds de badges positifs.
+*   **Violet - La profondeur**
+    *   `Violet-500 (#8b5cf6)` : Données secondaires, Grades moyens.
+    *   `Violet-50 (#f5f3ff)` : Fonds décoratifs.
+*   **Rose - L'urgence douce**
+    *   `Rose-500 (#f43f5e)` : Alertes, Retards, Erreurs (moins agressif que le rouge pur).
+    *   `Rose-50 (#fff1f2)` : Fonds d'alerte.
 
----
-
-## 4. Style Graphique & UI
-
-### Layout "Bento" (Cartes)
-L'interface est composée de conteneurs (cartes) clairement délimités.
-*   **Bordures :** Fines (1px), couleur Slate-200.
-*   **Ombres :** Très légères ou inexistantes (Flat Design) pour la performance. `shadow-sm` maximum.
-*   **Arrondis :** `rounded-xl` (12px) ou `rounded-2xl` (16px) pour un aspect moderne et amical.
-
-### Iconographie
-**Style :** Outline / Stroke (Traits fins).
-**Librairie recommandée :** [Lucide React](https://lucide.dev/)
-*   Traits de 1.5px ou 2px.
-*   Arrondis cohérents avec les boutons.
-
-### Mobile-First UX Patterns
-1.  **Bottom Navigation :** Navigation principale en bas de l'écran (Pouce).
-2.  **Touch Targets :** Tous les éléments interactifs font minimum 44x44px.
-3.  **Actions Flottantes (FAB) :** Pour les actions principales (ex: "Justifier une absence").
-4.  **Skeleton Screens :** Chargement progressif pour une sensation de vitesse instantanée.
+### Neutres & Structure
+*   **Background** : `#F8FAFC` (Slate 50) enrichi par un motif "Dot Grid" coloré très subtil.
+*   **Surface** : Blanc pur avec légère transparence (`bg-white/80`).
+*   **Textes** : `Slate-900` (Titres), `Slate-600` (Corps). Jamais de noir pur (`#000`).
 
 ---
 
-## 5. Exemple d'Application (Tailwind CSS)
+## 3. Typographie "Big & Readable"
 
-```jsx
-// Exemple de bouton primaire
-<button className="bg-indigo-600 text-white font-medium py-3 px-4 rounded-xl hover:bg-indigo-700 active:scale-95 transition-all">
-  Connexion
-</button>
+On augmente l'échelle de base pour un confort de lecture maximal.
 
-// Exemple de carte (Note)
-<div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-  <div className="flex justify-between items-center">
-    <h3 className="text-slate-800 font-semibold">Mathématiques</h3>
-    <span className="text-emerald-600 font-bold bg-emerald-50 px-2 py-1 rounded-lg">16/20</span>
+**Polices :**
+1.  **Fira Sans (Bold Italic)** : Pour les titres. Donne du caractère et du mouvement.
+2.  **Montserrat** : Pour le texte. Géométrique et moderne.
+
+**Échelle (Revue à la hausse) :**
+*   **H1 (Page Title) :** `text-3xl` (30px) ou `text-4xl` (36px).
+*   **H2 (Section) :** `text-2xl` (24px).
+*   **H3 (Card Title) :** `text-xl` (20px).
+*   **Body Base :** `text-base` (17px) - *Notre standard minimum pour le contenu.*
+*   **Body Small :** `text-sm` (15px) - *Uniquement pour les métadonnées secondaires.*
+*   **Micro :** `text-xs` (13px) - *Usage très rare.*
+
+---
+
+## 4. Composants UI (Le Style "Airy")
+
+### Les Cartes (Cards)
+Elles sont le cœur de l'interface "Bento".
+*   **Forme :** Très arrondies (`rounded-2xl` = 24px).
+*   **Matière :** Verre dépoli (`bg-white/80` + `backdrop-blur-md`).
+*   **Bordure :** Très fine et subtile (`border-slate-200`).
+*   **Ombre :** Douce et diffuse (`shadow-lg` avec couleur légère).
+*   **Padding :** Généreux ! `p-7` (28px) minimum. On ne colle pas le contenu aux bords.
+
+### Les Boutons (Buttons)
+Ils appellent au clic.
+*   **Taille :** Hauteur de 48px (`h-12`) minimum pour le standard. 56px (`h-14`) pour les actions majeures.
+*   **Forme :** `rounded-xl` (16px). Presque des "pillules" mais avec un peu de structure.
+*   **Feedback :** Effet d'enfoncement au clic (`active:scale-95`).
+
+### Les Badges (Tags)
+*   Couleurs pastels (`bg-indigo-100 text-indigo-700`).
+*   Arrondis complets (`rounded-full`).
+*   Texte en `font-bold`.
+
+---
+
+## 5. Règles d'Espacement (Spacing)
+
+L'air est aussi important que le contenu.
+*   **Gap (Grilles) :** Minimum `gap-6` (24px) entre les cartes.
+*   **Section Spacing :** `space-y-8` (32px) entre les grands blocs.
+*   **Interlignage :** `leading-relaxed` pour le texte courant.
+
+---
+
+## 6. Accessibilité (A11y)
+
+*   **Contraste :** On utilise les variantes `600` ou `700` des couleurs (Teal, Violet, Rose) pour le texte sur fond blanc, jamais le `500` (trop clair).
+*   **Focus :** Anneaux de focus (`ring`) visibles et colorés (Indigo).
+*   **Cibles tactiles :** Rien en dessous de 44x44px. C'est la loi.
+
+---
+
+## 7. Exemple de Code (Tailwind)
+
+```tsx
+// Une Carte "Airy"
+<div className="
+  relative overflow-hidden
+  rounded-2xl
+  border border-slate-200
+  bg-white/80 backdrop-blur-md
+  p-7
+  shadow-sm transition-shadow hover:shadow-md
+">
+  <h3 className="font-heading text-xl font-bold italic text-slate-900">
+    Mon Cours
+  </h3>
+  <p className="mt-2 text-base leading-relaxed text-slate-600">
+    Description du cours avec de l'espace pour respirer.
+  </p>
+  
+  <div className="mt-6 flex gap-3">
+    <button className="
+      h-12 px-6
+      rounded-xl
+      bg-indigo-600 text-white font-semibold
+      shadow-glow-indigo-soft
+      active:scale-95 transition-transform
+    ">
+      Voir les détails
+    </button>
   </div>
-  <p className="text-slate-500 text-sm mt-1">Devoir surveillé #3</p>
 </div>
 ```

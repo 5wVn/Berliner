@@ -1,12 +1,25 @@
 import type { Metadata, Viewport } from "next";
-import { Belanosima } from "next/font/google";
+import { Fira_Sans, Montserrat, Roboto, Outfit } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/shared/providers/AuthProvider";
+import { ThemeToggle } from "@/shared/components/ui/ThemeToggle";
+import { cn } from "@/lib/utils";
 
-const belanosima = Belanosima({
-  weight: ["400", "600", "700"],
+const outfitHeading = Outfit({subsets:['latin'],variable:'--font-heading'});
+
+const roboto = Roboto({subsets:['latin'],variable:'--font-sans'});
+
+const firaSans = Fira_Sans({
+  weight: ["400", "600", "700", "800"],
+  style: ["normal", "italic"],
   subsets: ["latin"],
-  variable: "--font-belanosima",
+  variable: "--font-fira",
+  display: "swap",
+});
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-montserrat",
   display: "swap",
 });
 
@@ -33,10 +46,30 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const themeScript = `
+(() => {
+  try {
+    const key = "berliner-theme";
+    const stored = localStorage.getItem(key);
+    const theme = stored === "dark" ? "dark" : "light";
+    const root = document.documentElement;
+    if (theme === "dark") {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
+  } catch {}
+})();
+  `;
+
   return (
-    <html lang="fr" className={`${belanosima.variable}`}>
-      <body className="font-sans antialiased bg-slate-50 text-slate-900">
-        <AuthProvider>{children}</AuthProvider>
+    <html lang="fr" className={cn(firaSans.variable, montserrat.variable, "font-sans", roboto.variable, outfitHeading.variable)} suppressHydrationWarning>
+      <body className="font-sans antialiased">
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <AuthProvider>
+          {children}
+          <ThemeToggle className="fixed right-4 top-4 z-50 sm:right-6 sm:top-6" />
+        </AuthProvider>
       </body>
     </html>
   );

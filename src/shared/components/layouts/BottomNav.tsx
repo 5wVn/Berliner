@@ -2,15 +2,14 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { 
-  Home, 
-  Calendar, 
-  GraduationCap, 
-  User, 
-  Users, 
-  FileText, 
-  BarChart, 
-  Briefcase
+import {
+  Home,
+  Calendar,
+  GraduationCap,
+  User,
+  Users,
+  FileText,
+  BarChart,
 } from "lucide-react"
 import { cn } from "@/shared/lib/utils"
 import { UserRole } from "@/shared/types/auth"
@@ -61,12 +60,19 @@ interface BottomNavProps {
 export function BottomNav({ role }: BottomNavProps) {
   const pathname = usePathname()
   const items = NAV_CONFIG[role] || []
+  const activeHref =
+    items
+      .map((item) => item.href)
+      .filter(
+        (href) => pathname === href || pathname.startsWith(`${href}/`)
+      )
+      .sort((a, b) => b.length - a.length)[0] || ""
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)]">
-      <div className="flex h-16 items-center justify-around px-2">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 bg-white/90 backdrop-blur-lg pb-[env(safe-area-inset-bottom)] dark:border-slate-800 dark:bg-slate-900/90 shadow-2xl">
+      <div className="flex h-20 items-center justify-around px-4">
         {items.map((item) => {
-          const isActive = pathname === item.href
+          const isActive = item.href === activeHref
           const Icon = item.icon
 
           return (
@@ -74,14 +80,18 @@ export function BottomNav({ role }: BottomNavProps) {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-col items-center justify-center space-y-1 rounded-lg px-3 py-1 text-xs font-medium transition-colors",
+                "group flex flex-col items-center justify-center space-y-1 rounded-2xl px-4 py-2 transition-all duration-300",
                 isActive
-                  ? "text-indigo-600"
-                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                  ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400 scale-105"
+                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
               )}
             >
-              <Icon className="h-6 w-6" strokeWidth={isActive ? 2.5 : 2} />
-              <span>{item.label}</span>
+              <Icon 
+                className={cn("h-7 w-7 transition-all duration-300", isActive ? "stroke-[2.5px]" : "stroke-[1.5px]")} 
+              />
+              <span className={cn("text-[11px] font-bold", isActive ? "opacity-100" : "opacity-80")}>
+                {item.label}
+              </span>
             </Link>
           )
         })}
