@@ -2,7 +2,12 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { ChevronLeft, GraduationCap, Calendar, Trophy } from "lucide-react";
+import {
+  IconCalendar as Calendar,
+  IconChevronLeft as ChevronLeft,
+  IconSchool as GraduationCap,
+  IconTrophy as Trophy,
+} from "@tabler/icons-react";
 
 import { DashboardLayout } from "@/shared/components/layouts/DashboardLayout";
 import { Card, CardHeader, CardContent, CardTitle } from "@/shared/components/ui/Card";

@@ -103,22 +103,3 @@ export async function logoutAction(): Promise<ActionEmptyResponse> {
 
     return { ok: true };
 }
-
-export async function registerAction(input: {
-    email: string;
-    role: UserRole;
-    firstName: string;
-    lastName: string;
-    establishmentId: string;
-}): Promise<ActionEmptyResponse> {
-    void input;
-    // Registration is admin-only and not yet implemented. Returning a typed
-    // error keeps the contract consistent for callers.
-    return {
-        ok: false,
-        error: {
-            code: 'INTERNAL',
-            message: 'Registration is not yet implemented.',
-        },
-    };
-}

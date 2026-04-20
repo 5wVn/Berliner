@@ -1,6 +1,11 @@
 "use client"
 
-import { Users, GraduationCap, School, TrendingUp } from "lucide-react"
+import {
+  IconBuildingCommunity as School,
+  IconSchool as GraduationCap,
+  IconTrendingUp as TrendingUp,
+  IconUsersGroup as Users,
+} from "@tabler/icons-react"
 import { Card, CardContent } from "@/shared/components/ui/Card"
 import { Skeleton } from "@/shared/components/ui/Skeleton"
 import { DashboardCardLink } from "@/shared/components/ui/DashboardCardLink"
@@ -46,9 +51,9 @@ export function KPIsWidget({
   }
 
   const items = [
-    { label: "Total etudiants", value: kpis?.total_students ?? 0, icon: Users },
-    { label: "Enseignants", value: kpis?.total_teachers ?? 0, icon: GraduationCap },
-    { label: "Classes", value: kpis?.total_classes ?? 0, icon: School },
+    { label: "Total etudiants", value: kpis?.total_students ?? 0, icon: Users, highlight: false },
+    { label: "Enseignants", value: kpis?.total_teachers ?? 0, icon: GraduationCap, highlight: false },
+    { label: "Classes", value: kpis?.total_classes ?? 0, icon: School, highlight: false },
     {
       label: "Moyenne globale",
       value:
@@ -56,6 +61,7 @@ export function KPIsWidget({
           ? kpis.global_average.toFixed(1)
           : "--",
       icon: TrendingUp,
+      highlight: true,
     },
   ]
 
@@ -64,10 +70,22 @@ export function KPIsWidget({
       <div className="grid grid-cols-1 gap-4 min-[360px]:grid-cols-2 md:gap-6">
         {items.map((kpi, index) => {
           const Icon = kpi.icon
-          return (
+          return kpi.highlight ? (
+            <div key={index} className="card-accent transition-transform duration-300 hover:-translate-y-1">
+              <div className="flex h-full min-h-36 flex-col items-start justify-between gap-4 p-6">
+                <div className="rounded-2xl border-2 border-current/25 bg-current/10 p-3">
+                  <Icon className="h-6 w-6" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <div className="text-3xl font-black tracking-tight">{kpi.value}</div>
+                  <p className="text-balance text-sm font-semibold opacity-80">{kpi.label}</p>
+                </div>
+              </div>
+            </div>
+          ) : (
             <Card key={index} className="transition-colors duration-300 hover:bg-muted">
               <CardContent className="flex h-full min-h-36 flex-col items-start justify-between gap-4 p-6">
-                <div className="rounded-2xl border-2 border-border bg-muted p-3 text-primary">
+                <div className="rounded-2xl border-2 border-border bg-surface-2 p-3 text-primary">
                   <Icon className="h-6 w-6" />
                 </div>
                 <div className="flex flex-col gap-1">

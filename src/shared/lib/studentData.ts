@@ -46,3 +46,13 @@ export type AttendanceSummary = {
   present: number;
   rate: number;
 };
+
+export type StudentAttendanceRecord = {
+  id: string;
+  status: string;
+  date: string;
+  subject_name: string;
+  class_name: string;
+  location?: string | null;
+  justification_url?: string | null;
+};

@@ -3,14 +3,14 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
-  Home,
-  Calendar,
-  GraduationCap,
-  User,
-  Users,
-  FileText,
-  BarChart,
-} from "lucide-react"
+  IconCalendar as Calendar,
+  IconChartBar as BarChart,
+  IconFileText as FileText,
+  IconHome as Home,
+  IconSchool as GraduationCap,
+  IconUser as User,
+  IconUsersGroup as Users,
+} from "@tabler/icons-react"
 import { cn } from "@/shared/lib/utils"
 import { UserRole } from "@/shared/types/auth"
 

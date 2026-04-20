@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Mail } from "lucide-react";
+import { IconMail as Mail } from "@tabler/icons-react";
 import { Card, CardContent } from "@/shared/components/ui/Card";
 import { Badge } from "@/shared/components/ui/Badge";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { RegistrarStudent } from "@/shared/lib/registrarData";
+import type { RegistrarStudent } from "@/types/api";
 
 const filterControlClass =
   "h-11 rounded-xl border-2 border-border bg-card px-3 text-sm font-semibold text-foreground w-full sm:w-auto";
@@ -44,17 +44,17 @@ export function StudentsList({ students }: StudentsListProps) {
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const classes = useMemo(() => {
-    const map = new Map<string, string>();
+    const set = new Set<string>();
     students.forEach((s) => {
-      if (s.class_id && s.class_name) map.set(s.class_id, s.class_name);
+      if (s.className) set.add(s.className);
     });
-    return Array.from(map.entries()).map(([id, name]) => ({ id, name }));
+    return Array.from(set);
   }, [students]);
 
   const statuses = useMemo(() => {
     const set = new Set<string>();
     students.forEach((s) => {
-      if (s.enrollment_status) set.add(s.enrollment_status);
+      if (s.enrollmentStatus) set.add(s.enrollmentStatus);
     });
     return Array.from(set);
   }, [students]);
@@ -62,10 +62,10 @@ export function StudentsList({ students }: StudentsListProps) {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return students.filter((s) => {
-      if (classFilter !== "all" && s.class_id !== classFilter) return false;
-      if (statusFilter !== "all" && s.enrollment_status !== statusFilter) return false;
+      if (classFilter !== "all" && s.className !== classFilter) return false;
+      if (statusFilter !== "all" && s.enrollmentStatus !== statusFilter) return false;
       if (!q) return true;
-      const haystack = `${s.first_name} ${s.last_name} ${s.email ?? ""}`.toLowerCase();
+      const haystack = `${s.firstName} ${s.lastName} ${s.email ?? ""}`.toLowerCase();
       return haystack.includes(q);
     });
   }, [students, query, classFilter, statusFilter]);
@@ -86,9 +86,9 @@ export function StudentsList({ students }: StudentsListProps) {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Toutes les classes</SelectItem>
-            {classes.map((c) => (
-              <SelectItem key={c.id} value={c.id}>
-                {c.name}
+            {classes.map((name) => (
+              <SelectItem key={name} value={name}>
+                {name}
               </SelectItem>
             ))}
           </SelectContent>
@@ -119,7 +119,7 @@ export function StudentsList({ students }: StudentsListProps) {
       ) : (
         <div className="flex flex-col gap-3">
           {filtered.map((s) => {
-            const fullName = `${s.first_name} ${s.last_name}`.trim() || "Étudiant";
+            const fullName = `${s.firstName} ${s.lastName}`.trim() || "Étudiant";
             return (
               <Card key={s.id}>
                 <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -132,11 +132,11 @@ export function StudentsList({ students }: StudentsListProps) {
                           {s.email}
                         </span>
                       ) : null}
-                      {s.class_name ? <span>Classe : {s.class_name}</span> : null}
+                      {s.className ? <span>Classe : {s.className}</span> : null}
                     </p>
                   </div>
-                  <Badge variant={statusVariant(s.enrollment_status)} className="w-fit shrink-0">
-                    {statusLabel(s.enrollment_status)}
+                  <Badge variant={statusVariant(s.enrollmentStatus)} className="w-fit shrink-0">
+                    {statusLabel(s.enrollmentStatus)}
                   </Badge>
                 </CardContent>
               </Card>

@@ -33,20 +33,20 @@ export default function ChooseDashboardPage() {
 
   return (
     <RequireAuth requireDashboardSwitcher>
-      <main className="min-h-screen flex items-center justify-center p-6 text-slate-900 dark:bg-slate-900 dark:text-slate-50">
-        <div className="w-full max-w-2xl space-y-6">
+      <main className="flex min-h-screen items-center justify-center bg-background p-6 text-foreground">
+        <div className="flex w-full max-w-2xl flex-col gap-6">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
+              <h1 className="text-2xl font-bold text-foreground">
                 Choisir un dashboard
               </h1>
-              <p className="text-slate-600 dark:text-slate-400">
+              <p className="text-muted-foreground">
                 Selectionnez la vue a ouvrir pour cette session.
               </p>
             </div>
             <button
               onClick={() => signOut()}
-              className="text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground"
             >
               Se deconnecter
             </button>
@@ -59,16 +59,16 @@ export default function ChooseDashboardPage() {
                 <button
                   key={option.role}
                   onClick={() => handleSelect(option.role)}
-                  className={`rounded-2xl border p-5 text-left transition-all ${
+                  className={`rounded-2xl border-2 p-5 text-left transition-all ${
                     isActive
-                      ? "border-indigo-300 bg-indigo-50 shadow-sm dark:border-indigo-500/60 dark:bg-indigo-500/15"
-                      : "border-slate-200 bg-white/70 hover:border-slate-300 hover:shadow-sm dark:border-slate-800 dark:bg-slate-900/50 dark:hover:border-slate-700"
+                      ? "border-primary bg-primary/15"
+                      : "border-border bg-card hover:border-primary/50"
                   }`}
                 >
-                  <div className="text-lg font-semibold text-slate-900 dark:text-slate-50">
+                  <div className="text-lg font-semibold text-foreground">
                     {option.label}
                   </div>
-                  <div className="text-sm text-slate-600 dark:text-slate-400">
+                  <div className="text-sm text-muted-foreground">
                     {option.description}
                   </div>
                 </button>

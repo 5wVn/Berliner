@@ -6,6 +6,7 @@ import type {
     AttendanceSummary,
     GradesSummary,
     ScheduleSession,
+    StudentAttendanceRecord,
     SubjectWithGrades,
 } from '@/shared/lib/studentData';
 import {
@@ -349,4 +350,117 @@ export async function getStudentAttendanceAction(): Promise<
     const rate = total > 0 ? Math.round((present / total) * 100) : 0;
 
     return { ok: true, data: { total, present, rate } };
+}
+
+/**
+ * Returns the detailed attendance records for the authenticated student:
+ * one row per session with status, subject, class and location.
+ */
+export async function getStudentAttendanceRecordsAction(): Promise<
+    ActionResponse<StudentAttendanceRecord[]>
+> {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return unauthenticated();
+
+    const { data: records, error: recordsError } = await supabase
+        .from('attendance_records')
+        .select('id, status, session_id, justification_url, created_at')
+        .eq('student_id', user.id)
+        .order('created_at', { ascending: false });
+
+    if (recordsError) return internal(recordsError.message);
+
+    const rows = (records ?? []) as Array<{
+        id: string;
+        status: string | null;
+        session_id: string | null;
+        justification_url: string | null;
+        created_at: string | null;
+    }>;
+    if (rows.length === 0) return { ok: true, data: [] };
+
+    const sessionIds = unique(rows.map((row) => row.session_id));
+    if (sessionIds.length === 0) return { ok: true, data: [] };
+
+    const { data: sessions, error: sessionsError } = await supabase
+        .from('sessions')
+        .select('id, start_time, location, class_subject_id')
+        .in('id', sessionIds);
+
+    if (sessionsError) return internal(sessionsError.message);
+
+    const sessionById = new Map(
+        (sessions ?? []).map((row) => [row.id, row])
+    );
+
+    const classSubjectIds = unique(
+        (sessions ?? []).map((row) => row.class_subject_id)
+    );
+
+    const classSubjectById = new Map<
+        string,
+        { class_id: string; subject_id: string }
+    >();
+    if (classSubjectIds.length > 0) {
+        const { data: classSubjects, error: classSubjectsError } = await supabase
+            .from('class_subjects')
+            .select('id, class_id, subject_id')
+            .in('id', classSubjectIds);
+        if (classSubjectsError) return internal(classSubjectsError.message);
+        (classSubjects ?? []).forEach((row) => {
+            classSubjectById.set(row.id, {
+                class_id: row.class_id,
+                subject_id: row.subject_id,
+            });
+        });
+    }
+
+    const subjectIds = unique(
+        Array.from(classSubjectById.values()).map((row) => row.subject_id)
+    );
+    const classIds = unique(
+        Array.from(classSubjectById.values()).map((row) => row.class_id)
+    );
+
+    const [subjectsResult, classesResult] = await Promise.all([
+        subjectIds.length > 0
+            ? supabase.from('subjects').select('id, name').in('id', subjectIds)
+            : Promise.resolve({ data: [], error: null }),
+        classIds.length > 0
+            ? supabase.from('classes').select('id, name').in('id', classIds)
+            : Promise.resolve({ data: [], error: null }),
+    ]);
+
+    if (subjectsResult.error) return internal(subjectsResult.error.message);
+    if (classesResult.error) return internal(classesResult.error.message);
+
+    const subjectNameById = new Map(
+        (subjectsResult.data ?? []).map((row) => [row.id, row.name])
+    );
+    const classNameById = new Map(
+        (classesResult.data ?? []).map((row) => [row.id, row.name])
+    );
+
+    const data: StudentAttendanceRecord[] = rows.map((row) => {
+        const session = row.session_id ? sessionById.get(row.session_id) : undefined;
+        const classSubject = session?.class_subject_id
+            ? classSubjectById.get(session.class_subject_id)
+            : undefined;
+        return {
+            id: row.id,
+            status: row.status ?? 'unknown',
+            date: session?.start_time ?? row.created_at ?? new Date().toISOString(),
+            subject_name: classSubject?.subject_id
+                ? subjectNameById.get(classSubject.subject_id) ?? 'Cours'
+                : 'Cours',
+            class_name: classSubject?.class_id
+                ? classNameById.get(classSubject.class_id) ?? ''
+                : '',
+            location: session?.location ?? null,
+            justification_url: row.justification_url,
+        };
+    });
+
+    return { ok: true, data };
 }

@@ -1,6 +1,11 @@
 "use client"
 
-import { Users, UserPlus, TrendingUp, AlertCircle } from "lucide-react"
+import {
+  IconAlertCircle as AlertCircle,
+  IconTrendingUp as TrendingUp,
+  IconUserPlus as UserPlus,
+  IconUsersGroup as Users,
+} from "@tabler/icons-react"
 import { Card, CardContent } from "@/shared/components/ui/Card"
 import { Skeleton } from "@/shared/components/ui/Skeleton"
 import { DashboardCardLink } from "@/shared/components/ui/DashboardCardLink"
@@ -44,10 +49,10 @@ export function StatsWidget({
   }
 
   const items = [
-    { label: "Total etudiants", value: stats?.total_students ?? 0, icon: Users },
-    { label: "Inscriptions du mois", value: stats?.new_enrollments_month ?? 0, icon: UserPlus },
-    { label: "Taux assiduite", value: `${stats?.global_attendance_rate ?? 0}%`, icon: TrendingUp },
-    { label: "Demandes", value: stats?.pending_document_requests ?? 0, icon: AlertCircle },
+    { label: "Total etudiants", value: stats?.total_students ?? 0, icon: Users, highlight: true },
+    { label: "Inscriptions du mois", value: stats?.new_enrollments_month ?? 0, icon: UserPlus, highlight: false },
+    { label: "Taux assiduite", value: `${stats?.global_attendance_rate ?? 0}%`, icon: TrendingUp, highlight: false },
+    { label: "Demandes", value: stats?.pending_document_requests ?? 0, icon: AlertCircle, highlight: false },
   ]
 
   return (
@@ -55,10 +60,20 @@ export function StatsWidget({
       <div className="grid grid-cols-1 gap-4 min-[360px]:grid-cols-2 md:gap-6">
         {items.map((stat, index) => {
           const Icon = stat.icon
-          return (
+          return stat.highlight ? (
+            <div key={index} className="card-accent transition-transform duration-300 hover:-translate-y-1">
+              <div className="flex h-full min-h-36 flex-col items-center justify-center gap-3 p-6 text-center">
+                <div className="rounded-full border-2 border-current/25 bg-current/10 p-3">
+                  <Icon className="h-6 w-6" />
+                </div>
+                <div className="text-3xl font-black tracking-tight">{stat.value}</div>
+                <p className="text-balance text-sm font-semibold opacity-80">{stat.label}</p>
+              </div>
+            </div>
+          ) : (
             <Card key={index} className="transition-colors duration-300 hover:bg-muted">
               <CardContent className="flex h-full min-h-36 flex-col items-center justify-center gap-3 p-6 text-center">
-                <div className="rounded-full border-2 border-border bg-muted p-3 text-primary">
+                <div className="rounded-full border-2 border-border bg-surface-2 p-3 text-primary">
                   <Icon className="h-6 w-6" />
                 </div>
                 <div className="text-3xl font-black tracking-tight text-foreground">{stat.value}</div>

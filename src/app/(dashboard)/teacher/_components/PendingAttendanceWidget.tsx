@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowRight } from "lucide-react"
+import { IconArrowRight as ArrowRight } from "@tabler/icons-react"
 import { format } from "date-fns"
 import { fr } from "date-fns/locale"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/Card"

@@ -1,8 +1,7 @@
 'use server';
 
 import { createClient } from '@/shared/lib/supabase/server';
-import type { ActionResponse } from '@/types/api';
-import type { RegistrarStudent } from '@/types/api';
+import type { ActionResponse, RegistrarStudent } from '@/types/api';
 import type {
     AttendanceAlert,
     DocumentRequest,
@@ -272,12 +271,13 @@ export async function getRegistrarStudentsAction(): Promise<
         };
     }
 
-    if (callerProfile.role !== 'registrar' && callerProfile.role !== 'academic_head') {
+    const allowed: ReadonlyArray<string> = ['registrar', 'academic_head', 'super_admin'];
+    if (!allowed.includes(callerProfile.role)) {
         return {
             ok: false,
             error: {
                 code: 'UNAUTHORIZED',
-                message: 'Seuls les registrar ou academic_head peuvent lister les étudiants.',
+                message: 'Accès réservé aux rôles registrar, academic_head ou super_admin.',
             },
         };
     }

@@ -1,7 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { BookOpen, CalendarClock, Users } from "lucide-react";
+import {
+  IconBook as BookOpen,
+  IconCalendarClock as CalendarClock,
+  IconUsersGroup as Users,
+} from "@tabler/icons-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Card, CardContent } from "@/shared/components/ui/Card";

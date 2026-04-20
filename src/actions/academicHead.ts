@@ -195,10 +195,29 @@ export async function getAcademicHeadGradeDistributionAction(): Promise<
         }
     });
 
-    const data: GradeDistributionBucket[] = buckets.map((b) => ({
+    if (total === 0) {
+        return {
+            ok: true,
+            data: buckets.map((b) => ({ range: b.range, count: b.count, percentage: 0 })),
+        };
+    }
+
+    // Ensure bucket percentages sum to exactly 100% using the largest remainder method.
+    const exact = buckets.map((b) => (b.count / total) * 100);
+    const base = exact.map((p) => Math.floor(p));
+    let remainder = 100 - base.reduce((sum, v) => sum + v, 0);
+    const order = exact
+        .map((p, idx) => ({ idx, frac: p - Math.floor(p) }))
+        .sort((a, b) => b.frac - a.frac);
+    for (let i = 0; i < order.length && remainder > 0; i += 1) {
+        base[order[i].idx] += 1;
+        remainder -= 1;
+    }
+
+    const data: GradeDistributionBucket[] = buckets.map((b, idx) => ({
         range: b.range,
         count: b.count,
-        percentage: total > 0 ? Math.round((b.count / total) * 100) : 0,
+        percentage: base[idx],
     }));
 
     return { ok: true, data };

@@ -1,5 +1,10 @@
 import { redirect } from "next/navigation"
-import { CalendarClock, Clock3, MapPin, Users } from "lucide-react"
+import {
+  IconCalendarClock as CalendarClock,
+  IconClockHour3 as Clock3,
+  IconMapPin as MapPin,
+  IconUsersGroup as Users,
+} from "@tabler/icons-react"
 import { format } from "date-fns"
 import { fr } from "date-fns/locale"
 import { DashboardLayout } from "@/shared/components/layouts/DashboardLayout"
@@ -120,95 +125,95 @@ export default async function TeacherSchedulePage() {
       showDashboardSwitcher={role === "academic_head" || role === "super_admin"}
       backgroundVariant="indigo"
     >
-      <div className="space-y-6 pb-6">
+      <div className="flex flex-col gap-6 pb-6">
         <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
+          <h1 className="text-2xl font-bold text-foreground">
             Planning enseignant
           </h1>
-          <p className="text-slate-600 dark:text-slate-400">
+          <p className="text-muted-foreground">
             Vue globale de vos cours et prochaines sessions.
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <Card className="border-slate-200 dark:border-slate-800">
+          <Card>
             <CardContent className="flex items-center justify-between p-5">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Aujourd hui
                 </p>
-                <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-50">
+                <p className="mt-1 text-2xl font-bold text-foreground">
                   {todaySessions.length}
                 </p>
-                <p className="text-sm text-slate-500 dark:text-slate-400">cours</p>
+                <p className="text-sm text-muted-foreground">cours</p>
               </div>
-              <CalendarClock className="h-7 w-7 text-indigo-500" />
+              <CalendarClock className="h-7 w-7 text-primary" />
             </CardContent>
           </Card>
 
-          <Card className="border-slate-200 dark:border-slate-800">
+          <Card>
             <CardContent className="flex items-center justify-between p-5">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Charge
                 </p>
-                <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-50">
+                <p className="mt-1 text-2xl font-bold text-foreground">
                   {totalHours.toFixed(1)}h
                 </p>
-                <p className="text-sm text-slate-500 dark:text-slate-400">sur le planning</p>
+                <p className="text-sm text-muted-foreground">sur le planning</p>
               </div>
-              <Clock3 className="h-7 w-7 text-indigo-500" />
+              <Clock3 className="h-7 w-7 text-primary" />
             </CardContent>
           </Card>
 
-          <Card className="border-slate-200 dark:border-slate-800">
+          <Card>
             <CardContent className="flex items-center justify-between p-5">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Etudiants du jour
                 </p>
-                <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-50">
+                <p className="mt-1 text-2xl font-bold text-foreground">
                   {totalStudentsToday}
                 </p>
-                <p className="text-sm text-slate-500 dark:text-slate-400">presences prevues</p>
+                <p className="text-sm text-muted-foreground">presences prevues</p>
               </div>
-              <Users className="h-7 w-7 text-indigo-500" />
+              <Users className="h-7 w-7 text-primary" />
             </CardContent>
           </Card>
         </div>
 
-        <Card className="border-slate-200 dark:border-slate-800">
+        <Card>
           <CardHeader className="pb-3">
             <CardTitle>Timeline des sessions</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="flex flex-col gap-6">
             {error ? (
-              <p className="text-sm text-rose-500">{error}</p>
+              <p className="text-sm text-destructive">{error}</p>
             ) : groupedSessions.length === 0 ? (
-              <p className="text-sm text-slate-500 dark:text-slate-400">
+              <p className="text-sm text-muted-foreground">
                 Aucun cours planifie pour le moment.
               </p>
             ) : (
               groupedSessions.map((group) => (
-                <section key={group.key} className="space-y-3">
-                  <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                <section key={group.key} className="flex flex-col gap-3">
+                  <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                     {formatDayLabel(group.date)}
                   </h2>
-                  <div className="space-y-3">
+                  <div className="flex flex-col gap-3">
                     {group.sessions.map((session) => (
                       <div
                         key={session.id}
-                        className="rounded-xl border border-slate-200 bg-white/70 p-4 dark:border-slate-800 dark:bg-slate-900/60"
+                        className="rounded-xl border-2 border-border bg-muted p-4"
                       >
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                           <div>
-                            <p className="text-base font-semibold text-slate-900 dark:text-slate-50">
+                            <p className="text-base font-semibold text-foreground">
                               {session.class_name}
                             </p>
-                            <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+                            <p className="mt-1 text-sm text-muted-foreground">
                               {session.subject}
                             </p>
-                            <p className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-600 dark:text-slate-400">
+                            <p className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
                               <span className="inline-flex items-center gap-1">
                                 <MapPin className="h-4 w-4" />
                                 {session.room}

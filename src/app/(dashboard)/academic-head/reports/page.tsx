@@ -1,5 +1,9 @@
 import { redirect } from "next/navigation";
-import { Download, GraduationCap, Users } from "lucide-react";
+import {
+  IconDownload as Download,
+  IconSchool as GraduationCap,
+  IconUsersGroup as Users,
+} from "@tabler/icons-react";
 import { DashboardLayout } from "@/shared/components/layouts/DashboardLayout";
 import { Button } from "@/shared/components/ui/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/Card";

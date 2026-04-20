@@ -50,6 +50,12 @@
     @apply rounded-2xl border-2 border-border bg-card;
   }
 
+  /* Lime accent card — dark lime icon + text on lime background */
+  .card-accent {
+    @apply rounded-2xl border-2 border-primary-shadow bg-primary;
+    color: oklch(0.35 0.12 130);
+  }
+
   .card-peek-item > * {
     background-color: var(--card) !important;
     box-shadow: 0 -4px 16px -4px rgba(0, 0, 0, 0.5);
@@ -66,6 +72,7 @@
 :root,
 .dark {
   --old-zinc: hsl(240 5.9% 10%);
+  --surface-2: hsl(240 3.7% 15.9%); /* raised surface inside old-zinc cards (forms, footers, nested) */
 
   /* Surfaces */
   --background: hsl(0 0% 0%);
@@ -119,7 +126,7 @@
   --sidebar-border: oklch(0.27 0 0);
   --sidebar-ring: oklch(0.84 0.21 130);
 
-  --radius: 1rem;
+  --radius: 0.75rem;
   --bottom-nav-height: 5rem;
 }
 
@@ -167,6 +174,7 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-surface-2: var(--surface-2);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
 

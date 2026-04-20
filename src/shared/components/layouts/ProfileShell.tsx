@@ -1,5 +1,11 @@
 import { redirect } from "next/navigation";
-import { AtSign, Building2, Mail, ShieldCheck, UserCircle2 } from "lucide-react";
+import {
+  IconAt as AtSign,
+  IconBuilding as Building2,
+  IconMail as Mail,
+  IconShieldCheck as ShieldCheck,
+  IconUserCircle as UserCircle2,
+} from "@tabler/icons-react";
 import { DashboardLayout, type DashboardBackground } from "@/shared/components/layouts/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/Card";
 import { Badge } from "@/shared/components/ui/Badge";

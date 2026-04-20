@@ -38,17 +38,20 @@ export async function getCompanyApprenticesAction(): Promise<
         };
     }
 
-    if (profile.role !== 'company' || !profile.company_id) {
+    const isOversight = profile.role === 'academic_head' || profile.role === 'super_admin';
+    const isCompanyContact = profile.role === 'company' && !!profile.company_id;
+
+    if (!isOversight && !isCompanyContact) {
         return {
             ok: false,
             error: {
                 code: 'UNAUTHORIZED',
-                message: 'Seuls les contacts entreprise rattachés peuvent lister les apprentis.',
+                message: 'Accès réservé aux contacts entreprise rattachés ou aux rôles d\'encadrement.',
             },
         };
     }
 
-    const { data, error } = await supabase
+    let query = supabase
         .from('apprenticeships')
         .select(
             `
@@ -67,8 +70,13 @@ export async function getCompanyApprenticesAction(): Promise<
                 )
             )
             `,
-        )
-        .eq('company_id', profile.company_id);
+        );
+
+    if (isCompanyContact) {
+        query = query.eq('company_id', profile.company_id!);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
         return {

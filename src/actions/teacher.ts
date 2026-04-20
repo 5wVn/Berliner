@@ -253,11 +253,46 @@ export async function getTeacherClassesAction(): Promise<
         studentCountByClassId.set(row.class_id, current + 1);
     });
 
+    const subjectCountByClassId = new Map<string, number>();
+    lookup.classSubjects.forEach((row) => {
+        const current = subjectCountByClassId.get(row.class_id) ?? 0;
+        subjectCountByClassId.set(row.class_id, current + 1);
+    });
+
+    const nowIso = new Date().toISOString();
+    const classSubjectIds = lookup.classSubjects.map((row) => row.id);
+    const classSubjectToClass = new Map(
+        lookup.classSubjects.map((row) => [row.id, row.class_id])
+    );
+
+    const nextSessionByClassId = new Map<string, string>();
+    if (classSubjectIds.length > 0) {
+        const { data: upcomingSessions, error: sessionsError } = await supabase
+            .from('sessions')
+            .select('start_time, class_subject_id')
+            .in('class_subject_id', classSubjectIds)
+            .gte('start_time', nowIso)
+            .order('start_time', { ascending: true });
+
+        if (sessionsError) return internal(sessionsError.message);
+
+        (upcomingSessions ?? []).forEach((row) => {
+            if (!row.class_subject_id || !row.start_time) return;
+            const classId = classSubjectToClass.get(row.class_subject_id);
+            if (!classId) return;
+            if (!nextSessionByClassId.has(classId)) {
+                nextSessionByClassId.set(classId, row.start_time);
+            }
+        });
+    }
+
     const data: TeacherClassSummary[] = classIds
         .map((classId) => ({
             id: classId,
             name: lookup.classNameById.get(classId) ?? 'Classe',
             student_count: studentCountByClassId.get(classId) ?? 0,
+            subject_count: subjectCountByClassId.get(classId) ?? 0,
+            next_session_at: nextSessionByClassId.get(classId) ?? null,
         }))
         .sort((a, b) => a.name.localeCompare(b.name));
 

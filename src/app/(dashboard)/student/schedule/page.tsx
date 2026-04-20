@@ -1,5 +1,11 @@
 import { redirect } from "next/navigation"
-import { BookOpen, CalendarClock, Clock3, MapPin, UserRound } from "lucide-react"
+import {
+  IconBook as BookOpen,
+  IconCalendarClock as CalendarClock,
+  IconClockHour3 as Clock3,
+  IconMapPin as MapPin,
+  IconUser as UserRound,
+} from "@tabler/icons-react"
 import { endOfWeek, format, startOfWeek } from "date-fns"
 import { fr } from "date-fns/locale"
 import { DashboardLayout } from "@/shared/components/layouts/DashboardLayout"
@@ -115,98 +121,96 @@ export default async function StudentSchedulePage() {
       showDashboardSwitcher={role === "academic_head" || role === "super_admin"}
       backgroundVariant="indigo"
     >
-      <div className="space-y-6 pb-6">
+      <div className="flex flex-col gap-6 pb-6">
         <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-50">
-            Mon planning
-          </h1>
-          <p className="text-slate-600 dark:text-slate-400">
+          <h1 className="text-2xl font-bold text-foreground">Mon planning</h1>
+          <p className="text-muted-foreground">
             Consulte tes prochains cours et organise ta semaine.
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <Card className="border-slate-200 dark:border-slate-800">
+          <Card>
             <CardContent className="flex items-center justify-between p-5">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Cette semaine
                 </p>
-                <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-50">
+                <p className="mt-1 text-2xl font-bold text-foreground">
                   {sessionsThisWeek}
                 </p>
-                <p className="text-sm text-slate-500 dark:text-slate-400">cours</p>
+                <p className="text-sm text-muted-foreground">cours</p>
               </div>
-              <CalendarClock className="h-7 w-7 text-indigo-500" />
+              <CalendarClock className="h-7 w-7 text-primary" />
             </CardContent>
           </Card>
 
-          <Card className="border-slate-200 dark:border-slate-800">
+          <Card>
             <CardContent className="flex items-center justify-between p-5">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Charge
                 </p>
-                <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-50">
+                <p className="mt-1 text-2xl font-bold text-foreground">
                   {totalHours.toFixed(1)}h
                 </p>
-                <p className="text-sm text-slate-500 dark:text-slate-400">a venir</p>
+                <p className="text-sm text-muted-foreground">a venir</p>
               </div>
-              <Clock3 className="h-7 w-7 text-indigo-500" />
+              <Clock3 className="h-7 w-7 text-primary" />
             </CardContent>
           </Card>
 
-          <Card className="border-slate-200 dark:border-slate-800">
+          <Card>
             <CardContent className="flex items-center justify-between p-5">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Prochain cours
                 </p>
-                <p className="mt-1 text-base font-bold text-slate-900 dark:text-slate-50">
+                <p className="mt-1 text-base font-bold text-foreground">
                   {nextSession
                     ? format(new Date(nextSession.start_time), "dd MMM, HH:mm", {
                         locale: fr,
                       })
                     : "Aucun"}
                 </p>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
+                <p className="text-sm text-muted-foreground">
                   {nextSession?.subject_name ?? "Pas de session planifiee"}
                 </p>
               </div>
-              <BookOpen className="h-7 w-7 text-indigo-500" />
+              <BookOpen className="h-7 w-7 text-primary" />
             </CardContent>
           </Card>
         </div>
 
-        <Card className="border-slate-200 dark:border-slate-800">
+        <Card>
           <CardHeader className="pb-3">
             <CardTitle>Calendrier des sessions</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="flex flex-col gap-6">
             {error ? (
-              <p className="text-sm text-rose-500">{error}</p>
+              <p className="text-sm text-destructive">{error}</p>
             ) : groupedSessions.length === 0 ? (
-              <p className="text-sm text-slate-500 dark:text-slate-400">
+              <p className="text-sm text-muted-foreground">
                 Aucun cours a venir pour le moment.
               </p>
             ) : (
               groupedSessions.map((group) => (
-                <section key={group.key} className="space-y-3">
-                  <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                <section key={group.key} className="flex flex-col gap-3">
+                  <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
                     {formatDayLabel(group.date)}
                   </h2>
-                  <div className="space-y-3">
+                  <div className="flex flex-col gap-3">
                     {group.sessions.map((session) => (
                       <div
                         key={session.id}
-                        className="rounded-xl border border-slate-200 bg-white/70 p-4 dark:border-slate-800 dark:bg-slate-900/60"
+                        className="rounded-xl border-2 border-border bg-muted p-4"
                       >
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                           <div>
-                            <p className="text-base font-semibold text-slate-900 dark:text-slate-50">
+                            <p className="text-base font-semibold text-foreground">
                               {session.subject_name}
                             </p>
-                            <p className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-600 dark:text-slate-400">
+                            <p className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
                               <span className="inline-flex items-center gap-1">
                                 <UserRound className="h-4 w-4" />
                                 {session.teacher_name ?? "Enseignant"}

@@ -1,6 +1,9 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { ChevronRight, GraduationCap } from "lucide-react";
+import {
+  IconChevronRight as ChevronRight,
+  IconSchool as GraduationCap,
+} from "@tabler/icons-react";
 import { DashboardLayout } from "@/shared/components/layouts/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/Card";
 import { Badge } from "@/shared/components/ui/Badge";

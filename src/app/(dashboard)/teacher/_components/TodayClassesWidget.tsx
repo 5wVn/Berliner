@@ -1,6 +1,6 @@
 "use client"
 
-import { Users } from "lucide-react"
+import { IconUsersGroup as Users } from "@tabler/icons-react"
 import { format } from "date-fns"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/Card"
 import { Skeleton } from "@/shared/components/ui/Skeleton"
@@ -64,7 +64,7 @@ export function TodayClassesWidget({
               return (
                 <div key={session.id} className="py-4">
                   <div className="mb-3 flex flex-col gap-2 min-[420px]:flex-row min-[420px]:items-start min-[420px]:justify-between">
-                    <span className="inline-flex w-fit items-center rounded-lg border-2 border-border bg-muted px-2.5 py-1 text-sm font-bold text-primary">
+                    <span className="inline-flex w-fit items-center rounded-lg border-2 border-border bg-surface-2 px-2.5 py-1 text-sm font-bold text-primary">
                       {format(startDate, "HH:mm")} - {format(endDate, "HH:mm")}
                     </span>
                     <span className="break-words text-sm font-semibold text-muted-foreground">

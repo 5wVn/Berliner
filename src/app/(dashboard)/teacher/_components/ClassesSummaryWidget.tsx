@@ -30,12 +30,12 @@ export function ClassesSummaryWidget({
             {items.map((cls) => (
               <div key={cls.id} className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 items-center gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-border bg-muted text-sm font-bold text-primary">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-border bg-surface-2 text-sm font-bold text-primary">
                     {cls.name.substring(0, 2)}
                   </div>
                   <span className="break-words text-base font-semibold text-foreground">{cls.name}</span>
                 </div>
-                <span className="shrink-0 rounded-full border-2 border-border bg-muted px-3 py-1 text-sm font-medium text-muted-foreground">
+                <span className="shrink-0 rounded-full border-2 border-border bg-surface-2 px-3 py-1 text-sm font-medium text-muted-foreground">
                   {cls.student_count} etu.
                 </span>
               </div>

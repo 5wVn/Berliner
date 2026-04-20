@@ -1,6 +1,10 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { Calendar, FileText, GraduationCap } from "lucide-react"
+import {
+  IconCalendar as Calendar,
+  IconFileText as FileText,
+  IconSchool as GraduationCap,
+} from "@tabler/icons-react"
 import { DashboardLayout } from "@/shared/components/layouts/DashboardLayout"
 import { ScheduleWidget } from "../_components/ScheduleWidget"
 import { GradesWidget } from "../_components/GradesWidget"
@@ -87,9 +91,9 @@ export default async function StudentDashboardPage() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex min-h-28 flex-col items-center justify-center gap-3 rounded-2xl border-2 border-border bg-transparent px-4 py-6 text-center transition-all duration-300 hover:-translate-y-1 hover:bg-muted"
+                className="card-accent flex min-h-28 flex-col items-center justify-center gap-3 px-4 py-6 text-center transition-all duration-300 hover:-translate-y-1"
               >
-                <div className="rounded-full border-2 border-border bg-muted p-3 text-primary">
+                <div className="rounded-full border-2 border-primary-foreground/20 bg-primary-foreground/10 p-3">
                   <Icon aria-hidden="true" className="h-8 w-8" />
                 </div>
                 <span className="text-center text-base font-semibold">{item.label}</span>

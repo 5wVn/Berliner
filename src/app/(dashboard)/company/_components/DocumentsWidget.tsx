@@ -1,6 +1,6 @@
 "use client"
 
-import { Download } from "lucide-react"
+import { IconDownload as Download } from "@tabler/icons-react"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/Card"
 import { Button } from "@/shared/components/ui/Button"
 import { Skeleton } from "@/shared/components/ui/Skeleton"

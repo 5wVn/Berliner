@@ -1,12 +1,5 @@
-﻿import { DashboardComingSoon } from "@/shared/components/layouts/DashboardComingSoon";
+import { ProfileShell } from "@/shared/components/layouts/ProfileShell";
 
 export default function Page() {
-  return (
-    <DashboardComingSoon
-      requiredRole="academic_head"
-      title=""
-      description=""
-    />
-  );
+  return <ProfileShell requiredRole="academic_head" backgroundVariant="indigo" />;
 }
-
