@@ -16,7 +16,7 @@ export type ActionError = {
 
 ## Auth
 ```ts
-export async function loginAction(input: {
+export` async function loginAction(input: {
   email: string;
   password: string;
 }): Promise<{ ok: true } | { ok: false; error: ActionError }>;

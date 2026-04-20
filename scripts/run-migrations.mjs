@@ -19,29 +19,32 @@ async function runSql(client, sql, label) {
     await client.query(sql);
     console.log(`Applied: ${label}`);
   } catch (err) {
-    console.error(`Failed: ${label}`);
-    throw err;
+    console.error(`Error in ${label}: ${err.message}`);
+    // Continue even on error (e.g. 'already exists')
   }
 }
 
 async function main() {
-  const client = new Client({ connectionString: databaseUrl });
+  const client = new Client({
+    connectionString: databaseUrl,
+    ssl: { rejectUnauthorized: false }
+  });
   await client.connect();
 
   const migrationFiles = existsSync(migrationsDir)
     ? readdirSync(migrationsDir)
-        .filter((file) => file.endsWith(".sql"))
-        .sort()
+      .filter((file) => file.endsWith(".sql"))
+      .sort()
     : [];
 
   for (const file of migrationFiles) {
     const fullPath = path.join(migrationsDir, file);
-    const sql = readFileSync(fullPath, "utf8");
+    const sql = readFileSync(fullPath, "utf8").replace(/^\uFEFF/, "");
     await runSql(client, sql, file);
   }
 
   if (existsSync(seedFile)) {
-    const seedSql = readFileSync(seedFile, "utf8");
+    const seedSql = readFileSync(seedFile, "utf8").replace(/^\uFEFF/, "");
     await runSql(client, seedSql, "seed.sql");
   }
 

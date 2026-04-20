@@ -2,8 +2,8 @@
 
 import { createClient } from '@/shared/lib/supabase/server';
 import type { ActionResponse } from '@/types/api';
+import type { ApprenticeStudent } from '@/types/api';
 import type {
-    Apprentice,
     ApprenticeRecentGrade,
     ApprenticesAttendanceOverview,
     CompanyDocument,
@@ -15,25 +15,105 @@ const unauthenticated = (): { ok: false; error: { code: 'UNAUTHENTICATED'; messa
 });
 
 /**
- * SCHEMA GAP: The current database does not model the company-apprentice
- * relationship. There is no `companies` table and no `company_id` column
- * on `profiles`. To wire these actions up for real, the schema needs:
- *
- *   - either a `companies` table + a join (e.g. `apprenticeships(company_id, student_id)`)
- *   - or a `company_id uuid REFERENCES profiles(id)` column on student
- *     profiles for the simpler one-company-per-apprentice model.
- *
- * Until then, all four company actions return empty data so the UI shows
- * honest empty states instead of misleading mock fixtures.
+ * Liste les apprentis rattachés à la company de l'utilisateur connecté.
+ * Utilise la table `apprenticeships` (P1) pour joindre company → students.
  */
-
 export async function getCompanyApprenticesAction(): Promise<
-    ActionResponse<Apprentice[]>
+    ActionResponse<ApprenticeStudent[]>
 > {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return unauthenticated();
-    return { ok: true, data: [] };
+
+    const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('role, company_id')
+        .eq('id', user.id)
+        .single();
+
+    if (profileError || !profile) {
+        return {
+            ok: false,
+            error: { code: 'NOT_FOUND', message: 'Profil introuvable.' },
+        };
+    }
+
+    if (profile.role !== 'company' || !profile.company_id) {
+        return {
+            ok: false,
+            error: {
+                code: 'UNAUTHORIZED',
+                message: 'Seuls les contacts entreprise rattachés peuvent lister les apprentis.',
+            },
+        };
+    }
+
+    const { data, error } = await supabase
+        .from('apprenticeships')
+        .select(
+            `
+            id,
+            start_date,
+            end_date,
+            status,
+            student:profiles!apprenticeships_student_id_fkey (
+                id,
+                first_name,
+                last_name,
+                email,
+                enrollments (
+                    status,
+                    classes ( name )
+                )
+            )
+            `,
+        )
+        .eq('company_id', profile.company_id);
+
+    if (error) {
+        return {
+            ok: false,
+            error: { code: 'INTERNAL', message: error.message },
+        };
+    }
+
+    type Row = {
+        id: string;
+        start_date: string;
+        end_date: string | null;
+        status: 'active' | 'ended' | 'pending';
+        student: {
+            id: string;
+            first_name: string;
+            last_name: string;
+            email: string;
+            enrollments: Array<{
+                status: string;
+                classes: { name: string } | null;
+            }> | null;
+        } | null;
+    };
+
+    const rows = (data ?? []) as unknown as Row[];
+
+    const apprentices: ApprenticeStudent[] = rows
+        .filter((r): r is Row & { student: NonNullable<Row['student']> } => r.student !== null)
+        .map((r) => {
+            const activeEnrollment = r.student.enrollments?.find((e) => e.status === 'active');
+            return {
+                apprenticeshipId: r.id,
+                studentId: r.student.id,
+                firstName: r.student.first_name,
+                lastName: r.student.last_name,
+                email: r.student.email,
+                startDate: r.start_date,
+                endDate: r.end_date,
+                status: r.status,
+                className: activeEnrollment?.classes?.name ?? null,
+            };
+        });
+
+    return { ok: true, data: apprentices };
 }
 
 export async function getCompanyApprenticesAttendanceAction(): Promise<

@@ -2,6 +2,7 @@
 
 import { createClient } from '@/shared/lib/supabase/server';
 import type { ActionResponse } from '@/types/api';
+import type { RegistrarStudent } from '@/types/api';
 import type {
     AttendanceAlert,
     DocumentRequest,
@@ -74,17 +75,13 @@ export async function getRegistrarStatsAction(): Promise<
             total_students: totalStudents ?? 0,
             new_enrollments_month: newEnrollments ?? 0,
             global_attendance_rate: globalAttendanceRate,
-            // The schema does not yet model document requests separately —
-            // see getRegistrarDocumentRequestsAction for context.
             pending_document_requests: 0,
         },
     };
 }
 
 /**
- * Pending enrollments awaiting registrar approval. Reads `enrollments`
- * with `status = 'pending'` (the schema default is 'active', so this
- * specifically targets rows the registrar still needs to act on).
+ * Pending enrollments awaiting registrar approval.
  */
 export async function getRegistrarPendingEnrollmentsAction(
     limit = 5
@@ -146,12 +143,6 @@ export async function getRegistrarPendingEnrollmentsAction(
 
 /**
  * Document requests awaiting registrar action.
- *
- * NOTE: The current schema only models `documents` (uploaded files). It
- * doesn't have a separate "request" concept with a pending/processing
- * status. Until that schema is added (a `document_requests` table or a
- * `status` column on `documents`), this action returns an empty list so
- * the UI surfaces an honest empty state instead of mock data.
  */
 export async function getRegistrarDocumentRequestsAction(): Promise<
     ActionResponse<DocumentRequest[]>
@@ -164,8 +155,6 @@ export async function getRegistrarDocumentRequestsAction(): Promise<
 
 /**
  * Students whose attendance rate falls below the alert threshold (75%).
- * Aggregates `attendance_records` per student in two queries (records +
- * profile lookup) instead of N+1 per student.
  */
 export async function getRegistrarAttendanceAlertsAction(
     limit = 5
@@ -215,9 +204,7 @@ export async function getRegistrarAttendanceAlertsAction(
         (profiles ?? []).map((row) => [row.id, row])
     );
 
-    // Best-effort class name: pick the most recent active enrollment per
-    // student. Empty string fallback so the widget still renders.
-    const { data: enrollments, error: enrollmentsError } = await supabase
+    const { data: enrollmentRows, error: enrollmentsError } = await supabase
         .from('enrollments')
         .select('student_id, class_id, created_at')
         .in('student_id', studentIds)
@@ -226,7 +213,7 @@ export async function getRegistrarAttendanceAlertsAction(
     if (enrollmentsError) return internal(enrollmentsError.message);
 
     const latestClassIdByStudent = new Map<string, string>();
-    (enrollments ?? []).forEach((row) => {
+    (enrollmentRows ?? []).forEach((row) => {
         if (!latestClassIdByStudent.has(row.student_id)) {
             latestClassIdByStudent.set(row.student_id, row.class_id);
         }
@@ -259,4 +246,92 @@ export async function getRegistrarAttendanceAlertsAction(
     });
 
     return { ok: true, data };
+}
+
+/**
+ * Liste tous les étudiants du tenant avec leur classe active.
+ * Auth : registrar ou academic_head.
+ */
+export async function getRegistrarStudentsAction(): Promise<
+    ActionResponse<RegistrarStudent[]>
+> {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return unauthenticated();
+
+    const { data: callerProfile, error: callerError } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+    if (callerError || !callerProfile) {
+        return {
+            ok: false,
+            error: { code: 'NOT_FOUND', message: 'Profil introuvable.' },
+        };
+    }
+
+    if (callerProfile.role !== 'registrar' && callerProfile.role !== 'academic_head') {
+        return {
+            ok: false,
+            error: {
+                code: 'UNAUTHORIZED',
+                message: 'Seuls les registrar ou academic_head peuvent lister les étudiants.',
+            },
+        };
+    }
+
+    const { data, error } = await supabase
+        .from('profiles')
+        .select(
+            `
+            id,
+            first_name,
+            last_name,
+            email,
+            enrollments (
+                status,
+                classes ( name )
+            )
+            `,
+        )
+        .eq('role', 'student')
+        .order('last_name', { ascending: true });
+
+    if (error) {
+        return {
+            ok: false,
+            error: { code: 'INTERNAL', message: error.message },
+        };
+    }
+
+    type Row = {
+        id: string;
+        first_name: string;
+        last_name: string;
+        email: string;
+        enrollments: Array<{
+            status: string;
+            classes: { name: string } | null;
+        }> | null;
+    };
+
+    const rows = (data ?? []) as unknown as Row[];
+
+    const students: RegistrarStudent[] = rows.map((r) => {
+        const active = r.enrollments?.find((e) => e.status === 'active');
+        const fallback = r.enrollments?.[0];
+        const chosen = active ?? fallback ?? null;
+        return {
+            id: r.id,
+            firstName: r.first_name,
+            lastName: r.last_name,
+            email: r.email,
+            className: chosen?.classes?.name ?? null,
+            enrollmentStatus: chosen?.status ?? null,
+        };
+    });
+
+    return { ok: true, data: students };
 }
