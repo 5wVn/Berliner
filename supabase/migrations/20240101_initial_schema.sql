@@ -1,4 +1,4 @@
-﻿-- Enable UUID extension if not already enabled
+-- Enable UUID extension if not already enabled
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
@@ -7,29 +7,37 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- -----------------------------------------------------------------------------
 
 -- Added 'super_admin' to support global access
-CREATE TYPE user_role AS ENUM (
-  'super_admin',
-  'student',
-  'teacher',
-  'registrar',
-  'academic_head',
-  'company'
-);
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_role') THEN
+    CREATE TYPE user_role AS ENUM (
+      'super_admin',
+      'student',
+      'teacher',
+      'registrar',
+      'academic_head',
+      'company'
+    );
+  END IF;
+END $$;
 
-CREATE TYPE attendance_status AS ENUM (
-  'present',
-  'absent',
-  'late',
-  'excused',
-  'pending_justification'
-);
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'attendance_status') THEN
+    CREATE TYPE attendance_status AS ENUM (
+      'present',
+      'absent',
+      'late',
+      'excused',
+      'pending_justification'
+    );
+  END IF;
+END $$;
 
 -- -----------------------------------------------------------------------------
 -- 2. Tables
 -- -----------------------------------------------------------------------------
 
 -- Establishments
-CREATE TABLE establishments (
+CREATE TABLE IF NOT EXISTS establishments (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   name text NOT NULL,
   slug text NOT NULL UNIQUE,
@@ -40,8 +48,8 @@ CREATE TABLE establishments (
 );
 
 -- Profiles (extends auth.users)
-CREATE TABLE profiles (
-  id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS profiles (
+  id uuid PRIMARY KEY, -- Removed REFERENCES auth.users(id) due to permission restrictions on schema 'auth'
   establishment_id uuid NOT NULL REFERENCES establishments(id),
   email text NOT NULL,
   role user_role NOT NULL,
@@ -54,7 +62,7 @@ CREATE TABLE profiles (
 );
 
 -- Programs
-CREATE TABLE programs (
+CREATE TABLE IF NOT EXISTS programs (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   establishment_id uuid NOT NULL REFERENCES establishments(id),
   name text NOT NULL,
@@ -66,7 +74,7 @@ CREATE TABLE programs (
 );
 
 -- Classes
-CREATE TABLE classes (
+CREATE TABLE IF NOT EXISTS classes (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   establishment_id uuid NOT NULL REFERENCES establishments(id),
   program_id uuid NOT NULL REFERENCES programs(id),
@@ -77,7 +85,7 @@ CREATE TABLE classes (
 );
 
 -- Subjects
-CREATE TABLE subjects (
+CREATE TABLE IF NOT EXISTS subjects (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   establishment_id uuid NOT NULL REFERENCES establishments(id),
   program_id uuid NOT NULL REFERENCES programs(id),
@@ -89,7 +97,7 @@ CREATE TABLE subjects (
 );
 
 -- Class Subjects (Join table for Classes <-> Subjects with assigned Teacher)
-CREATE TABLE class_subjects (
+CREATE TABLE IF NOT EXISTS class_subjects (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   establishment_id uuid NOT NULL REFERENCES establishments(id),
   class_id uuid NOT NULL REFERENCES classes(id),
@@ -100,7 +108,7 @@ CREATE TABLE class_subjects (
 );
 
 -- Sessions
-CREATE TABLE sessions (
+CREATE TABLE IF NOT EXISTS sessions (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   establishment_id uuid NOT NULL REFERENCES establishments(id),
   class_subject_id uuid NOT NULL REFERENCES class_subjects(id),
@@ -113,7 +121,7 @@ CREATE TABLE sessions (
 );
 
 -- Enrollments (Students in Classes)
-CREATE TABLE enrollments (
+CREATE TABLE IF NOT EXISTS enrollments (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   establishment_id uuid NOT NULL REFERENCES establishments(id),
   student_id uuid NOT NULL REFERENCES profiles(id),
@@ -126,7 +134,7 @@ CREATE TABLE enrollments (
 );
 
 -- Evaluations
-CREATE TABLE evaluations (
+CREATE TABLE IF NOT EXISTS evaluations (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   establishment_id uuid NOT NULL REFERENCES establishments(id),
   class_subject_id uuid NOT NULL REFERENCES class_subjects(id),
@@ -139,7 +147,7 @@ CREATE TABLE evaluations (
 );
 
 -- Grades
-CREATE TABLE grades (
+CREATE TABLE IF NOT EXISTS grades (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   establishment_id uuid NOT NULL REFERENCES establishments(id),
   evaluation_id uuid NOT NULL REFERENCES evaluations(id),
@@ -151,7 +159,7 @@ CREATE TABLE grades (
 );
 
 -- Attendance Records
-CREATE TABLE attendance_records (
+CREATE TABLE IF NOT EXISTS attendance_records (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   establishment_id uuid NOT NULL REFERENCES establishments(id),
   session_id uuid NOT NULL REFERENCES sessions(id),
@@ -163,7 +171,7 @@ CREATE TABLE attendance_records (
 );
 
 -- Documents
-CREATE TABLE documents (
+CREATE TABLE IF NOT EXISTS documents (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   establishment_id uuid NOT NULL REFERENCES establishments(id),
   owner_id uuid NOT NULL REFERENCES profiles(id),
@@ -175,7 +183,7 @@ CREATE TABLE documents (
 );
 
 -- Student Records (Additional info)
-CREATE TABLE student_records (
+CREATE TABLE IF NOT EXISTS student_records (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   establishment_id uuid NOT NULL REFERENCES establishments(id),
   student_id uuid NOT NULL REFERENCES profiles(id),
@@ -190,31 +198,31 @@ CREATE TABLE student_records (
 -- 3. Indexes
 -- -----------------------------------------------------------------------------
 
-CREATE INDEX idx_profiles_establishment ON profiles(establishment_id);
-CREATE INDEX idx_profiles_establishment_role ON profiles(establishment_id, role);
+CREATE INDEX IF NOT EXISTS idx_profiles_establishment ON profiles(establishment_id);
+CREATE INDEX IF NOT EXISTS idx_profiles_establishment_role ON profiles(establishment_id, role);
 
-CREATE INDEX idx_programs_establishment ON programs(establishment_id);
-CREATE INDEX idx_classes_establishment ON classes(establishment_id);
-CREATE INDEX idx_subjects_establishment ON subjects(establishment_id);
+CREATE INDEX IF NOT EXISTS idx_programs_establishment ON programs(establishment_id);
+CREATE INDEX IF NOT EXISTS idx_classes_establishment ON classes(establishment_id);
+CREATE INDEX IF NOT EXISTS idx_subjects_establishment ON subjects(establishment_id);
 
-CREATE INDEX idx_class_subjects_establishment ON class_subjects(establishment_id);
-CREATE INDEX idx_class_subjects_establishment_class ON class_subjects(establishment_id, class_id);
+CREATE INDEX IF NOT EXISTS idx_class_subjects_establishment ON class_subjects(establishment_id);
+CREATE INDEX IF NOT EXISTS idx_class_subjects_establishment_class ON class_subjects(establishment_id, class_id);
 
-CREATE INDEX idx_sessions_establishment ON sessions(establishment_id);
-CREATE INDEX idx_sessions_establishment_start ON sessions(establishment_id, start_time);
+CREATE INDEX IF NOT EXISTS idx_sessions_establishment ON sessions(establishment_id);
+CREATE INDEX IF NOT EXISTS idx_sessions_establishment_start ON sessions(establishment_id, start_time);
 
-CREATE INDEX idx_enrollments_establishment ON enrollments(establishment_id);
-CREATE INDEX idx_enrollments_establishment_student ON enrollments(establishment_id, student_id);
+CREATE INDEX IF NOT EXISTS idx_enrollments_establishment ON enrollments(establishment_id);
+CREATE INDEX IF NOT EXISTS idx_enrollments_establishment_student ON enrollments(establishment_id, student_id);
 
-CREATE INDEX idx_evaluations_establishment ON evaluations(establishment_id);
-CREATE INDEX idx_grades_establishment ON grades(establishment_id);
-CREATE INDEX idx_grades_establishment_student ON grades(establishment_id, student_id);
+CREATE INDEX IF NOT EXISTS idx_evaluations_establishment ON evaluations(establishment_id);
+CREATE INDEX IF NOT EXISTS idx_grades_establishment ON grades(establishment_id);
+CREATE INDEX IF NOT EXISTS idx_grades_establishment_student ON grades(establishment_id, student_id);
 
-CREATE INDEX idx_attendance_records_establishment ON attendance_records(establishment_id);
-CREATE INDEX idx_attendance_records_establishment_student ON attendance_records(establishment_id, student_id);
+CREATE INDEX IF NOT EXISTS idx_attendance_records_establishment ON attendance_records(establishment_id);
+CREATE INDEX IF NOT EXISTS idx_attendance_records_establishment_student ON attendance_records(establishment_id, student_id);
 
-CREATE INDEX idx_documents_establishment ON documents(establishment_id);
-CREATE INDEX idx_student_records_establishment ON student_records(establishment_id);
+CREATE INDEX IF NOT EXISTS idx_documents_establishment ON documents(establishment_id);
+CREATE INDEX IF NOT EXISTS idx_student_records_establishment ON student_records(establishment_id);
 
 
 -- -----------------------------------------------------------------------------
@@ -222,13 +230,13 @@ CREATE INDEX idx_student_records_establishment ON student_records(establishment_
 -- -----------------------------------------------------------------------------
 
 -- Helper function to get the current user's establishment_id
-CREATE OR REPLACE FUNCTION auth.user_establishment_id()
+CREATE OR REPLACE FUNCTION public.user_establishment_id()
 RETURNS uuid AS $$
   SELECT establishment_id FROM public.profiles WHERE id = auth.uid();
 $$ LANGUAGE SQL STABLE SECURITY DEFINER;
 
 -- Helper function to get the current user's role
-CREATE OR REPLACE FUNCTION auth.user_role()
+CREATE OR REPLACE FUNCTION public.user_role()
 RETURNS user_role AS $$
   SELECT role FROM public.profiles WHERE id = auth.uid();
 $$ LANGUAGE SQL STABLE SECURITY DEFINER;
@@ -254,17 +262,17 @@ ALTER TABLE student_records ENABLE ROW LEVEL SECURITY;
 -- Policy: Establishments
 CREATE POLICY "Users can view their own establishment or super_admin all"
   ON establishments FOR SELECT
-  USING (id = auth.user_establishment_id() OR auth.user_role() = 'super_admin');
+  USING (id = public.user_establishment_id() OR public.user_role() = 'super_admin');
 
 -- Policy: Profiles
 CREATE POLICY "Users can view profiles in their establishment or super_admin all"
   ON profiles FOR SELECT
-  USING (establishment_id = auth.user_establishment_id() OR auth.user_role() = 'super_admin');
+  USING (establishment_id = public.user_establishment_id() OR public.user_role() = 'super_admin');
 
 CREATE POLICY "Users can update their own profile or super_admin all"
   ON profiles FOR UPDATE
-  USING (id = auth.uid() OR auth.user_role() = 'super_admin')
-  WITH CHECK ((id = auth.uid() AND establishment_id = auth.user_establishment_id()) OR auth.user_role() = 'super_admin');
+  USING (id = auth.uid() OR public.user_role() = 'super_admin')
+  WITH CHECK ((id = auth.uid() AND establishment_id = public.user_establishment_id()) OR public.user_role() = 'super_admin');
 
 -- Generic Isolation Policy for other tables
 -- Pattern: establishment_id matches user's OR user is super_admin
@@ -272,54 +280,54 @@ CREATE POLICY "Users can update their own profile or super_admin all"
 -- Programs
 CREATE POLICY "Establishment isolation for programs"
   ON programs FOR ALL
-  USING (establishment_id = auth.user_establishment_id() OR auth.user_role() = 'super_admin');
+  USING (establishment_id = public.user_establishment_id() OR public.user_role() = 'super_admin');
 
 -- Classes
 CREATE POLICY "Establishment isolation for classes"
   ON classes FOR ALL
-  USING (establishment_id = auth.user_establishment_id() OR auth.user_role() = 'super_admin');
+  USING (establishment_id = public.user_establishment_id() OR public.user_role() = 'super_admin');
 
 -- Subjects
 CREATE POLICY "Establishment isolation for subjects"
   ON subjects FOR ALL
-  USING (establishment_id = auth.user_establishment_id() OR auth.user_role() = 'super_admin');
+  USING (establishment_id = public.user_establishment_id() OR public.user_role() = 'super_admin');
 
 -- Class Subjects
 CREATE POLICY "Establishment isolation for class_subjects"
   ON class_subjects FOR ALL
-  USING (establishment_id = auth.user_establishment_id() OR auth.user_role() = 'super_admin');
+  USING (establishment_id = public.user_establishment_id() OR public.user_role() = 'super_admin');
 
 -- Sessions
 CREATE POLICY "Establishment isolation for sessions"
   ON sessions FOR ALL
-  USING (establishment_id = auth.user_establishment_id() OR auth.user_role() = 'super_admin');
+  USING (establishment_id = public.user_establishment_id() OR public.user_role() = 'super_admin');
 
 -- Enrollments
 CREATE POLICY "Establishment isolation for enrollments"
   ON enrollments FOR ALL
-  USING (establishment_id = auth.user_establishment_id() OR auth.user_role() = 'super_admin');
+  USING (establishment_id = public.user_establishment_id() OR public.user_role() = 'super_admin');
 
 -- Evaluations
 CREATE POLICY "Establishment isolation for evaluations"
   ON evaluations FOR ALL
-  USING (establishment_id = auth.user_establishment_id() OR auth.user_role() = 'super_admin');
+  USING (establishment_id = public.user_establishment_id() OR public.user_role() = 'super_admin');
 
 -- Grades
 CREATE POLICY "Establishment isolation for grades"
   ON grades FOR ALL
-  USING (establishment_id = auth.user_establishment_id() OR auth.user_role() = 'super_admin');
+  USING (establishment_id = public.user_establishment_id() OR public.user_role() = 'super_admin');
 
 -- Attendance Records
 CREATE POLICY "Establishment isolation for attendance_records"
   ON attendance_records FOR ALL
-  USING (establishment_id = auth.user_establishment_id() OR auth.user_role() = 'super_admin');
+  USING (establishment_id = public.user_establishment_id() OR public.user_role() = 'super_admin');
 
 -- Documents
 CREATE POLICY "Establishment isolation for documents"
   ON documents FOR ALL
-  USING (establishment_id = auth.user_establishment_id() OR auth.user_role() = 'super_admin');
+  USING (establishment_id = public.user_establishment_id() OR public.user_role() = 'super_admin');
 
 -- Student Records
 CREATE POLICY "Establishment isolation for student_records"
   ON student_records FOR ALL
-  USING (establishment_id = auth.user_establishment_id() OR auth.user_role() = 'super_admin');
+  USING (establishment_id = public.user_establishment_id() OR public.user_role() = 'super_admin');
