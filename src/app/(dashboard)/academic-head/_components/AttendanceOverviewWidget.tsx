@@ -1,6 +1,10 @@
 "use client"
 
-import { TrendingUp, TrendingDown, Minus } from "lucide-react"
+import {
+  IconMinus as Minus,
+  IconTrendingDown as TrendingDown,
+  IconTrendingUp as TrendingUp,
+} from "@tabler/icons-react"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/shared/components/ui/Card"
 import { cn } from "@/shared/lib/utils"
 import { DashboardCardLink } from "@/shared/components/ui/DashboardCardLink"

@@ -60,7 +60,7 @@ export function ScheduleWidget({
 
               return (
                 <div key={session.id} className="flex items-start gap-4 py-4">
-                  <div className="flex h-14 w-16 shrink-0 flex-col items-center justify-center rounded-xl border-2 border-border bg-muted text-foreground">
+                  <div className="flex h-14 w-16 shrink-0 flex-col items-center justify-center rounded-xl border-2 border-border bg-surface-2 text-foreground">
                     <span className="text-lg font-bold leading-none">{format(startDate, "HH:mm")}</span>
                     <span className="mt-1 text-[10px] font-bold uppercase text-muted-foreground">
                       {format(startDate, "dd MMM", { locale: fr })}

@@ -1,12 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Roboto, Outfit } from "next/font/google";
+import { Roboto_Slab, Outfit } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/shared/providers/AuthProvider";
 import { cn } from "@/lib/utils";
 
 const outfitHeading = Outfit({ subsets: ["latin"], variable: "--font-heading" });
 
-const roboto = Roboto({ subsets: ["latin"], variable: "--font-sans" });
+const robotoSlab = Roboto_Slab({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: "Berliner - Portail Etudiant",
@@ -50,7 +50,7 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={cn("dark", roboto.variable, outfitHeading.variable, "font-sans")}
+      className={cn("dark", robotoSlab.variable, outfitHeading.variable, "font-sans")}
       suppressHydrationWarning
     >
       <body className="font-sans antialiased">

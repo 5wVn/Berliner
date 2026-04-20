@@ -11,15 +11,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Apprentice, ApprenticeAttendance } from "@/shared/lib/companyData";
+import type { ApprenticeAttendance } from "@/shared/lib/companyData";
+import type { ApprenticeStudent } from "@/types/api";
 
 const filterControlClass =
   "h-11 rounded-xl border-2 border-border bg-card px-3 text-sm font-semibold text-foreground w-full sm:w-auto";
 
 interface ApprenticesListProps {
-  apprentices: Apprentice[];
+  apprentices: ApprenticeStudent[];
   attendance: ApprenticeAttendance[];
 }
+
+const getInitials = (firstName: string, lastName: string) =>
+  `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() || "?";
 
 export function ApprenticesList({ apprentices, attendance }: ApprenticesListProps) {
   const [query, setQuery] = useState("");
@@ -32,15 +36,18 @@ export function ApprenticesList({ apprentices, attendance }: ApprenticesListProp
   }, [attendance]);
 
   const programs = useMemo(() => {
-    return Array.from(new Set(apprentices.map((a) => a.program).filter(Boolean)));
+    return Array.from(
+      new Set(apprentices.map((a) => a.className).filter((c): c is string => Boolean(c)))
+    );
   }, [apprentices]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return apprentices.filter((a) => {
-      if (programFilter !== "all" && a.program !== programFilter) return false;
+      if (programFilter !== "all" && a.className !== programFilter) return false;
       if (!q) return true;
-      return a.name.toLowerCase().includes(q);
+      const fullName = `${a.firstName} ${a.lastName}`.toLowerCase();
+      return fullName.includes(q);
     });
   }, [apprentices, query, programFilter]);
 
@@ -76,17 +83,20 @@ export function ApprenticesList({ apprentices, attendance }: ApprenticesListProp
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {filtered.map((a) => {
-            const rate = rateById.get(a.id);
+            const rate = rateById.get(a.studentId);
+            const fullName = `${a.firstName} ${a.lastName}`.trim() || "Apprenti";
             return (
-              <Card key={a.id}>
+              <Card key={a.apprenticeshipId}>
                 <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
                   <div className="flex min-w-0 items-center gap-4">
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-primary bg-primary text-sm font-bold text-primary-foreground">
-                      {a.initials}
+                      {getInitials(a.firstName, a.lastName)}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="break-words font-semibold text-foreground">{a.name}</p>
-                      <p className="break-words text-sm text-muted-foreground">{a.program}</p>
+                      <p className="break-words font-semibold text-foreground">{fullName}</p>
+                      <p className="break-words text-sm text-muted-foreground">
+                        {a.className ?? "—"}
+                      </p>
                     </div>
                   </div>
                   {rate !== undefined ? (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { FileText } from "lucide-react";
+import { IconFileText as FileText } from "@tabler/icons-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Card, CardContent } from "@/shared/components/ui/Card";

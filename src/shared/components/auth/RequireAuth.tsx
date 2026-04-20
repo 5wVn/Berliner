@@ -102,7 +102,7 @@ export function RequireAuth({
 
   if (authError) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-slate-600 dark:text-slate-400">
+      <div className="flex min-h-screen items-center justify-center bg-background text-muted-foreground">
         Erreur d&apos;authentification: {authError}
       </div>
     );
@@ -110,7 +110,7 @@ export function RequireAuth({
 
   if (!isReady) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-slate-600 dark:text-slate-400">
+      <div className="flex min-h-screen items-center justify-center bg-background text-muted-foreground">
         Chargement...
       </div>
     );

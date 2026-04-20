@@ -20,16 +20,16 @@ export function AttendanceWidget({
   if (loading) {
     return (
       <Card className="h-full">
-        <CardHeader className="space-y-0 pb-4">
+        <CardHeader className="pb-4">
           <Skeleton className="h-6 w-32" />
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col items-center space-y-6">
-            <div className="relative flex flex-col items-center justify-center space-y-2">
+          <div className="flex flex-col items-center gap-6">
+            <div className="relative flex flex-col items-center justify-center gap-2">
               <Skeleton className="h-12 w-20" />
               <Skeleton className="h-4 w-28" />
             </div>
-            <div className="w-full space-y-3">
+            <div className="flex w-full flex-col gap-3">
               <div className="flex justify-between">
                 <Skeleton className="h-4 w-20" />
                 <Skeleton className="h-4 w-24" />
@@ -44,45 +44,44 @@ export function AttendanceWidget({
 
   const { rate, total, present } = summary ?? { rate: 0, total: 0, present: 0 }
 
-  // Color logic: vert ≥90%, orange ≥75%, rouge <75%
-  let colorClass = "bg-rose-500"
-  let textColorClass = "text-rose-600 dark:text-rose-400"
+  let barClass = "bg-destructive"
+  let textClass = "text-destructive"
 
   if (rate >= 90) {
-    colorClass = "bg-teal-500"
-    textColorClass = "text-teal-600 dark:text-teal-400"
+    barClass = "bg-primary"
+    textClass = "text-primary"
   } else if (rate >= 75) {
-    colorClass = "bg-amber-500"
-    textColorClass = "text-amber-600 dark:text-amber-400"
+    barClass = "bg-warning"
+    textClass = "text-warning"
   }
 
   return (
     <Card className="h-full">
-      <CardHeader className="space-y-0 pb-4">
-        <CardTitle className="text-xl font-bold italic">Assiduité</CardTitle>
+      <CardHeader className="pb-4">
+        <CardTitle>Assiduité</CardTitle>
       </CardHeader>
       <CardContent>
         {error ? (
-          <p className="text-sm text-rose-500">{error}</p>
+          <p className="text-sm text-destructive">{error}</p>
         ) : (
-          <div className="flex flex-col items-center space-y-6">
+          <div className="flex flex-col items-center gap-6">
             <div className="relative flex flex-col items-center justify-center">
-              <span className={cn("text-6xl font-black tracking-tight", textColorClass)}>{rate}%</span>
-              <span className="text-base font-medium text-slate-500 dark:text-slate-400 mt-1">
+              <span className={cn("text-6xl font-black tracking-tight", textClass)}>{rate}%</span>
+              <span className="mt-1 text-base font-medium text-muted-foreground">
                 Présence globale
               </span>
             </div>
 
-            <div className="w-full space-y-2">
-              <div className="flex justify-between text-sm font-medium text-slate-600 dark:text-slate-400">
+            <div className="flex w-full flex-col gap-2">
+              <div className="flex justify-between text-sm font-medium text-muted-foreground">
                 <span>Présence</span>
                 <span>
                   {present}/{total} séances
                 </span>
               </div>
-              <div className="h-3 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+              <div className="h-3 w-full overflow-hidden rounded-full bg-muted">
                 <div
-                  className={cn("h-full transition-all duration-500 ease-in-out shadow-sm", colorClass)}
+                  className={cn("h-full transition-all duration-500 ease-in-out", barClass)}
                   style={{ width: `${rate}%` }}
                 />
               </div>

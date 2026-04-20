@@ -15,6 +15,8 @@ export type TeacherClassSummary = {
   id: string;
   name: string;
   student_count: number;
+  subject_count?: number;
+  next_session_at?: string | null;
 };
 
 export type PendingAttendanceSession = {

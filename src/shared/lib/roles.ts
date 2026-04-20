@@ -9,10 +9,6 @@ const ROLE_TO_PATH: Record<UserRole, string> = {
   company: "/company",
 };
 
-export function roleToPath(role: UserRole) {
-  return ROLE_TO_PATH[role];
-}
-
 export function roleToDashboardPath(role: UserRole) {
   // super_admin doesn't have its own dashboard — it lands on the role
   // picker, same as academic_head with no selection.

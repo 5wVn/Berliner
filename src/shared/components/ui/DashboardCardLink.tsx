@@ -1,6 +1,6 @@
 import * as React from "react"
 import Link from "next/link"
-import { ChevronRight } from "lucide-react"
+import { IconChevronRight as ChevronRight } from "@tabler/icons-react"
 import { buttonVariants } from "@/shared/components/ui/Button"
 import { cn } from "@/shared/lib/utils"
 
@@ -24,7 +24,7 @@ export function DashboardCardLink({
       data-href={href}
       className={cn(
         buttonVariants({ variant: "outline", size: "sm" }),
-        "dashboard-card-link group w-full gap-2 sm:w-auto",
+        "dashboard-card-link group w-full gap-2 bg-surface-2 sm:w-auto",
         className
       )}
       {...props}

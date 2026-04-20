@@ -1,7 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CalendarDays, MapPin } from "lucide-react";
+import {
+  IconCalendarWeek as CalendarDays,
+  IconMapPin as MapPin,
+} from "@tabler/icons-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Badge } from "@/shared/components/ui/Badge";
