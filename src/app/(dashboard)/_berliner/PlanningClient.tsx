@@ -329,7 +329,7 @@ export function PlanningClient({ state }: PlanningClientProps) {
                     : empty
                     ? "transparent"
                     : p.accentSecondary,
-                  opacity: on ? 0.6 : w.today || !empty ? 1 : 0.5,
+                  opacity: on ? 0.6 : empty ? 0.5 : 1,
                 }}
               />
             </div>

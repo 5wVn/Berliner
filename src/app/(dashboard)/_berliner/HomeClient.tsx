@@ -463,7 +463,7 @@ export function HomeClient({ state }: HomeClientProps) {
                       style={{
                         fontSize: 10.5,
                         color: p.accentSecondaryInk,
-                        background: p.accentSecondarySoft,
+                        background: p.accentSecondary,
                         fontWeight: 600,
                         letterSpacing: 0.4,
                         padding: "3px 8px",
