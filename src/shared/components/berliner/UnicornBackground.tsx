@@ -115,7 +115,16 @@ export function UnicornBackground() {
         aria-hidden
         style={{
           position: "fixed",
-          inset: 0,
+          // Bleed the wrapper above the viewport by the safe-area amount
+          // so the shader's natural darker top edge falls outside the
+          // visible area. The shader project was designed for a 370×780
+          // iPhone-frame prototype with a fake status bar overlay; without
+          // bleed, the dark band lands exactly under the iOS notch and
+          // reads as "the top is cut off".
+          top: "calc(env(safe-area-inset-top) * -1 - 24px)",
+          right: 0,
+          bottom: 0,
+          left: 0,
           zIndex: 0,
           pointerEvents: "none",
           overflow: "hidden",
@@ -126,11 +135,13 @@ export function UnicornBackground() {
           id={SCENE_ID}
           ref={ref}
           data-us-project={PROJECT_ID}
-          // Explicit viewport units — UnicornStudio sizes its canvas from
-          // the host element's offsetWidth/Height at init time; relying on
-          // % requires the parent to be laid out, which isn't guaranteed
-          // when addScene() runs immediately after Script onLoad.
-          style={{ width: "100vw", height: "100vh" }}
+          style={{
+            width: "100vw",
+            // Match the wrapper bleed so the canvas extends into the
+            // overflow-clipped overflow zone instead of leaving an empty
+            // band at the bottom.
+            height: "calc(100vh + env(safe-area-inset-top) + 24px)",
+          }}
         />
       </div>
     </>
