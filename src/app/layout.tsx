@@ -49,7 +49,7 @@ export default function RootLayout({
     else root.classList.remove("dark");
     const accent = localStorage.getItem(ak);
     const valid = ["green","blue","orange","violet","lemon","slate","red"];
-    root.dataset.accent = valid.indexOf(accent) >= 0 ? accent : "green";
+    root.dataset.accent = valid.indexOf(accent) >= 0 ? accent : "red";
   } catch (e) {}
 })();
   `;
@@ -64,7 +64,7 @@ export default function RootLayout({
         geistHeading.variable,
         "font-sans"
       )}
-      data-accent="green"
+      data-accent="red"
       suppressHydrationWarning
     >
       <body className="font-sans antialiased">

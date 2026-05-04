@@ -124,9 +124,22 @@ export type Palette = {
 
 export function pal(theme: Theme, accent: AccentName): Palette {
   const base = theme === "dark" ? DARK : LIGHT;
-  const a = ACCENT_DEFS[accent] ?? ACCENT_DEFS.green;
+  const a = ACCENT_DEFS[accent] ?? ACCENT_DEFS.red;
+  // In dark mode the page background is transparent and surfaces are
+  // translucent so the Unicorn Studio shader animates through. Light
+  // mode stays opaque (no shader).
+  const overrides =
+    theme === "dark"
+      ? {
+          bg: "transparent",
+          surface: "rgba(22,22,26,0.65)",
+          surface2: "rgba(29,29,34,0.7)",
+          chip: "rgba(35,35,42,0.6)",
+        }
+      : {};
   return {
     ...base,
+    ...overrides,
     accent: a.c,
     accentSoft: a.soft,
     accentInk: a.ink,

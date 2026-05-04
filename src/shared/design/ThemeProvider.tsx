@@ -24,7 +24,7 @@ type ThemeContextValue = {
 const THEME_KEY = "berliner-theme";
 const ACCENT_KEY = "berliner-accent";
 
-const DEFAULTS = { theme: "dark" as Theme, accent: "green" as AccentName };
+const DEFAULTS = { theme: "dark" as Theme, accent: "red" as AccentName };
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
