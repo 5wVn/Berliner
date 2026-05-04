@@ -101,19 +101,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let active = true;
-    const supabase = getSupabaseClient();
+    let supabase: ReturnType<typeof getSupabaseClient>;
+    try {
+      supabase = getSupabaseClient();
+    } catch (err) {
+      setAuthError(err instanceof Error ? err.message : "Supabase init failed");
+      setLoading(false);
+      return;
+    }
 
     const loadSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (!active) return;
-      setSession(data.session ?? null);
-      if (data.session?.user?.id) {
-        await fetchProfile(data.session.user.id);
-      } else {
+      try {
+        const { data } = await supabase.auth.getSession();
+        if (!active) return;
+        setSession(data.session ?? null);
+        if (data.session?.user?.id) {
+          await fetchProfile(data.session.user.id);
+        } else {
+          setProfile(null);
+          setAuthError(null);
+        }
+      } catch (err) {
+        if (!active) return;
+        setAuthError(err instanceof Error ? err.message : "Session load failed");
         setProfile(null);
-        setAuthError(null);
+      } finally {
+        if (active) setLoading(false);
       }
-      setLoading(false);
     };
 
     loadSession();

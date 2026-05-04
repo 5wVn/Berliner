@@ -21,8 +21,6 @@ export function createClient(): SupabaseClient {
 export function getSupabaseClient(): SupabaseClient {
   if (globalForSupabase.supabase) return globalForSupabase.supabase;
   const client = createClient();
-  if (process.env.NODE_ENV !== "production") {
-    globalForSupabase.supabase = client;
-  }
+  globalForSupabase.supabase = client;
   return client;
 }
