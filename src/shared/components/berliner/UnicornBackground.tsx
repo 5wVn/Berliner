@@ -127,16 +127,16 @@ export function UnicornBackground() {
           ref={ref}
           data-us-project={PROJECT_ID}
           style={{
-            // Render the shader 30% taller than the viewport, shifted up
-            // by 15vh, so the project's natural darker top edge (designed
-            // for the prototype's fake iOS status bar overlay) sits above
-            // the visible area on every device. env(safe-area-inset-top)
-            // alone wasn't enough — this overlap is device-agnostic and
-            // works whether the safe-area is 0 (browser) or 59px (notch).
-            position: "relative",
-            top: "-15vh",
             width: "100vw",
-            height: "130vh",
+            height: "100vh",
+            // Scale the rendered shader from the center of the viewport
+            // and let the wrapper's overflow:hidden clip the bleed. This
+            // pushes the shader's darker edges (designed for the
+            // prototype's iPhone-frame mockup) outside the visible area
+            // without depending on env() / vh math, which iOS PWA WebKit
+            // sometimes treats unpredictably under viewport-fit:cover.
+            transform: "scale(1.4)",
+            transformOrigin: "center center",
           }}
         />
       </div>
