@@ -129,14 +129,6 @@ export function UnicornBackground() {
           style={{
             width: "100vw",
             height: "100vh",
-            // Scale the rendered shader from the center of the viewport
-            // and let the wrapper's overflow:hidden clip the bleed. This
-            // pushes the shader's darker edges (designed for the
-            // prototype's iPhone-frame mockup) outside the visible area
-            // without depending on env() / vh math, which iOS PWA WebKit
-            // sometimes treats unpredictably under viewport-fit:cover.
-            transform: "scale(1.4)",
-            transformOrigin: "center center",
           }}
         />
       </div>
