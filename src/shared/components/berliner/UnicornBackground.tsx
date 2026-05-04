@@ -126,7 +126,11 @@ export function UnicornBackground() {
           id={SCENE_ID}
           ref={ref}
           data-us-project={PROJECT_ID}
-          style={{ width: "100%", height: "100%" }}
+          // Explicit viewport units — UnicornStudio sizes its canvas from
+          // the host element's offsetWidth/Height at init time; relying on
+          // % requires the parent to be laid out, which isn't guaranteed
+          // when addScene() runs immediately after Script onLoad.
+          style={{ width: "100vw", height: "100vh" }}
         />
       </div>
     </>
