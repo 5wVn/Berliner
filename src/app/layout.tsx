@@ -26,9 +26,12 @@ export const metadata: Metadata = {
   // Next.js's appleWebApp.capable only emits the modern generic
   // `mobile-web-app-capable`. Older iOS PWA installs (and some WKWebView
   // versions) still need the apple-prefixed tag to enter true standalone
-  // mode and apply the status-bar-style. Set it explicitly here.
+  // mode and apply the status-bar-style. Re-emit the status-bar style
+  // explicitly here as a belt-and-suspenders against any iOS PWA chrome
+  // that captured an older install state.
   other: {
     "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "black-translucent",
   },
 };
 
