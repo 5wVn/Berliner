@@ -123,10 +123,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       } catch (err) {
         if (!active) return;
+        // Aborted fetches are expected on unmount/navigation — don't surface.
+        if (err instanceof DOMException && err.name === "AbortError") return;
         setAuthError(err instanceof Error ? err.message : "Session load failed");
         setProfile(null);
       } finally {
-        if (active) setLoading(false);
+        // Always release the loading state. The component being unmounted
+        // mid-flight is fine — React tolerates state updates on unmounted
+        // components, but leaving `loading` stuck at true blocks RequireAuth
+        // forever if cleanup raced ahead of the async resolution.
+        setLoading(false);
       }
     };
 
@@ -134,15 +140,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const { data: listener } = supabase.auth.onAuthStateChange(
       async (_event, nextSession) => {
-        setSession(nextSession);
-        if (nextSession?.user?.id) {
-          await fetchProfile(nextSession.user.id);
-        } else {
-          setProfile(null);
-          setSelectedRole(null);
-          setAuthError(null);
+        try {
+          setSession(nextSession);
+          if (nextSession?.user?.id) {
+            await fetchProfile(nextSession.user.id);
+          } else {
+            setProfile(null);
+            setSelectedRole(null);
+            setAuthError(null);
+          }
+        } catch (err) {
+          if (err instanceof DOMException && err.name === "AbortError") return;
+          setAuthError(
+            err instanceof Error ? err.message : "Auth state change failed"
+          );
+        } finally {
+          setLoading(false);
         }
-        setLoading(false);
       }
     );
 
