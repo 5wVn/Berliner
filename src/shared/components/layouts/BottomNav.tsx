@@ -80,7 +80,7 @@ export function BottomNav({ role }: BottomNavProps) {
   return (
     <nav
       aria-label="Navigation principale"
-      className="fixed bottom-0 left-0 right-0 z-50 border-t-2 border-border bg-card/95 pb-[env(safe-area-inset-bottom)] shadow-2xl backdrop-blur-lg"
+      className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-[rgba(250,250,247,0.88)] pb-[env(safe-area-inset-bottom)] shadow-2xl [backdrop-filter:blur(14px)] [-webkit-backdrop-filter:blur(14px)] dark:bg-[rgba(14,14,16,0.85)]"
     >
       <div className="mx-auto flex h-[var(--bottom-nav-height)] max-w-md items-center justify-around gap-1 px-2 touch-manipulation sm:max-w-none sm:px-4">
         {items.map((item) => {
