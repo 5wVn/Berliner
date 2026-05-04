@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import {
   IconCalendar as Calendar,
   IconChartBar as BarChart,
+  IconChecklist as Checklist,
   IconFileText as FileText,
   IconHome as Home,
   IconSchool as GraduationCap,
@@ -23,14 +24,16 @@ interface NavItem {
 const NAV_CONFIG: Record<UserRole, NavItem[]> = {
   student: [
     { label: "Accueil", href: "/student", icon: Home },
-    { label: "Planning", href: "/student/schedule", icon: Calendar },
     { label: "Notes", href: "/student/grades", icon: GraduationCap },
+    { label: "Planning", href: "/student/schedule", icon: Calendar },
+    { label: "Devoirs", href: "/student/devoirs", icon: Checklist },
     { label: "Profil", href: "/student/profile", icon: User },
   ],
   teacher: [
     { label: "Accueil", href: "/teacher", icon: Home },
+    { label: "Notes", href: "/teacher/grades", icon: GraduationCap },
     { label: "Planning", href: "/teacher/schedule", icon: Calendar },
-    { label: "Classes", href: "/teacher/classes", icon: Users },
+    { label: "Devoirs", href: "/teacher/devoirs", icon: Checklist },
     { label: "Profil", href: "/teacher/profile", icon: User },
   ],
   registrar: [

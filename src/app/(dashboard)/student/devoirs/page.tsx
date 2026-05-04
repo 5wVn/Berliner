@@ -2,10 +2,10 @@ import { redirect } from "next/navigation";
 import { getBerlinerStateAction } from "@/actions/berliner-state";
 import { canAccessRole, roleToDashboardPath } from "@/shared/lib/roles";
 import type { UserRole } from "@/shared/types/auth";
-import { ProfileClient } from "../../_berliner/ProfileClient";
+import { DevoirsClient } from "../../_berliner/DevoirsClient";
 import { MobileLayout } from "../../_berliner/MobileLayout";
 
-export default async function StudentProfilePage() {
+export default async function StudentDevoirsPage() {
   const result = await getBerlinerStateAction();
   if (!result.ok) {
     if (result.error.code === "UNAUTHENTICATED") redirect("/");
@@ -17,7 +17,7 @@ export default async function StudentProfilePage() {
   }
   return (
     <MobileLayout role="student">
-      <ProfileClient state={result.data} />
+      <DevoirsClient state={result.data} />
     </MobileLayout>
   );
 }

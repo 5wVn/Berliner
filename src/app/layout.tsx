@@ -1,12 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Roboto_Slab, Outfit } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/shared/providers/AuthProvider";
+import { ThemeProvider } from "@/shared/design/ThemeProvider";
 import { cn } from "@/lib/utils";
 
-const outfitHeading = Outfit({ subsets: ["latin"], variable: "--font-heading" });
-
-const robotoSlab = Roboto_Slab({ subsets: ["latin"], variable: "--font-sans" });
+const geistSans = Geist({ subsets: ["latin"], variable: "--font-sans" });
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
+// Heading font shares the same Geist face — globals.css references
+// --font-heading for the other roles' h1/h2 styling.
+const geistHeading = Geist({ subsets: ["latin"], variable: "--font-heading" });
 
 export const metadata: Metadata = {
   title: "Berliner - Portail Etudiant",
@@ -23,7 +26,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#09090b",
+  themeColor: "#0E0E10",
 };
 
 export default function RootLayout({
@@ -31,33 +34,44 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Inline pre-hydration script: read theme + accent from localStorage
+  // and apply them to <html> before React mounts so the first paint is
+  // already correct (no flash of mismatched theme).
   const themeScript = `
 (() => {
   try {
-    const key = "berliner-theme";
-    const stored = localStorage.getItem(key);
+    const tk = "berliner-theme";
+    const ak = "berliner-accent";
+    const stored = localStorage.getItem(tk);
     const theme = stored === "light" ? "light" : "dark";
     const root = document.documentElement;
-    if (theme === "dark") {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
-  } catch {}
+    if (theme === "dark") root.classList.add("dark");
+    else root.classList.remove("dark");
+    const accent = localStorage.getItem(ak);
+    const valid = ["green","blue","orange","violet","lemon","slate","red"];
+    root.dataset.accent = valid.indexOf(accent) >= 0 ? accent : "green";
+  } catch (e) {}
 })();
   `;
 
   return (
     <html
       lang="fr"
-      className={cn("dark", robotoSlab.variable, outfitHeading.variable, "font-sans")}
+      className={cn(
+        "dark",
+        geistSans.variable,
+        geistMono.variable,
+        geistHeading.variable,
+        "font-sans"
+      )}
+      data-accent="green"
       suppressHydrationWarning
     >
       <body className="font-sans antialiased">
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
