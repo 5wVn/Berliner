@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { supabase } from "@/shared/lib/supabase/client";
+import { getSupabaseClient } from "@/shared/lib/supabase/client";
 import { UserRole } from "@/shared/types/auth";
 
 type Profile = {
@@ -45,22 +45,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authError, setAuthError] = useState<string | null>(null);
   const [selectedRole, setSelectedRoleState] = useState<UserRole | null>(null);
 
-  const fetchProfile = useCallback(async (userId: string) => {
-    setAuthError(null);
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("id, establishment_id, email, role, first_name, last_name, phone")
-      .eq("id", userId)
-      .maybeSingle();
+  const supabase = useMemo(() => getSupabaseClient(), []);
 
-    if (error) {
-      setAuthError(error.message);
-      setProfile(null);
-      return;
-    }
+  const fetchProfile = useCallback(
+    async (userId: string) => {
+      setAuthError(null);
+      const { data, error } = await supabase
+        .from("profiles")
+        .select(
+          "id, establishment_id, email, role, first_name, last_name, phone"
+        )
+        .eq("id", userId)
+        .maybeSingle();
 
-    setProfile(data ?? null);
-  }, []);
+      if (error) {
+        setAuthError(error.message);
+        setProfile(null);
+        return;
+      }
+
+      setProfile(data ?? null);
+    },
+    [supabase]
+  );
 
   const refreshProfile = useCallback(async () => {
     // Re-read the session from Supabase first so that newly-set cookies
@@ -77,7 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     await fetchProfile(nextSession.user.id);
-  }, [fetchProfile]);
+  }, [fetchProfile, supabase]);
 
   const setSelectedRole = useCallback((role: UserRole | null) => {
     setSelectedRoleState(role);
@@ -133,7 +140,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       active = false;
       listener.subscription.unsubscribe();
     };
-  }, [fetchProfile, setSelectedRole]);
+  }, [fetchProfile, setSelectedRole, supabase]);
 
   useEffect(() => {
     if (!profile) return;
@@ -145,7 +152,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = useCallback(async () => {
     setSelectedRole(null);
     await supabase.auth.signOut();
-  }, [setSelectedRole]);
+  }, [setSelectedRole, supabase]);
 
   const value = useMemo<AuthContextValue>(
     () => ({
