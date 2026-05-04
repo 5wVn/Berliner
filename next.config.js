@@ -12,8 +12,21 @@ const withPWA = require("next-pwa")({
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  compress: true,
+  productionBrowserSourceMaps: false,
   images: {
-    formats: ["image/avif", "image/webp"]
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 60 * 60 * 24 * 30
+  },
+  experimental: {
+    // Tree-shake named imports from these libs (e.g. `import { IconX } from
+    // "@tabler/icons-react"` no longer pulls the whole barrel).
+    optimizePackageImports: [
+      "@tabler/icons-react",
+      "date-fns",
+      "radix-ui",
+      "@radix-ui/react-icons"
+    ]
   },
   async headers() {
     return [

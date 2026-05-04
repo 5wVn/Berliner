@@ -1,9 +1,11 @@
+import { Suspense } from "react"
 import { redirect } from "next/navigation"
 import { DashboardLayout } from "@/shared/components/layouts/DashboardLayout"
 import { PendingEnrollmentsWidget } from "../_components/PendingEnrollmentsWidget"
 import { DocumentRequestsWidget } from "../_components/DocumentRequestsWidget"
 import { AttendanceAlertsWidget } from "../_components/AttendanceAlertsWidget"
 import { StatsWidget } from "../_components/StatsWidget"
+import { Skeleton } from "@/shared/components/ui/Skeleton"
 import { createClient } from "@/shared/lib/supabase/server"
 import {
   getRegistrarAttendanceAlertsAction,
@@ -13,6 +15,50 @@ import {
 } from "@/actions/registrar"
 import { canAccessRole, roleToDashboardPath } from "@/shared/lib/roles"
 import type { UserRole } from "@/shared/types/auth"
+
+async function StatsSection() {
+  const result = await getRegistrarStatsAction()
+  return (
+    <StatsWidget
+      stats={result.ok ? result.data : null}
+      error={result.ok ? null : result.error.message}
+    />
+  )
+}
+
+async function PendingEnrollmentsSection() {
+  const result = await getRegistrarPendingEnrollmentsAction(5)
+  return (
+    <PendingEnrollmentsWidget
+      enrollments={result.ok ? result.data : null}
+      error={result.ok ? null : result.error.message}
+    />
+  )
+}
+
+async function DocumentRequestsSection() {
+  const result = await getRegistrarDocumentRequestsAction()
+  return (
+    <DocumentRequestsWidget
+      requests={result.ok ? result.data : null}
+      error={result.ok ? null : result.error.message}
+    />
+  )
+}
+
+async function AttendanceAlertsSection() {
+  const result = await getRegistrarAttendanceAlertsAction(5)
+  return (
+    <AttendanceAlertsWidget
+      alerts={result.ok ? result.data : null}
+      error={result.ok ? null : result.error.message}
+    />
+  )
+}
+
+function WidgetSkeleton() {
+  return <Skeleton className="h-48 w-full" />
+}
 
 export default async function RegistrarDashboardPage() {
   const supabase = await createClient()
@@ -37,25 +83,6 @@ export default async function RegistrarDashboardPage() {
 
   const userName = `${profile.first_name ?? ""} ${profile.last_name ?? ""}`.trim() || "Utilisateur"
 
-  const [statsResult, enrollmentsResult, requestsResult, alertsResult] = await Promise.all([
-    getRegistrarStatsAction(),
-    getRegistrarPendingEnrollmentsAction(5),
-    getRegistrarDocumentRequestsAction(),
-    getRegistrarAttendanceAlertsAction(5),
-  ])
-
-  const stats = statsResult.ok ? statsResult.data : null
-  const statsError = statsResult.ok ? null : statsResult.error.message
-
-  const enrollments = enrollmentsResult.ok ? enrollmentsResult.data : null
-  const enrollmentsError = enrollmentsResult.ok ? null : enrollmentsResult.error.message
-
-  const requests = requestsResult.ok ? requestsResult.data : null
-  const requestsError = requestsResult.ok ? null : requestsResult.error.message
-
-  const alerts = alertsResult.ok ? alertsResult.data : null
-  const alertsError = alertsResult.ok ? null : alertsResult.error.message
-
   return (
     <DashboardLayout
       role="registrar"
@@ -73,10 +100,18 @@ export default async function RegistrarDashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:gap-6">
-          <StatsWidget stats={stats} error={statsError} />
-          <PendingEnrollmentsWidget enrollments={enrollments} error={enrollmentsError} />
-          <DocumentRequestsWidget requests={requests} error={requestsError} />
-          <AttendanceAlertsWidget alerts={alerts} error={alertsError} />
+          <Suspense fallback={<WidgetSkeleton />}>
+            <StatsSection />
+          </Suspense>
+          <Suspense fallback={<WidgetSkeleton />}>
+            <PendingEnrollmentsSection />
+          </Suspense>
+          <Suspense fallback={<WidgetSkeleton />}>
+            <DocumentRequestsSection />
+          </Suspense>
+          <Suspense fallback={<WidgetSkeleton />}>
+            <AttendanceAlertsSection />
+          </Suspense>
         </div>
       </div>
     </DashboardLayout>
