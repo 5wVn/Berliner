@@ -17,7 +17,10 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
+    // black-translucent makes the iOS status bar overlay the page content
+    // (instead of a solid bar), so the Unicorn shader renders all the way
+    // to the very top of the screen in standalone / PWA mode.
+    statusBarStyle: "black-translucent",
     title: "Berliner",
   },
 };
@@ -26,6 +29,10 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
+  // viewportFit:cover lets the page extend under the iPhone notch / home
+  // indicator. Combined with the mobile pages' max(env(safe-area-inset-*),
+  // …) padding, the Unicorn shader renders all the way to the edges.
+  viewportFit: "cover",
   themeColor: "#0E0E10",
 };
 
