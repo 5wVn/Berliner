@@ -367,11 +367,15 @@ export function HomeClient({ state }: HomeClientProps) {
                         style={{
                           fontFamily: p.font.mono,
                           fontSize: 10,
-                          color: isFirst ? p.accent : p.ink3,
+                          color: isFirst
+                            ? p.accent
+                            : slot.when === "tomorrow"
+                            ? p.accentSecondary
+                            : p.ink3,
                           letterSpacing: 0.5,
                           textTransform: "uppercase",
                           marginBottom: 2,
-                          fontWeight: isFirst ? 600 : 400,
+                          fontWeight: isFirst || slot.when === "tomorrow" ? 600 : 400,
                         }}
                       >
                         {isFirst && slot.when === "today" ? "PROCHAIN" : dayLabel} ·{" "}
@@ -458,9 +462,12 @@ export function HomeClient({ state }: HomeClientProps) {
                     <Mono
                       style={{
                         fontSize: 10.5,
-                        color: p.accent,
+                        color: p.accentSecondaryInk,
+                        background: p.accentSecondarySoft,
                         fontWeight: 600,
                         letterSpacing: 0.4,
+                        padding: "3px 8px",
+                        borderRadius: 6,
                       }}
                     >
                       {relDue(it.date)}
