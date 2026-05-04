@@ -843,11 +843,37 @@ type EditProfilePanelProps = {
   onSaved?: () => void;
 };
 
+// The `profiles` DB table has no avatar column in this schema, so the
+// avatar lives entirely in localStorage keyed per user (the user id is
+// pulled in by the parent and merged into the initial state).
+const AVATAR_KEY = "berliner.avatar.v1";
+
+export function readLocalAvatar(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.localStorage.getItem(AVATAR_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function writeLocalAvatar(value: string | null) {
+  if (typeof window === "undefined") return;
+  try {
+    if (value) window.localStorage.setItem(AVATAR_KEY, value);
+    else window.localStorage.removeItem(AVATAR_KEY);
+  } catch {
+    // ignore quota
+  }
+}
+
 export function EditProfilePanel({ onClose, initial, onSaved }: EditProfilePanelProps) {
   const { palette: p } = useTheme();
   const [first, setFirst] = useState(initial.first_name);
   const [last, setLast] = useState(initial.last_name);
-  const [avatar, setAvatar] = useState<string | null>(initial.avatar_url);
+  const [avatar, setAvatar] = useState<string | null>(
+    initial.avatar_url ?? readLocalAvatar()
+  );
   const [isPending, startTransition] = useTransition();
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
@@ -875,12 +901,12 @@ export function EditProfilePanel({ onClose, initial, onSaved }: EditProfilePanel
       const r = await updateMyProfileAction({
         first_name: first,
         last_name: last,
-        avatar_url: avatar,
       });
       if (!r.ok) {
         setMsg({ kind: "err", text: r.error.message });
         return;
       }
+      writeLocalAvatar(avatar);
       setMsg({ kind: "ok", text: "Profil mis à jour" });
       onSaved?.();
       window.setTimeout(onClose, 700);

@@ -137,10 +137,13 @@ export async function getBerlinerStateAction(): Promise<ActionResponse<BerlinerS
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return unauthenticated();
 
-  // 1) Profile
+  // 1) Profile. The `profiles` table has no `avatar_url` or `class_id` column —
+  // we'll derive the class from `enrollments` below and store the avatar
+  // client-side (the prototype used a base64 avatar_url field that doesn't
+  // exist in this schema).
   const { data: profile, error: profileError } = await supabase
     .from('profiles')
-    .select('id, email, first_name, last_name, role, avatar_url, establishment_id, class_id')
+    .select('id, email, first_name, last_name, role, establishment_id')
     .eq('id', user.id)
     .maybeSingle();
   if (profileError) return internal(profileError.message);
@@ -187,6 +190,7 @@ export async function getBerlinerStateAction(): Promise<ActionResponse<BerlinerS
 
   // 4) Class names + class label for the current profile.
   let className: string | undefined;
+  let primaryClassId: string | undefined;
   const classNameById = new Map<string, string>();
   if (classIds.length > 0) {
     const { data: classRows, error: classesError } = await supabase
@@ -195,10 +199,11 @@ export async function getBerlinerStateAction(): Promise<ActionResponse<BerlinerS
       .in('id', classIds);
     if (classesError) return internal(classesError.message);
     (classRows ?? []).forEach((c) => classNameById.set(c.id, c.name));
-    if (isStudent && profile.class_id) {
-      className = classNameById.get(profile.class_id);
-    } else if (isStudent && classIds.length > 0) {
-      className = classNameById.get(classIds[0]);
+    // Students: use the first enrolled class as their "primary" class. Multi-
+    // class enrollment is rare and the UI only ever needs one label.
+    if (isStudent && classIds.length > 0) {
+      primaryClassId = classIds[0];
+      className = classNameById.get(primaryClassId);
     }
   }
 
@@ -504,9 +509,11 @@ export async function getBerlinerStateAction(): Promise<ActionResponse<BerlinerS
       first_name: profile.first_name ?? '',
       last_name: profile.last_name ?? '',
       role,
-      avatar_url: profile.avatar_url ?? null,
+      // Schema has no `avatar_url` column; clients persist avatars in
+      // localStorage instead. See EditProfilePanel.
+      avatar_url: null,
       establishment_id: profile.establishment_id ?? '',
-      class_id: profile.class_id ?? undefined,
+      class_id: primaryClassId,
       class_name: className,
     },
     establishmentName,

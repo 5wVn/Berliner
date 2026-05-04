@@ -17,6 +17,7 @@ import {
   NotifBellPill,
   NotificationsPanel,
   QRScanPanel,
+  readLocalAvatar,
   useNotificationFeed,
 } from "@/shared/components/berliner/Overlays";
 import { useRouter } from "next/navigation";
@@ -596,7 +597,7 @@ export function HomeClient({ state }: HomeClientProps) {
             first_name: state.profile.first_name,
             last_name: state.profile.last_name,
             email: state.profile.email,
-            avatar_url: state.profile.avatar_url,
+            avatar_url: state.profile.avatar_url ?? readLocalAvatar(),
           }}
           onSaved={() => router.refresh()}
         />

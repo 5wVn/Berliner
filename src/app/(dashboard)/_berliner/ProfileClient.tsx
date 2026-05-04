@@ -24,8 +24,10 @@ import { GlobalAnimations, Mono, ScrollFade } from "@/shared/design/primitives";
 import {
   EditProfilePanel,
   NotificationsPanel,
+  readLocalAvatar,
   useNotificationFeed,
 } from "@/shared/components/berliner/Overlays";
+import { useEffect } from "react";
 
 const ROLE_LABEL: Record<string, string> = {
   student: "Étudiant",
@@ -52,6 +54,12 @@ export function ProfileClient({ state }: { state: BerlinerState }) {
   const isStudent = state.profile.role === "student";
   const [overlay, setOverlay] = useState<null | "edit" | "notifs">(null);
   const [isPending, startTransition] = useTransition();
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  useEffect(() => {
+    // Re-read after the edit overlay closes so a freshly-picked avatar
+    // shows up without a full page refresh.
+    setAvatarUrl(readLocalAvatar());
+  }, [overlay]);
   const { unreadCount } = useNotificationFeed();
 
   const grades = isStudent
@@ -176,9 +184,9 @@ export function ProfileClient({ state }: { state: BerlinerState }) {
                 height: 88,
                 borderRadius: 44,
                 flexShrink: 0,
-                background: state.profile.avatar_url ? "#000" : p.accentSoft,
-                backgroundImage: state.profile.avatar_url
-                  ? `url(${state.profile.avatar_url})`
+                background: avatarUrl ? "#000" : p.accentSoft,
+                backgroundImage: avatarUrl
+                  ? `url(${avatarUrl})`
                   : "none",
                 backgroundSize: "cover",
                 backgroundPosition: "center",
@@ -194,7 +202,7 @@ export function ProfileClient({ state }: { state: BerlinerState }) {
                 cursor: "pointer",
               }}
             >
-              {!state.profile.avatar_url && initials.toUpperCase()}
+              {!avatarUrl && initials.toUpperCase()}
             </div>
             <div style={{ minWidth: 0, flex: 1 }}>
               <div
@@ -492,7 +500,7 @@ export function ProfileClient({ state }: { state: BerlinerState }) {
             first_name: state.profile.first_name,
             last_name: state.profile.last_name,
             email: state.profile.email,
-            avatar_url: state.profile.avatar_url,
+            avatar_url: avatarUrl,
           }}
           onSaved={() => router.refresh()}
         />

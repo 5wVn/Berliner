@@ -79,13 +79,13 @@ export async function markAttendanceAction(
 
 // ─────────────────────────────────────────────────────────────
 // Update own profile (any role).
-// Avatar is stored as a public URL; clients pass a base64 data
-// URL and we store it directly in `avatar_url` (column is text).
+// The `profiles` table has no `avatar_url` column in this schema,
+// so the avatar is stored client-side (localStorage). Only the
+// name fields hit the DB.
 // ─────────────────────────────────────────────────────────────
 export type ProfileUpdate = {
   first_name?: string;
   last_name?: string;
-  avatar_url?: string | null;
 };
 
 export async function updateMyProfileAction(
@@ -98,7 +98,6 @@ export async function updateMyProfileAction(
   const update: Record<string, unknown> = {};
   if (typeof patch.first_name === 'string') update.first_name = patch.first_name.trim();
   if (typeof patch.last_name === 'string') update.last_name = patch.last_name.trim();
-  if ('avatar_url' in patch) update.avatar_url = patch.avatar_url ?? null;
 
   if (Object.keys(update).length === 0) return { ok: true };
 
