@@ -1,5 +1,23 @@
-import { ProfileShell } from "@/shared/components/layouts/ProfileShell";
+import { redirect } from "next/navigation";
+import { getBerlinerStateAction } from "@/actions/berliner-state";
+import { canAccessRole, roleToDashboardPath } from "@/shared/lib/roles";
+import type { UserRole } from "@/shared/types/auth";
+import { ProfileClient } from "../../_berliner/ProfileClient";
+import { MobileLayout } from "../../_berliner/MobileLayout";
 
-export default function Page() {
-  return <ProfileShell requiredRole="teacher" backgroundVariant="teal" />;
+export default async function TeacherProfilePage() {
+  const result = await getBerlinerStateAction();
+  if (!result.ok) {
+    if (result.error.code === "UNAUTHENTICATED") redirect("/");
+    throw new Error(result.error.message);
+  }
+  const role = result.data.profile.role as UserRole;
+  if (!canAccessRole(role, "teacher")) {
+    redirect(roleToDashboardPath(role));
+  }
+  return (
+    <MobileLayout role="teacher">
+      <ProfileClient state={result.data} />
+    </MobileLayout>
+  );
 }

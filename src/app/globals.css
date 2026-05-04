@@ -9,10 +9,14 @@
   html {
     -webkit-tap-highlight-color: transparent;
     scroll-behavior: smooth;
-    color-scheme: dark;
+    color-scheme: light dark;
     background-color: var(--background);
     overflow-x: hidden;
     @apply font-sans;
+  }
+
+  html.dark {
+    color-scheme: dark;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -69,70 +73,187 @@
   }
 }
 
-:root,
-.dark {
-  --old-zinc: hsl(240 5.9% 10%);
-  --surface-2: hsl(240 3.7% 15.9%); /* raised surface inside old-zinc cards (forms, footers, nested) */
+/* ─────────────────────────────────────────────────────────────────
+ * LIGHT theme (default)
+ * Used by every page; mobile UI for student/teacher reads from these
+ * via the inline-style `pal()` palette plus a few CSS-variable hooks.
+ * ───────────────────────────────────────────────────────────────── */
+:root {
+  --old-zinc: oklch(0.985 0 0);
+  --surface-2: #F4F3EE;
 
-  /* Surfaces */
-  --background: hsl(0 0% 0%);
-  --foreground: oklch(0.98 0 0);          /* zinc-50 */
-  --card: var(--old-zinc);
-  --card-foreground: oklch(0.98 0 0);
-  --popover: var(--old-zinc);
-  --popover-foreground: oklch(0.98 0 0);
+  --background: #FAFAF7;
+  --foreground: #0E0E0F;
+  --card: #FFFFFF;
+  --card-foreground: #0E0E0F;
+  --popover: #FFFFFF;
+  --popover-foreground: #0E0E0F;
 
-  /* Primary (lime) */
-  --primary: oklch(0.84 0.21 130);
-  --primary-foreground: oklch(0.20 0.05 130);
-  --primary-shadow: oklch(0.55 0.16 130); /* darker lime — 3D button bottom */
+  --primary: oklch(0.72 0.16 145);
+  --primary-foreground: #FFFFFF;
+  --primary-shadow: oklch(0.55 0.13 145);
 
-  /* Secondary (zinc) */
-  --secondary: oklch(0.27 0 0);           /* zinc-800 */
-  --secondary-foreground: oklch(0.98 0 0);
-  --secondary-shadow: oklch(0.18 0 0);    /* zinc-950 */
+  --secondary: #F4F3EE;
+  --secondary-foreground: #0E0E0F;
+  --secondary-shadow: rgba(15,15,17,0.18);
 
-  /* Muted / accent */
-  --muted: oklch(0.27 0 0);               /* zinc-800 */
-  --muted-foreground: oklch(0.71 0 0);    /* zinc-400 */
-  --accent: oklch(0.27 0 0);
-  --accent-foreground: oklch(0.84 0.21 130);
+  --muted: #F4F3EE;
+  --muted-foreground: #7A7A80;
+  --accent: oklch(0.72 0.16 145);
+  --accent-foreground: oklch(0.32 0.06 145);
 
-  /* Semantic */
-  --destructive: oklch(0.71 0.18 25);     /* red-400 */
-  --destructive-foreground: oklch(0.98 0 0);
-  --warning: oklch(0.78 0.17 75);         /* amber-400 */
-  --warning-foreground: oklch(0.18 0 0);
+  --destructive: oklch(0.66 0.20 25);
+  --destructive-foreground: #FFFFFF;
+  --warning: oklch(0.78 0.16 75);
+  --warning-foreground: #1A1A1A;
 
-  /* Borders / inputs / focus */
-  --border: oklch(0.27 0 0);              /* zinc-800 */
-  --input: oklch(0.27 0 0);
-  --ring: oklch(0.84 0.21 130);
+  --border: rgba(15,15,17,0.08);
+  --input: rgba(15,15,17,0.08);
+  --ring: oklch(0.72 0.16 145);
 
-  /* Charts — mono lime ladder */
-  --chart-1: oklch(0.84 0.21 130);
-  --chart-2: oklch(0.72 0.18 130);
-  --chart-3: oklch(0.55 0.16 130);
-  --chart-4: oklch(0.42 0.13 130);
-  --chart-5: oklch(0.32 0.10 130);
+  --chart-1: oklch(0.72 0.16 145);
+  --chart-2: oklch(0.62 0.14 145);
+  --chart-3: oklch(0.55 0.13 145);
+  --chart-4: oklch(0.46 0.10 145);
+  --chart-5: oklch(0.38 0.08 145);
 
-  /* Sidebar */
-  --sidebar: var(--old-zinc);
-  --sidebar-foreground: oklch(0.98 0 0);
-  --sidebar-primary: oklch(0.84 0.21 130);
-  --sidebar-primary-foreground: oklch(0.20 0.05 130);
-  --sidebar-accent: oklch(0.27 0 0);
-  --sidebar-accent-foreground: oklch(0.84 0.21 130);
-  --sidebar-border: oklch(0.27 0 0);
-  --sidebar-ring: oklch(0.84 0.21 130);
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #0E0E0F;
+  --sidebar-primary: oklch(0.72 0.16 145);
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #F4F3EE;
+  --sidebar-accent-foreground: oklch(0.32 0.06 145);
+  --sidebar-border: rgba(15,15,17,0.08);
+  --sidebar-ring: oklch(0.72 0.16 145);
 
   --radius: 0.75rem;
   --bottom-nav-height: 5rem;
 }
 
+/* ─────────────────────────────────────────────────────────────────
+ * DARK theme — applied via `.dark` class on <html>.
+ * ───────────────────────────────────────────────────────────────── */
+.dark {
+  --old-zinc: hsl(240 5.9% 10%);
+  --surface-2: hsl(240 3.7% 15.9%);
+
+  --background: #0E0E10;
+  --foreground: #F5F5F2;
+  --card: #16161A;
+  --card-foreground: #F5F5F2;
+  --popover: #16161A;
+  --popover-foreground: #F5F5F2;
+
+  --primary: oklch(0.72 0.16 145);
+  --primary-foreground: #0E0E10;
+  --primary-shadow: oklch(0.55 0.13 145);
+
+  --secondary: #1D1D22;
+  --secondary-foreground: #F5F5F2;
+  --secondary-shadow: #08080A;
+
+  --muted: #23232A;
+  --muted-foreground: #8A8A92;
+  --accent: oklch(0.72 0.16 145);
+  --accent-foreground: oklch(0.32 0.06 145);
+
+  --destructive: oklch(0.66 0.20 25);
+  --destructive-foreground: #FFFFFF;
+  --warning: oklch(0.78 0.16 75);
+  --warning-foreground: #0E0E10;
+
+  --border: rgba(255,255,255,0.08);
+  --input: rgba(255,255,255,0.08);
+  --ring: oklch(0.72 0.16 145);
+
+  --chart-1: oklch(0.84 0.18 145);
+  --chart-2: oklch(0.72 0.16 145);
+  --chart-3: oklch(0.55 0.13 145);
+  --chart-4: oklch(0.42 0.10 145);
+  --chart-5: oklch(0.32 0.07 145);
+
+  --sidebar: #16161A;
+  --sidebar-foreground: #F5F5F2;
+  --sidebar-primary: oklch(0.72 0.16 145);
+  --sidebar-primary-foreground: #0E0E10;
+  --sidebar-accent: #23232A;
+  --sidebar-accent-foreground: oklch(0.84 0.18 145);
+  --sidebar-border: rgba(255,255,255,0.08);
+  --sidebar-ring: oklch(0.72 0.16 145);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+ * ACCENT swap — overrides --primary, --accent, --ring whenever a
+ * non-green accent is selected. Defaults to green when no attr.
+ *
+ * Each pair (light + dark) exposes the same accent OKLCH value because
+ * the prototype's accent palette is theme-independent.
+ * ───────────────────────────────────────────────────────────────── */
+:root[data-accent="blue"], .dark[data-accent="blue"] {
+  --primary: oklch(0.66 0.18 250);
+  --primary-shadow: oklch(0.50 0.14 250);
+  --accent: oklch(0.66 0.18 250);
+  --accent-foreground: oklch(0.32 0.08 250);
+  --ring: oklch(0.66 0.18 250);
+  --chart-1: oklch(0.66 0.18 250);
+  --chart-2: oklch(0.56 0.15 250);
+  --chart-3: oklch(0.46 0.12 250);
+}
+:root[data-accent="orange"], .dark[data-accent="orange"] {
+  --primary: oklch(0.72 0.18 50);
+  --primary-shadow: oklch(0.55 0.14 50);
+  --accent: oklch(0.72 0.18 50);
+  --accent-foreground: oklch(0.34 0.08 50);
+  --ring: oklch(0.72 0.18 50);
+  --chart-1: oklch(0.72 0.18 50);
+  --chart-2: oklch(0.62 0.15 50);
+  --chart-3: oklch(0.52 0.12 50);
+}
+:root[data-accent="violet"], .dark[data-accent="violet"] {
+  --primary: oklch(0.66 0.20 305);
+  --primary-shadow: oklch(0.50 0.16 305);
+  --accent: oklch(0.66 0.20 305);
+  --accent-foreground: oklch(0.32 0.08 305);
+  --ring: oklch(0.66 0.20 305);
+  --chart-1: oklch(0.66 0.20 305);
+  --chart-2: oklch(0.56 0.16 305);
+  --chart-3: oklch(0.46 0.12 305);
+}
+:root[data-accent="lemon"], .dark[data-accent="lemon"] {
+  --primary: oklch(0.86 0.18 105);
+  --primary-shadow: oklch(0.65 0.14 105);
+  --accent: oklch(0.86 0.18 105);
+  --accent-foreground: oklch(0.32 0.08 105);
+  --ring: oklch(0.86 0.18 105);
+  --chart-1: oklch(0.86 0.18 105);
+  --chart-2: oklch(0.72 0.15 105);
+  --chart-3: oklch(0.58 0.12 105);
+}
+:root[data-accent="slate"], .dark[data-accent="slate"] {
+  --primary: #c3cdff;
+  --primary-shadow: #8e9bd9;
+  --accent: #c3cdff;
+  --accent-foreground: oklch(0.32 0.04 260);
+  --ring: #c3cdff;
+  --chart-1: #c3cdff;
+  --chart-2: #a4b1ee;
+  --chart-3: #8e9bd9;
+}
+:root[data-accent="red"], .dark[data-accent="red"] {
+  --primary: oklch(0.66 0.22 15);
+  --primary-shadow: oklch(0.50 0.18 15);
+  --accent: oklch(0.66 0.22 15);
+  --accent-foreground: oklch(0.32 0.08 15);
+  --ring: oklch(0.66 0.22 15);
+  --chart-1: oklch(0.66 0.22 15);
+  --chart-2: oklch(0.56 0.18 15);
+  --chart-3: oklch(0.46 0.14 15);
+}
+
 @theme inline {
   --font-sans: var(--font-sans);
   --font-heading: var(--font-heading);
+  --font-mono: var(--font-mono);
 
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
