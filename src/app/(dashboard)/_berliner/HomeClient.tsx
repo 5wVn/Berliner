@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { type BerlinerState } from "@/actions/berliner-state";
 import { computeGlobalAverage } from "@/shared/lib/berliner-stats";
 import { useTheme } from "@/shared/design/ThemeProvider";
@@ -39,20 +39,31 @@ export function HomeClient({ state }: HomeClientProps) {
   const { unreadCount } = useNotificationFeed();
 
   const isStudent = state.profile.role === "student";
-  const today = localISO(new Date());
-  const tomorrow = localISO(new Date(Date.now() + 86400000));
+
+  // Time-dependent state must come from useEffect to avoid SSR/CSR
+  // hydration mismatches (server's clock may differ from client's at
+  // hydration time, flipping liveSlot / upcoming filters).
+  const [tick, setTick] = useState<number | null>(null);
+  useEffect(() => {
+    setTick(Date.now());
+    const id = setInterval(() => setTick(Date.now()), 60000);
+    return () => clearInterval(id);
+  }, []);
+  const today = tick != null ? localISO(new Date(tick)) : "";
+  const tomorrow = tick != null ? localISO(new Date(tick + 86400000)) : "";
 
   // ── Today's slots ────────────────────────────────────────────
   const todaySlots = useMemo(
-    () => state.sessions.filter((s) => s.start.startsWith(today)),
+    () => (today ? state.sessions.filter((s) => s.start.startsWith(today)) : []),
     [state.sessions, today]
   );
   const tomorrowSlots = useMemo(
-    () => state.sessions.filter((s) => s.start.startsWith(tomorrow)),
+    () =>
+      tomorrow ? state.sessions.filter((s) => s.start.startsWith(tomorrow)) : [],
     [state.sessions, tomorrow]
   );
 
-  const now = Date.now();
+  const now = tick ?? 0;
   const liveSlot = todaySlots.find((s) => {
     const start = new Date(s.start).getTime();
     const end = new Date(s.end).getTime();
@@ -117,6 +128,17 @@ export function HomeClient({ state }: HomeClientProps) {
   const headerKicker = isStudent
     ? `BERLINER · ${(state.profile.class_name || "ÉLÈVE").toUpperCase()}`
     : `BERLINER · PROF${state.profile.last_name ? " · " + state.profile.last_name.toUpperCase() : ""}`;
+
+  // Until the client clock is available, render an empty shell so the
+  // SSR HTML and the first client paint are byte-identical (avoids
+  // React #418 hydration mismatches around liveSlot / upcoming filters).
+  if (tick == null) {
+    return (
+      <PageShell p={p}>
+        <GlobalAnimations />
+      </PageShell>
+    );
+  }
 
   return (
     <PageShell p={p}>
