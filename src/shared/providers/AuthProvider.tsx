@@ -45,36 +45,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authError, setAuthError] = useState<string | null>(null);
   const [selectedRole, setSelectedRoleState] = useState<UserRole | null>(null);
 
-  const supabase = useMemo(() => getSupabaseClient(), []);
+  const fetchProfile = useCallback(async (userId: string) => {
+    setAuthError(null);
+    const { data, error } = await getSupabaseClient()
+      .from("profiles")
+      .select(
+        "id, establishment_id, email, role, first_name, last_name, phone"
+      )
+      .eq("id", userId)
+      .maybeSingle();
 
-  const fetchProfile = useCallback(
-    async (userId: string) => {
-      setAuthError(null);
-      const { data, error } = await supabase
-        .from("profiles")
-        .select(
-          "id, establishment_id, email, role, first_name, last_name, phone"
-        )
-        .eq("id", userId)
-        .maybeSingle();
+    if (error) {
+      setAuthError(error.message);
+      setProfile(null);
+      return;
+    }
 
-      if (error) {
-        setAuthError(error.message);
-        setProfile(null);
-        return;
-      }
-
-      setProfile(data ?? null);
-    },
-    [supabase]
-  );
+    setProfile(data ?? null);
+  }, []);
 
   const refreshProfile = useCallback(async () => {
     // Re-read the session from Supabase first so that newly-set cookies
     // (e.g. from a Server Action login) are picked up before fetching the
     // profile. Without this, refreshProfile would short-circuit whenever
     // the in-memory session is still null.
-    const { data } = await supabase.auth.getSession();
+    const { data } = await getSupabaseClient().auth.getSession();
     const nextSession = data.session ?? null;
     setSession(nextSession);
 
@@ -84,7 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     await fetchProfile(nextSession.user.id);
-  }, [fetchProfile, supabase]);
+  }, [fetchProfile]);
 
   const setSelectedRole = useCallback((role: UserRole | null) => {
     setSelectedRoleState(role);
@@ -106,6 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let active = true;
+    const supabase = getSupabaseClient();
 
     const loadSession = async () => {
       const { data } = await supabase.auth.getSession();
@@ -140,7 +136,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       active = false;
       listener.subscription.unsubscribe();
     };
-  }, [fetchProfile, setSelectedRole, supabase]);
+  }, [fetchProfile, setSelectedRole]);
 
   useEffect(() => {
     if (!profile) return;
@@ -151,8 +147,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = useCallback(async () => {
     setSelectedRole(null);
-    await supabase.auth.signOut();
-  }, [setSelectedRole, supabase]);
+    await getSupabaseClient().auth.signOut();
+  }, [setSelectedRole]);
 
   const value = useMemo<AuthContextValue>(
     () => ({
