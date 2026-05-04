@@ -123,7 +123,7 @@ export function OverlayShell({
         flexDirection: "column",
         zIndex: 60,
         animation: "berliner-slide-up 240ms ease-out",
-        paddingTop: "env(safe-area-inset-top)",
+        paddingTop: "max(env(safe-area-inset-top), 12px)",
       }}
     >
       <div
