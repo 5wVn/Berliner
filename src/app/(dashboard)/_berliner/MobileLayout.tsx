@@ -44,7 +44,7 @@ export function MobileLayout({
           zIndex: 1,
           // Respect the notch on PWA / iPhone, with a 12px minimum so the
           // header kicker never hugs the top edge in regular browsers.
-          paddingTop: "max(env(safe-area-inset-top), 12px)",
+          paddingTop: "calc(max(env(safe-area-inset-top), 12px) + 24px)",
           paddingBottom:
             "calc(var(--bottom-nav-height) + env(safe-area-inset-bottom))",
         }}
