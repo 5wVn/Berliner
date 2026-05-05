@@ -36,7 +36,7 @@ export function UpcomingSessionsWidget({
                 <div key={session.id} className="flex items-start gap-4 border-b-2 border-border pb-4 last:border-0 last:pb-0">
                   <div className="flex w-16 shrink-0 flex-col items-center justify-center rounded-xl border-2 border-border bg-surface-2 px-3 py-2 text-sm font-bold text-foreground">
                     <span className="text-lg">{format(startDate, "dd")}</span>
-                    <span className="text-[10px] uppercase text-muted-foreground">
+                    <span className="text-[12px] uppercase text-muted-foreground">
                       {format(startDate, "MMM", { locale: fr })}
                     </span>
                   </div>

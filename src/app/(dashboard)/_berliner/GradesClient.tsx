@@ -162,7 +162,7 @@ export function GradesClient({ state }: GradesClientProps) {
                 alignItems: "center",
                 justifyContent: "space-between",
                 fontFamily: p.font.mono,
-                fontSize: 11,
+                fontSize: 13,
                 color: p.ink3,
                 textTransform: "uppercase",
                 letterSpacing: 0.5,
@@ -205,13 +205,13 @@ export function GradesClient({ state }: GradesClientProps) {
                   ? globalAvg.toFixed(1)
                   : "—"}
               </Mono>
-              <Mono style={{ fontSize: 16, color: p.ink3, fontWeight: 500 }}>
+              <Mono style={{ fontSize: 18, color: p.ink3, fontWeight: 500 }}>
                 /20
               </Mono>
             </div>
             <Mono
               style={{
-                fontSize: 11,
+                fontSize: 13,
                 color: p.ink3,
                 marginTop: 6,
                 display: "block",
@@ -270,7 +270,7 @@ export function GradesClient({ state }: GradesClientProps) {
                       : "1px solid transparent",
                   borderRadius: 7,
                   fontFamily: p.font.mono,
-                  fontSize: 12,
+                  fontSize: 14,
                   fontWeight: 600,
                   letterSpacing: 0.4,
                   cursor: "pointer",
@@ -283,7 +283,7 @@ export function GradesClient({ state }: GradesClientProps) {
                     marginLeft: 6,
                     color: tk === term ? p.ink3 : p.ink4,
                     fontWeight: 500,
-                    fontSize: 11,
+                    fontSize: 13,
                   }}
                 >
                   {avg != null ? avg.toFixed(1) : "—"}
@@ -312,7 +312,7 @@ export function GradesClient({ state }: GradesClientProps) {
                 alignItems: "center",
                 justifyContent: "space-between",
                 fontFamily: p.font.mono,
-                fontSize: 10.5,
+                fontSize: 12.5,
                 letterSpacing: 0.6,
                 textTransform: "uppercase",
                 color: p.ink3,
@@ -359,7 +359,7 @@ export function GradesClient({ state }: GradesClientProps) {
                   !subjFilter ? (p.dark ? p.border : p.ink) : p.border
                 }`,
                 fontFamily: p.font.mono,
-                fontSize: 10.5,
+                fontSize: 12.5,
                 fontWeight: 600,
                 letterSpacing: 0.3,
                 cursor: "pointer",
@@ -384,7 +384,7 @@ export function GradesClient({ state }: GradesClientProps) {
                     color: active ? "#fff" : p.ink3,
                     border: `1px solid ${active ? c : p.border}`,
                     fontFamily: p.font.mono,
-                    fontSize: 10.5,
+                    fontSize: 12.5,
                     fontWeight: 500,
                     letterSpacing: 0.3,
                     cursor: "pointer",
@@ -455,10 +455,10 @@ export function GradesClient({ state }: GradesClientProps) {
                     }}
                   />
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 14, fontWeight: 500 }}>
+                    <div style={{ fontSize: 16, fontWeight: 500 }}>
                       {subj.name}
                     </div>
-                    <Mono style={{ fontSize: 11, color: p.ink3 }}>
+                    <Mono style={{ fontSize: 13, color: p.ink3 }}>
                       {s.count} note{s.count > 1 ? "s" : ""} · coef {subj.coef}
                     </Mono>
                   </div>
@@ -468,7 +468,7 @@ export function GradesClient({ state }: GradesClientProps) {
                   <div style={{ textAlign: "right", minWidth: 52 }}>
                     <Mono
                       style={{
-                        fontSize: 18,
+                        fontSize: 20,
                         fontWeight: 600,
                         color: p.ink,
                         letterSpacing: -0.4,
@@ -476,7 +476,7 @@ export function GradesClient({ state }: GradesClientProps) {
                     >
                       {s.avg != null ? s.avg.toFixed(1) : "—"}
                     </Mono>
-                    <Mono style={{ fontSize: 10, color: p.ink4 }}>/20</Mono>
+                    <Mono style={{ fontSize: 12, color: p.ink4 }}>/20</Mono>
                   </div>
                 </div>
               </div>
@@ -512,7 +512,7 @@ export function GradesClient({ state }: GradesClientProps) {
               onClick={() => setDetailSubjectId(null)}
               style={{
                 fontFamily: p.font.mono,
-                fontSize: 12,
+                fontSize: 14,
                 color: p.ink3,
                 cursor: "pointer",
                 letterSpacing: 0.4,
@@ -531,7 +531,7 @@ export function GradesClient({ state }: GradesClientProps) {
             />
             <Mono
               style={{
-                fontSize: 11,
+                fontSize: 13,
                 color: p.ink3,
                 textTransform: "uppercase",
                 letterSpacing: 0.5,
@@ -555,7 +555,7 @@ export function GradesClient({ state }: GradesClientProps) {
             </div>
             <Mono
               style={{
-                fontSize: 11,
+                fontSize: 13,
                 color: p.ink3,
                 letterSpacing: 0.4,
                 textTransform: "uppercase",
@@ -608,7 +608,7 @@ export function GradesClient({ state }: GradesClientProps) {
                 >
                   <Mono
                     style={{
-                      fontSize: 9.5,
+                      fontSize: 11.5,
                       color: p.ink4,
                       letterSpacing: 0.5,
                       textTransform: "uppercase",
@@ -644,7 +644,7 @@ export function GradesClient({ state }: GradesClientProps) {
               >
                 <Mono
                   style={{
-                    fontSize: 10.5,
+                    fontSize: 12.5,
                     color: p.ink3,
                     letterSpacing: 0.6,
                     textTransform: "uppercase",
@@ -698,7 +698,7 @@ export function GradesClient({ state }: GradesClientProps) {
                     >
                       <Mono
                         style={{
-                          fontSize: 10,
+                          fontSize: 12,
                           color: p.ink3,
                           letterSpacing: 0.4,
                           width: 44,
@@ -708,7 +708,7 @@ export function GradesClient({ state }: GradesClientProps) {
                       </Mono>
                       <Mono
                         style={{
-                          fontSize: 11,
+                          fontSize: 13,
                           color: p.ink2,
                           textTransform: "uppercase",
                           letterSpacing: 0.4,
@@ -719,7 +719,7 @@ export function GradesClient({ state }: GradesClientProps) {
                       </Mono>
                       <Mono
                         style={{
-                          fontSize: 16,
+                          fontSize: 18,
                           fontWeight: 600,
                           letterSpacing: -0.3,
                           color:
@@ -732,7 +732,7 @@ export function GradesClient({ state }: GradesClientProps) {
                       >
                         {r.score}
                       </Mono>
-                      <Mono style={{ fontSize: 11, color: p.ink4 }}>
+                      <Mono style={{ fontSize: 13, color: p.ink4 }}>
                         /{r.maxScore}
                       </Mono>
                       {!isStudent && (
@@ -899,7 +899,7 @@ function GradeChart({
           justifyContent: "space-between",
           marginTop: 4,
           fontFamily: p.font.mono,
-          fontSize: 9,
+          fontSize: 11,
           color: p.ink4,
           letterSpacing: 0.3,
         }}
@@ -1006,7 +1006,7 @@ function TeacherGradeEntry({
             style={{
               padding: "6px 10px",
               borderRadius: 7,
-              fontSize: 12,
+              fontSize: 14,
               background: studentId === st.id ? p.accent : p.surface,
               color:
                 studentId === st.id ? (p.dark ? "#0E0E10" : "#FFF") : p.ink2,
@@ -1031,7 +1031,7 @@ function TeacherGradeEntry({
             border: `1px solid ${adding ? p.accent : p.border}`,
             borderRadius: 9,
             fontFamily: p.font.mono,
-            fontSize: 11,
+            fontSize: 13,
             color: adding ? (p.dark ? "#0E0E10" : "#FFF") : p.ink2,
             fontWeight: 600,
             letterSpacing: 0.4,
@@ -1050,7 +1050,7 @@ function TeacherGradeEntry({
             border: `1px dashed ${p.border}`,
             borderRadius: 9,
             fontFamily: p.font.mono,
-            fontSize: 11,
+            fontSize: 13,
             color: p.ink2,
             fontWeight: 600,
             letterSpacing: 0.4,
@@ -1079,7 +1079,7 @@ function TeacherGradeEntry({
                 style={{
                   padding: "4px 8px",
                   borderRadius: 6,
-                  fontSize: 11,
+                  fontSize: 13,
                   background:
                     classSubjectId === cs.id
                       ? p.accent
@@ -1111,7 +1111,7 @@ function TeacherGradeEntry({
               borderRadius: 6,
               padding: "6px 10px",
               fontFamily: p.font.sans,
-              fontSize: 13,
+              fontSize: 15,
               color: p.ink,
               outline: "none",
               marginBottom: 8,
@@ -1133,12 +1133,12 @@ function TeacherGradeEntry({
                 borderRadius: 6,
                 padding: "6px 8px",
                 fontFamily: p.font.mono,
-                fontSize: 13,
+                fontSize: 15,
                 color: p.ink,
                 outline: "none",
               }}
             />
-            <Mono style={{ color: p.ink3, fontSize: 13 }}>
+            <Mono style={{ color: p.ink3, fontSize: 15 }}>
               / {maxScore}
             </Mono>
             <input
@@ -1153,7 +1153,7 @@ function TeacherGradeEntry({
                 borderRadius: 6,
                 padding: "6px 8px",
                 fontFamily: p.font.mono,
-                fontSize: 12,
+                fontSize: 14,
                 color: p.ink3,
                 outline: "none",
               }}
@@ -1170,7 +1170,7 @@ function TeacherGradeEntry({
                 borderRadius: 6,
                 padding: "6px 14px",
                 fontFamily: p.font.mono,
-                fontSize: 11,
+                fontSize: 13,
                 fontWeight: 600,
                 cursor: isPending ? "wait" : "pointer",
                 letterSpacing: 0.4,
@@ -1214,7 +1214,7 @@ function DeleteGradeButton({
         marginLeft: 4,
         background: p.dark ? p.surface2 : p.chip,
         color: p.ink3,
-        fontSize: 12,
+        fontSize: 14,
         fontFamily: p.font.mono,
         display: "flex",
         alignItems: "center",

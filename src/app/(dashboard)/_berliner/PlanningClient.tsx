@@ -129,7 +129,7 @@ export function PlanningClient({ state }: PlanningClientProps) {
           <span
             style={{
               fontFamily: p.font.mono,
-              fontSize: 11,
+              fontSize: 13,
               color: p.ink3,
               letterSpacing: 0.5,
               textTransform: "uppercase",
@@ -156,7 +156,7 @@ export function PlanningClient({ state }: PlanningClientProps) {
                 alignItems: "center",
                 justifyContent: "center",
                 color: p.ink,
-                fontSize: 14,
+                fontSize: 16,
                 fontWeight: 600,
                 lineHeight: 1,
                 borderRight: `1px solid ${p.border}`,
@@ -168,7 +168,7 @@ export function PlanningClient({ state }: PlanningClientProps) {
               style={{
                 padding: "6px 12px",
                 fontFamily: p.font.mono,
-                fontSize: 10.5,
+                fontSize: 12.5,
                 fontWeight: 600,
                 color: p.ink2,
                 letterSpacing: 0.5,
@@ -205,7 +205,7 @@ export function PlanningClient({ state }: PlanningClientProps) {
                 alignItems: "center",
                 justifyContent: "center",
                 color: p.ink,
-                fontSize: 14,
+                fontSize: 16,
                 fontWeight: 600,
                 lineHeight: 1,
               }}
@@ -227,7 +227,7 @@ export function PlanningClient({ state }: PlanningClientProps) {
           </div>
           <div
             style={{
-              fontSize: 14,
+              fontSize: 16,
               color: p.ink3,
               fontWeight: 500,
               textTransform: "capitalize",
@@ -240,7 +240,7 @@ export function PlanningClient({ state }: PlanningClientProps) {
           style={{
             display: "block",
             marginTop: 6,
-            fontSize: 11.5,
+            fontSize: 13.5,
             color: p.ink3,
             letterSpacing: 0.3,
           }}
@@ -304,7 +304,7 @@ export function PlanningClient({ state }: PlanningClientProps) {
               <div
                 style={{
                   fontFamily: p.font.mono,
-                  fontSize: 9.5,
+                  fontSize: 11.5,
                   letterSpacing: 0.6,
                   textTransform: "uppercase",
                   opacity: on ? 0.85 : 0.6,
@@ -312,7 +312,7 @@ export function PlanningClient({ state }: PlanningClientProps) {
               >
                 {w.full}
               </div>
-              <Mono style={{ fontSize: 18, fontWeight: 600, lineHeight: 1 }}>
+              <Mono style={{ fontSize: 20, fontWeight: 600, lineHeight: 1 }}>
                 {w.n}
               </Mono>
               <div
@@ -374,7 +374,7 @@ export function PlanningClient({ state }: PlanningClientProps) {
                   gap: 8,
                   marginBottom: 6,
                   fontFamily: p.font.mono,
-                  fontSize: 10.5,
+                  fontSize: 12.5,
                   fontWeight: 600,
                   letterSpacing: 0.5,
                   textTransform: "uppercase",
@@ -405,7 +405,7 @@ export function PlanningClient({ state }: PlanningClientProps) {
               </div>
               <Mono
                 style={{
-                  fontSize: 11.5,
+                  fontSize: 13.5,
                   color: p.ink3,
                   marginTop: 4,
                   display: "block",
@@ -424,7 +424,7 @@ export function PlanningClient({ state }: PlanningClientProps) {
                       background: p.sem.ok + "18",
                       border: `1px solid ${p.sem.ok}40`,
                       fontFamily: p.font.mono,
-                      fontSize: 11,
+                      fontSize: 13,
                       fontWeight: 600,
                       color: p.sem.ok,
                       letterSpacing: 0.5,
@@ -451,7 +451,7 @@ export function PlanningClient({ state }: PlanningClientProps) {
                       borderRadius: 10,
                       cursor: "pointer",
                       fontFamily: p.font.mono,
-                      fontSize: 12,
+                      fontSize: 14,
                       fontWeight: 700,
                       letterSpacing: 0.6,
                       textAlign: "center",
@@ -511,7 +511,7 @@ export function PlanningClient({ state }: PlanningClientProps) {
                   >
                     <Mono
                       style={{
-                        fontSize: 14,
+                        fontSize: 16,
                         fontWeight: 600,
                         color: p.ink,
                         lineHeight: 1.1,
@@ -522,7 +522,7 @@ export function PlanningClient({ state }: PlanningClientProps) {
                     </Mono>
                     <Mono
                       style={{
-                        fontSize: 10.5,
+                        fontSize: 12.5,
                         color: p.ink4,
                         letterSpacing: 0.3,
                         marginTop: 2,
@@ -542,7 +542,7 @@ export function PlanningClient({ state }: PlanningClientProps) {
                   >
                     <div
                       style={{
-                        fontSize: 14.5,
+                        fontSize: 16.5,
                         fontWeight: 500,
                         lineHeight: 1.2,
                         whiteSpace: "nowrap",
@@ -554,7 +554,7 @@ export function PlanningClient({ state }: PlanningClientProps) {
                     </div>
                     <Mono
                       style={{
-                        fontSize: 10.5,
+                        fontSize: 12.5,
                         color: p.ink3,
                         letterSpacing: 0.3,
                         marginTop: 2,
@@ -589,7 +589,7 @@ export function PlanningClient({ state }: PlanningClientProps) {
                     {done && (
                       <Mono
                         style={{
-                          fontSize: 10,
+                          fontSize: 12,
                           color: p.ink4,
                           letterSpacing: 0.4,
                         }}
@@ -600,7 +600,7 @@ export function PlanningClient({ state }: PlanningClientProps) {
                     {!done && present && (
                       <Mono
                         style={{
-                          fontSize: 10,
+                          fontSize: 12,
                           color: p.sem.ok,
                           fontWeight: 700,
                           letterSpacing: 0.4,
