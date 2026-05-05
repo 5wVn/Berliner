@@ -54,6 +54,13 @@ export default function RootLayout({
   // Inline pre-hydration script: read theme + accent from localStorage
   // and apply them to <html> before React mounts so the first paint is
   // already correct (no flash of mismatched theme).
+  //
+  // Also installs a global handler that silences the benign
+  // "signal is aborted without reason" AbortError unhandled rejections
+  // emitted by Next.js prefetch + the next-pwa Workbox runtime when
+  // the user navigates away from a route mid-fetch. These are noise,
+  // not real errors, and we don't trigger any AbortControllers in
+  // application code (verified: zero `AbortController` usages in src/).
   const themeScript = `
 (() => {
   try {
@@ -67,6 +74,12 @@ export default function RootLayout({
     const accent = localStorage.getItem(ak);
     const valid = ["green","blue","orange","violet","lemon","slate","red"];
     root.dataset.accent = valid.indexOf(accent) >= 0 ? accent : "red";
+  } catch (e) {}
+  try {
+    window.addEventListener("unhandledrejection", function (e) {
+      var r = e && e.reason;
+      if (r && r.name === "AbortError") e.preventDefault();
+    });
   } catch (e) {}
 })();
   `;
