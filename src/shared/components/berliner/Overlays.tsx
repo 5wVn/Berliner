@@ -139,7 +139,7 @@ export function OverlayShell({
           onClick={onClose}
           style={{
             fontFamily: p.font.mono,
-            fontSize: 12,
+            fontSize: 14,
             color: p.ink3,
             cursor: "pointer",
             letterSpacing: 0.4,
@@ -151,7 +151,7 @@ export function OverlayShell({
         <div style={{ flex: 1 }} />
         <Mono
           style={{
-            fontSize: 11,
+            fontSize: 13,
             color: p.ink3,
             textTransform: "uppercase",
             letterSpacing: 0.5,
@@ -242,7 +242,7 @@ export function NotificationsPanel({ onClose, onNav }: NotificationsPanelProps) 
               border: `1px solid ${p.border}`,
               borderRadius: 9,
               fontFamily: p.font.mono,
-              fontSize: 11,
+              fontSize: 13,
               fontWeight: 600,
               color: p.ink2,
               letterSpacing: 0.4,
@@ -261,7 +261,7 @@ export function NotificationsPanel({ onClose, onNav }: NotificationsPanelProps) 
             textAlign: "center",
             color: p.ink3,
             fontFamily: p.font.mono,
-            fontSize: 11,
+            fontSize: 13,
             letterSpacing: 0.4,
             border: `1px dashed ${p.border}`,
             borderRadius: 12,
@@ -320,7 +320,7 @@ export function NotificationsPanel({ onClose, onNav }: NotificationsPanelProps) 
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: 14,
+                    fontSize: 16,
                     flexShrink: 0,
                   }}
                 >
@@ -337,7 +337,7 @@ export function NotificationsPanel({ onClose, onNav }: NotificationsPanelProps) 
                   >
                     <Mono
                       style={{
-                        fontSize: 9.5,
+                        fontSize: 11.5,
                         color: g.color,
                         letterSpacing: 0.5,
                         padding: "1px 5px",
@@ -350,7 +350,7 @@ export function NotificationsPanel({ onClose, onNav }: NotificationsPanelProps) 
                     </Mono>
                     <Mono
                       style={{
-                        fontSize: 10,
+                        fontSize: 12,
                         color: p.ink4,
                         letterSpacing: 0.3,
                       }}
@@ -360,7 +360,7 @@ export function NotificationsPanel({ onClose, onNav }: NotificationsPanelProps) 
                   </div>
                   <div
                     style={{
-                      fontSize: 13.5,
+                      fontSize: 15.5,
                       fontWeight: 500,
                       color: read ? p.ink2 : p.ink,
                       lineHeight: 1.3,
@@ -371,7 +371,7 @@ export function NotificationsPanel({ onClose, onNav }: NotificationsPanelProps) 
                   {n.meta && (
                     <Mono
                       style={{
-                        fontSize: 10.5,
+                        fontSize: 12.5,
                         color: p.ink3,
                         marginTop: 2,
                         display: "block",
@@ -466,7 +466,7 @@ export function QRScanPanel({ onClose, sessionId, sessionTitle }: QRScanPanelPro
         ) : (
           <>
             Scanner le QR{" "}
-            <span style={{ color: p.ink3, fontWeight: 500, fontSize: 18 }}>
+            <span style={{ color: p.ink3, fontWeight: 500, fontSize: 20 }}>
               du cours
             </span>
           </>
@@ -476,7 +476,7 @@ export function QRScanPanel({ onClose, sessionId, sessionTitle }: QRScanPanelPro
     >
       <Mono
         style={{
-          fontSize: 11,
+          fontSize: 13,
           color: p.ink3,
           letterSpacing: 0.4,
           display: "block",
@@ -623,7 +623,7 @@ export function QRScanPanel({ onClose, sessionId, sessionTitle }: QRScanPanelPro
               WebkitBackdropFilter: "blur(8px)",
               color: "#fff",
               fontFamily: p.font.mono,
-              fontSize: 11,
+              fontSize: 13,
               display: "flex",
               alignItems: "center",
               gap: 8,
@@ -686,7 +686,7 @@ export function QRScanPanel({ onClose, sessionId, sessionTitle }: QRScanPanelPro
         >
           <Mono
             style={{
-              fontSize: 10.5,
+              fontSize: 12.5,
               color: p.ink3,
               letterSpacing: 0.5,
               textTransform: "uppercase",
@@ -727,7 +727,7 @@ export function QRScanPanel({ onClose, sessionId, sessionTitle }: QRScanPanelPro
               color: code.length === 6 ? (p.dark ? "#0E0E10" : "#FFF") : p.ink3,
               borderRadius: 9,
               fontFamily: p.font.mono,
-              fontSize: 12,
+              fontSize: 14,
               fontWeight: 600,
               letterSpacing: 0.5,
               cursor: code.length === 6 ? "pointer" : "not-allowed",
@@ -748,7 +748,7 @@ export function QRScanPanel({ onClose, sessionId, sessionTitle }: QRScanPanelPro
             background: p.sem.bad + "20",
             color: p.sem.bad,
             fontFamily: p.font.mono,
-            fontSize: 11,
+            fontSize: 13,
             letterSpacing: 0.3,
           }}
         >
@@ -767,7 +767,7 @@ export function QRScanPanel({ onClose, sessionId, sessionTitle }: QRScanPanelPro
             border: `1px solid ${p.border}`,
             borderRadius: 9,
             fontFamily: p.font.mono,
-            fontSize: 11,
+            fontSize: 13,
             color: p.ink3,
             letterSpacing: 0.4,
             cursor: "pointer",
@@ -787,7 +787,7 @@ export function QRScanPanel({ onClose, sessionId, sessionTitle }: QRScanPanelPro
             border: `1px solid ${p.border}`,
             borderRadius: 9,
             fontFamily: p.font.mono,
-            fontSize: 11,
+            fontSize: 13,
             color: p.ink3,
             letterSpacing: 0.4,
             cursor: "pointer",
@@ -808,7 +808,7 @@ export function QRScanPanel({ onClose, sessionId, sessionTitle }: QRScanPanelPro
             color: p.dark ? "#0E0E10" : "#FFF",
             borderRadius: 9,
             fontFamily: p.font.mono,
-            fontSize: 12,
+            fontSize: 14,
             fontWeight: 600,
             letterSpacing: 0.5,
             cursor: "pointer",
@@ -933,7 +933,7 @@ export function EditProfilePanel({ onClose, initial, onSaved }: EditProfilePanel
               border: `1px solid ${p.border}`,
               borderRadius: 9,
               fontFamily: p.font.mono,
-              fontSize: 11,
+              fontSize: 13,
               color: p.ink2,
               fontWeight: 600,
               letterSpacing: 0.5,
@@ -952,7 +952,7 @@ export function EditProfilePanel({ onClose, initial, onSaved }: EditProfilePanel
               color: isPending ? p.ink3 : p.dark ? "#0E0E10" : "#FFF",
               borderRadius: 9,
               fontFamily: p.font.mono,
-              fontSize: 11,
+              fontSize: 13,
               fontWeight: 600,
               letterSpacing: 0.5,
               cursor: isPending ? "wait" : "pointer",
@@ -1000,10 +1000,10 @@ export function EditProfilePanel({ onClose, initial, onSaved }: EditProfilePanel
           {!avatar && (initials.toUpperCase() || "?")}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 2 }}>Photo</div>
+          <div style={{ fontSize: 16, fontWeight: 500, marginBottom: 2 }}>Photo</div>
           <Mono
             style={{
-              fontSize: 10.5,
+              fontSize: 12.5,
               color: p.ink3,
               letterSpacing: 0.4,
               display: "block",
@@ -1021,7 +1021,7 @@ export function EditProfilePanel({ onClose, initial, onSaved }: EditProfilePanel
                 border: `1px solid ${p.border}`,
                 borderRadius: 6,
                 fontFamily: p.font.mono,
-                fontSize: 10.5,
+                fontSize: 12.5,
                 fontWeight: 600,
                 color: p.ink2,
                 cursor: "pointer",
@@ -1039,7 +1039,7 @@ export function EditProfilePanel({ onClose, initial, onSaved }: EditProfilePanel
                   border: `1px solid ${p.border}`,
                   borderRadius: 6,
                   fontFamily: p.font.mono,
-                  fontSize: 10.5,
+                  fontSize: 12.5,
                   fontWeight: 500,
                   color: p.sem.bad,
                   cursor: "pointer",
@@ -1083,7 +1083,7 @@ export function EditProfilePanel({ onClose, initial, onSaved }: EditProfilePanel
             background: msg.kind === "err" ? p.sem.bad + "20" : p.sem.ok + "20",
             color: msg.kind === "err" ? p.sem.bad : p.sem.ok,
             fontFamily: p.font.mono,
-            fontSize: 11,
+            fontSize: 13,
             letterSpacing: 0.3,
           }}
         >
@@ -1115,7 +1115,7 @@ function Field({
     <div style={{ marginBottom: 10 }}>
       <Mono
         style={{
-          fontSize: 9.5,
+          fontSize: 11.5,
           color: p.ink3,
           letterSpacing: 0.5,
           textTransform: "uppercase",
@@ -1138,7 +1138,7 @@ function Field({
           borderRadius: 9,
           padding: "11px 12px",
           fontFamily: p.font.sans,
-          fontSize: 14,
+          fontSize: 16,
           color: disabled ? p.ink3 : p.ink,
           outline: "none",
           opacity: disabled ? 0.7 : 1,
@@ -1287,7 +1287,7 @@ export function BulkImportPanel({
       onClose={onClose}
       footer={
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <Mono style={{ fontSize: 10.5, color: p.ink3, letterSpacing: 0.3 }}>
+          <Mono style={{ fontSize: 12.5, color: p.ink3, letterSpacing: 0.3 }}>
             <span style={{ color: p.sem.ok, fontWeight: 600 }}>{valid.length}</span> ok
             <span style={{ margin: "0 6px", opacity: 0.4 }}>·</span>
             <span style={{ color: p.sem.bad, fontWeight: 600 }}>{errors.length}</span> ko
@@ -1304,7 +1304,7 @@ export function BulkImportPanel({
                 busy || valid.length === 0 ? p.ink3 : p.dark ? "#0E0E10" : "#FFF",
               borderRadius: 9,
               fontFamily: p.font.mono,
-              fontSize: 11,
+              fontSize: 13,
               fontWeight: 600,
               letterSpacing: 0.5,
               cursor: busy || valid.length === 0 ? "not-allowed" : "pointer",
@@ -1322,7 +1322,7 @@ export function BulkImportPanel({
     >
       <Mono
         style={{
-          fontSize: 10.5,
+          fontSize: 12.5,
           color: p.ink3,
           letterSpacing: 0.4,
           display: "block",
@@ -1335,7 +1335,7 @@ export function BulkImportPanel({
 
       <Mono
         style={{
-          fontSize: 9.5,
+          fontSize: 11.5,
           color: p.ink3,
           letterSpacing: 0.5,
           textTransform: "uppercase",
@@ -1353,7 +1353,7 @@ export function BulkImportPanel({
             style={{
               padding: "5px 10px",
               borderRadius: 6,
-              fontSize: 11,
+              fontSize: 13,
               background:
                 classSubjectId === s.classSubjectId
                   ? p.accent
@@ -1378,7 +1378,7 @@ export function BulkImportPanel({
 
       <Mono
         style={{
-          fontSize: 9.5,
+          fontSize: 11.5,
           color: p.ink3,
           letterSpacing: 0.5,
           textTransform: "uppercase",
@@ -1399,7 +1399,7 @@ export function BulkImportPanel({
           borderRadius: 9,
           padding: "9px 11px",
           fontFamily: p.font.sans,
-          fontSize: 13,
+          fontSize: 15,
           color: p.ink,
           outline: "none",
           marginBottom: 12,
@@ -1417,7 +1417,7 @@ export function BulkImportPanel({
           borderRadius: 9,
           padding: "10px 12px",
           fontFamily: p.font.mono,
-          fontSize: 12,
+          fontSize: 14,
           lineHeight: 1.5,
           color: p.ink,
           outline: "none",
@@ -1427,7 +1427,7 @@ export function BulkImportPanel({
 
       <Mono
         style={{
-          fontSize: 10,
+          fontSize: 12,
           color: p.ink4,
           letterSpacing: 0.4,
           display: "block",
@@ -1450,7 +1450,7 @@ export function BulkImportPanel({
               padding: 14,
               color: p.ink4,
               fontFamily: p.font.mono,
-              fontSize: 11,
+              fontSize: 13,
               textAlign: "center",
             }}
           >
@@ -1470,11 +1470,11 @@ export function BulkImportPanel({
               background: r.error ? p.sem.bad + "0d" : "transparent",
             }}
           >
-            <Mono style={{ fontSize: 10, color: p.ink4, width: 16 }}>{r.line}</Mono>
+            <Mono style={{ fontSize: 12, color: p.ink4, width: 16 }}>{r.line}</Mono>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div
                 style={{
-                  fontSize: 13,
+                  fontSize: 15,
                   fontWeight: 500,
                   color: r.error ? p.ink3 : p.ink,
                   lineHeight: 1.2,
@@ -1486,7 +1486,7 @@ export function BulkImportPanel({
                 {r.matchName ?? r.name}
               </div>
               {r.error && (
-                <Mono style={{ fontSize: 10, color: p.sem.bad, letterSpacing: 0.3 }}>
+                <Mono style={{ fontSize: 12, color: p.sem.bad, letterSpacing: 0.3 }}>
                   ⚠ {r.error}
                 </Mono>
               )}
@@ -1494,7 +1494,7 @@ export function BulkImportPanel({
             {!r.error && r.note !== null && (
               <Mono
                 style={{
-                  fontSize: 14,
+                  fontSize: 16,
                   fontWeight: 600,
                   letterSpacing: -0.3,
                   color:
@@ -1504,7 +1504,7 @@ export function BulkImportPanel({
                 {r.note}
               </Mono>
             )}
-            {!r.error && <Mono style={{ fontSize: 10, color: p.ink4 }}>/{r.max}</Mono>}
+            {!r.error && <Mono style={{ fontSize: 12, color: p.ink4 }}>/{r.max}</Mono>}
           </div>
         ))}
       </div>
@@ -1518,7 +1518,7 @@ export function BulkImportPanel({
             background: result.kind === "err" ? p.sem.bad + "20" : p.sem.ok + "20",
             color: result.kind === "err" ? p.sem.bad : p.sem.ok,
             fontFamily: p.font.mono,
-            fontSize: 11,
+            fontSize: 13,
             letterSpacing: 0.3,
           }}
         >
@@ -1566,7 +1566,7 @@ export function NotifBellPill({
         }`,
         borderRadius: 999,
         fontFamily: p.font.mono,
-        fontSize: 10.5,
+        fontSize: 12.5,
         fontWeight: 700,
         letterSpacing: 0.5,
         lineHeight: 1,
@@ -1607,7 +1607,7 @@ export function NotifBellPill({
             background: p.dark ? "#0E0E10" : "#FFFFFF",
             color: p.accent,
             borderRadius: 999,
-            fontSize: 10,
+            fontSize: 12,
             fontWeight: 700,
             fontVariantNumeric: "tabular-nums",
             letterSpacing: 0,

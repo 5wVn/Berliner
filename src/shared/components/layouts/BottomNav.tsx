@@ -104,7 +104,7 @@ export function BottomNav({ role }: BottomNavProps) {
               />
               <span
                 className={cn(
-                  "max-w-full truncate text-[10px] leading-tight font-bold sm:text-[11px]",
+                  "max-w-full truncate text-[12px] leading-tight font-bold sm:text-[13px]",
                   isActive ? "opacity-100" : "opacity-80"
                 )}
               >

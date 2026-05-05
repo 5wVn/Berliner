@@ -67,7 +67,7 @@ export function AppHeader({
               alignItems: "center",
               justifyContent: "space-between",
               fontFamily: p.font.mono,
-              fontSize: 11,
+              fontSize: 13,
               color: p.ink3,
               letterSpacing: 0.5,
               textTransform: "uppercase",
@@ -97,7 +97,7 @@ export function AppHeader({
               display: "flex",
               gap: 14,
               fontFamily: p.font.mono,
-              fontSize: 11.5,
+              fontSize: 13.5,
               color: p.ink3,
               letterSpacing: 0.3,
             }}
@@ -141,7 +141,7 @@ export function AppSectionLabel({
       <span
         style={{
           fontFamily: p.font.mono,
-          fontSize: 10.5,
+          fontSize: 12.5,
           color: p.ink3,
           letterSpacing: 0.6,
           textTransform: "uppercase",
@@ -155,7 +155,7 @@ export function AppSectionLabel({
           onClick={onAction}
           style={{
             fontFamily: p.font.mono,
-            fontSize: 10.5,
+            fontSize: 12.5,
             color: p.accent,
             letterSpacing: 0.4,
             textTransform: "uppercase",
@@ -256,7 +256,7 @@ export function AppRow({
           <div
             style={{
               fontFamily: p.font.mono,
-              fontSize: 10,
+              fontSize: 12,
               color: p.ink3,
               letterSpacing: 0.5,
               textTransform: "uppercase",
@@ -266,14 +266,14 @@ export function AppRow({
             {kind}
           </div>
         )}
-        <div style={{ fontSize: 14, fontWeight: 500, lineHeight: 1.2 }}>
+        <div style={{ fontSize: 16, fontWeight: 500, lineHeight: 1.2 }}>
           {title}
         </div>
         {meta && (
           <div
             style={{
               fontFamily: p.font.mono,
-              fontSize: 10.5,
+              fontSize: 12.5,
               color: p.ink3,
               letterSpacing: 0.3,
             }}
@@ -282,7 +282,7 @@ export function AppRow({
           </div>
         )}
       </div>
-      {right !== undefined ? right : <span style={{ color: p.ink3, fontSize: 18 }}>›</span>}
+      {right !== undefined ? right : <span style={{ color: p.ink3, fontSize: 20 }}>›</span>}
     </div>
   );
 }
@@ -339,7 +339,7 @@ export function SectionEmpty({
         textAlign: "center",
         color: p.ink3,
         fontFamily: p.font.mono,
-        fontSize: 11,
+        fontSize: 13,
         letterSpacing: 0.5,
         border: `1px dashed ${p.border}`,
         borderRadius: 12,

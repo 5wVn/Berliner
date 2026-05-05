@@ -147,7 +147,7 @@ export function HomeClient({ state }: HomeClientProps) {
               alignItems: "center",
               justifyContent: "space-between",
               fontFamily: p.font.mono,
-              fontSize: 11,
+              fontSize: 13,
               color: p.ink3,
               letterSpacing: 0.5,
               textTransform: "uppercase",
@@ -177,7 +177,7 @@ export function HomeClient({ state }: HomeClientProps) {
               display: "flex",
               gap: 14,
               fontFamily: p.font.mono,
-              fontSize: 11.5,
+              fontSize: 13.5,
               color: p.ink3,
               letterSpacing: 0.3,
             }}
@@ -240,7 +240,7 @@ export function HomeClient({ state }: HomeClientProps) {
                   gap: 8,
                   marginBottom: 6,
                   fontFamily: p.font.mono,
-                  fontSize: 10.5,
+                  fontSize: 12.5,
                   fontWeight: 600,
                   letterSpacing: 0.5,
                   textTransform: "uppercase",
@@ -271,7 +271,7 @@ export function HomeClient({ state }: HomeClientProps) {
               </div>
               <Mono
                 style={{
-                  fontSize: 11.5,
+                  fontSize: 13.5,
                   color: p.ink3,
                   marginTop: 4,
                   display: "block",
@@ -301,7 +301,7 @@ export function HomeClient({ state }: HomeClientProps) {
                     borderRadius: 10,
                     cursor: "pointer",
                     fontFamily: p.font.mono,
-                    fontSize: 12,
+                    fontSize: 14,
                     fontWeight: 700,
                     letterSpacing: 0.6,
                     textAlign: "center",
@@ -366,7 +366,7 @@ export function HomeClient({ state }: HomeClientProps) {
                       <div
                         style={{
                           fontFamily: p.font.mono,
-                          fontSize: 10,
+                          fontSize: 12,
                           color: isFirst ? p.accent : p.ink3,
                           letterSpacing: 0.5,
                           textTransform: "uppercase",
@@ -381,16 +381,16 @@ export function HomeClient({ state }: HomeClientProps) {
                         })}
                       </div>
                       <div
-                        style={{ fontSize: 15, fontWeight: 500, lineHeight: 1.2 }}
+                        style={{ fontSize: 17, fontWeight: 500, lineHeight: 1.2 }}
                       >
                         {slot.subjectName}
                       </div>
-                      <Mono style={{ fontSize: 11, color: p.ink3 }}>
+                      <Mono style={{ fontSize: 13, color: p.ink3 }}>
                         {slot.room || "—"}{" "}
                         {slot.className ? `· ${slot.className}` : ""}
                       </Mono>
                     </div>
-                    <span style={{ color: p.ink3, fontSize: 18 }}>›</span>
+                    <span style={{ color: p.ink3, fontSize: 20 }}>›</span>
                   </div>
                 );
               })}
@@ -445,19 +445,19 @@ export function HomeClient({ state }: HomeClientProps) {
                     />
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div
-                        style={{ fontSize: 14, fontWeight: 500, lineHeight: 1.2 }}
+                        style={{ fontSize: 16, fontWeight: 500, lineHeight: 1.2 }}
                       >
                         {it.name}
                       </div>
                       <Mono
-                        style={{ fontSize: 10.5, color: p.ink3, letterSpacing: 0.3 }}
+                        style={{ fontSize: 12.5, color: p.ink3, letterSpacing: 0.3 }}
                       >
                         {it.subjectName}
                       </Mono>
                     </div>
                     <Mono
                       style={{
-                        fontSize: 10.5,
+                        fontSize: 12.5,
                         color: p.accent,
                         fontWeight: 600,
                         letterSpacing: 0.4,
@@ -516,12 +516,12 @@ export function HomeClient({ state }: HomeClientProps) {
                       }}
                     />
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 14, fontWeight: 500 }}>
+                      <div style={{ fontSize: 16, fontWeight: 500 }}>
                         {g.subjectName}
                       </div>
                       <Mono
                         style={{
-                          fontSize: 10.5,
+                          fontSize: 12.5,
                           color: p.ink3,
                           letterSpacing: 0.3,
                           textTransform: "uppercase",
@@ -532,7 +532,7 @@ export function HomeClient({ state }: HomeClientProps) {
                     </div>
                     <Mono
                       style={{
-                        fontSize: 18,
+                        fontSize: 20,
                         fontWeight: 600,
                         letterSpacing: -0.3,
                         color:
@@ -545,7 +545,7 @@ export function HomeClient({ state }: HomeClientProps) {
                     >
                       {g.score}
                     </Mono>
-                    <Mono style={{ fontSize: 11, color: p.ink4 }}>/{g.maxScore}</Mono>
+                    <Mono style={{ fontSize: 13, color: p.ink4 }}>/{g.maxScore}</Mono>
                   </div>
                 );
               })}

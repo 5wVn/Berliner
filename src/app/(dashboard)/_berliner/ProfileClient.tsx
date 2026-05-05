@@ -165,7 +165,7 @@ export function ProfileClient({ state }: { state: BerlinerState }) {
               alignItems: "center",
               justifyContent: "space-between",
               fontFamily: p.font.mono,
-              fontSize: 11,
+              fontSize: 13,
               color: p.ink3,
               letterSpacing: 0.5,
               textTransform: "uppercase",
@@ -217,7 +217,7 @@ export function ProfileClient({ state }: { state: BerlinerState }) {
               </div>
               <Mono
                 style={{
-                  fontSize: 11,
+                  fontSize: 13,
                   color: p.ink3,
                   marginTop: 4,
                   letterSpacing: 0.3,
@@ -232,7 +232,7 @@ export function ProfileClient({ state }: { state: BerlinerState }) {
               {state.profile.class_name && (
                 <Mono
                   style={{
-                    fontSize: 10.5,
+                    fontSize: 12.5,
                     color: p.accent,
                     marginTop: 4,
                     letterSpacing: 0.4,
@@ -247,7 +247,7 @@ export function ProfileClient({ state }: { state: BerlinerState }) {
               {state.establishmentName && !state.profile.class_name && (
                 <Mono
                   style={{
-                    fontSize: 10.5,
+                    fontSize: 12.5,
                     color: p.ink3,
                     marginTop: 4,
                     letterSpacing: 0.4,
@@ -291,7 +291,7 @@ export function ProfileClient({ state }: { state: BerlinerState }) {
                 {s.delta != null && (
                   <Mono
                     style={{
-                      fontSize: 9.5,
+                      fontSize: 11.5,
                       fontWeight: 600,
                       color: s.delta >= 0 ? p.sem.ok : p.sem.bad,
                     }}
@@ -304,7 +304,7 @@ export function ProfileClient({ state }: { state: BerlinerState }) {
               <div
                 style={{
                   fontFamily: p.font.mono,
-                  fontSize: 9.5,
+                  fontSize: 11.5,
                   color: p.ink3,
                   textTransform: "uppercase",
                   letterSpacing: 0.5,
@@ -313,7 +313,7 @@ export function ProfileClient({ state }: { state: BerlinerState }) {
               >
                 {s.l}
               </div>
-              <div style={{ fontSize: 10.5, color: p.ink4, marginTop: 1 }}>
+              <div style={{ fontSize: 12.5, color: p.ink4, marginTop: 1 }}>
                 {s.sub}
               </div>
             </div>
@@ -361,7 +361,7 @@ export function ProfileClient({ state }: { state: BerlinerState }) {
           >
             <Mono
               style={{
-                fontSize: 11,
+                fontSize: 13,
                 color: p.ink2,
                 letterSpacing: 0.4,
                 textTransform: "uppercase",
@@ -389,7 +389,7 @@ export function ProfileClient({ state }: { state: BerlinerState }) {
                     background: theme === t ? p.surface : "transparent",
                     color: theme === t ? p.ink : p.ink3,
                     fontFamily: p.font.mono,
-                    fontSize: 10.5,
+                    fontSize: 12.5,
                     fontWeight: 600,
                     letterSpacing: 0.4,
                     textTransform: "uppercase",
@@ -414,7 +414,7 @@ export function ProfileClient({ state }: { state: BerlinerState }) {
           >
             <Mono
               style={{
-                fontSize: 11,
+                fontSize: 13,
                 color: p.ink2,
                 letterSpacing: 0.4,
                 textTransform: "uppercase",
@@ -461,7 +461,7 @@ export function ProfileClient({ state }: { state: BerlinerState }) {
             right={
               <Mono
                 style={{
-                  fontSize: 10,
+                  fontSize: 12,
                   color: p.sem.bad,
                   letterSpacing: 0.4,
                 }}
@@ -477,7 +477,7 @@ export function ProfileClient({ state }: { state: BerlinerState }) {
         <div
           style={{
             fontFamily: p.font.mono,
-            fontSize: 10.5,
+            fontSize: 12.5,
             color: p.ink4,
             textAlign: "center",
             letterSpacing: 0.4,

@@ -192,16 +192,16 @@ export function DevoirsClient({ state }: DevoirsClientProps) {
             }}
           />
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 14.5, fontWeight: 500, lineHeight: 1.2 }}>
+            <div style={{ fontSize: 16.5, fontWeight: 500, lineHeight: 1.2 }}>
               {it.evaluation.name}
             </div>
-            <Mono style={{ fontSize: 11, color: p.ink3 }}>
+            <Mono style={{ fontSize: 13, color: p.ink3 }}>
               {it.evaluation.subjectName}
             </Mono>
           </div>
           <Mono
             style={{
-              fontSize: 10.5,
+              fontSize: 12.5,
               fontWeight: 600,
               letterSpacing: 0.4,
               textAlign: "right",
@@ -301,7 +301,7 @@ export function DevoirsClient({ state }: DevoirsClientProps) {
                 !subjFilter ? (p.dark ? p.border : p.ink) : p.border
               }`,
               fontFamily: p.font.mono,
-              fontSize: 10.5,
+              fontSize: 12.5,
               fontWeight: 600,
               letterSpacing: 0.3,
               cursor: "pointer",
@@ -326,7 +326,7 @@ export function DevoirsClient({ state }: DevoirsClientProps) {
                   color: active ? "#fff" : p.ink3,
                   border: `1px solid ${active ? c : p.border}`,
                   fontFamily: p.font.mono,
-                  fontSize: 10.5,
+                  fontSize: 12.5,
                   fontWeight: 500,
                   letterSpacing: 0.3,
                   cursor: "pointer",
@@ -357,7 +357,7 @@ export function DevoirsClient({ state }: DevoirsClientProps) {
         {isStudent && todo.length > 0 && (
           <Mono
             style={{
-              fontSize: 9.5,
+              fontSize: 11.5,
               color: p.ink4,
               padding: "2px 0 4px",
               letterSpacing: 0.3,
@@ -407,7 +407,7 @@ export function DevoirsClient({ state }: DevoirsClientProps) {
                         borderRadius: 11,
                         background: c + "25",
                         color: c,
-                        fontSize: 11,
+                        fontSize: 13,
                         fontWeight: 700,
                         display: "flex",
                         alignItems: "center",
@@ -420,7 +420,7 @@ export function DevoirsClient({ state }: DevoirsClientProps) {
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div
                         style={{
-                          fontSize: 13.5,
+                          fontSize: 15.5,
                           fontWeight: 500,
                           textDecoration: "line-through",
                           color: p.ink3,
@@ -429,14 +429,14 @@ export function DevoirsClient({ state }: DevoirsClientProps) {
                       >
                         {it.evaluation.name}
                       </div>
-                      <Mono style={{ fontSize: 10.5, color: p.ink4 }}>
+                      <Mono style={{ fontSize: 12.5, color: p.ink4 }}>
                         {it.evaluation.subjectName} · {relDue(it.evaluation.date)}
                       </Mono>
                     </div>
                     {it.grade ? (
                       <Mono
                         style={{
-                          fontSize: 13,
+                          fontSize: 15,
                           fontWeight: 600,
                           color:
                             (it.grade.score / Math.max(it.grade.maxScore, 1)) *
@@ -451,7 +451,7 @@ export function DevoirsClient({ state }: DevoirsClientProps) {
                     ) : (
                       <Mono
                         style={{
-                          fontSize: 10,
+                          fontSize: 12,
                           color: p.ink4,
                           letterSpacing: 0.3,
                         }}
