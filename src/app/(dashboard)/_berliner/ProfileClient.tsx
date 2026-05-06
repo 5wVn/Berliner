@@ -2,8 +2,8 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { type BerlinerState } from "@/actions/berliner-state";
 import { computeGlobalAverage } from "@/shared/lib/berliner-stats";
+import { useBerlinerState } from "./BerlinerStateContext";
 import { logoutAction } from "@/actions/auth";
 import { useTheme } from "@/shared/design/ThemeProvider";
 import {
@@ -48,7 +48,8 @@ const ACCENT_C: Record<AccentName, string> = {
   red: "oklch(0.66 0.22 15)",
 };
 
-export function ProfileClient({ state }: { state: BerlinerState }) {
+export function ProfileClient() {
+  const state = useBerlinerState();
   const { palette: p, theme, setTheme, accent, setAccent } = useTheme();
   const router = useRouter();
   const isStudent = state.profile.role === "student";

@@ -1,23 +1,24 @@
+import "server-only";
 import { redirect } from "next/navigation";
+import { cache } from "react";
 import { getBerlinerStateAction } from "@/actions/berliner-state";
 import { canAccessRole, roleToDashboardPath } from "@/shared/lib/roles";
 import type { UserRole } from "@/shared/types/auth";
-import { GradesClient } from "../../_berliner/GradesClient";
-import { MobileLayout } from "../../_berliner/MobileLayout";
+import type { BerlinerState } from "@/actions/berliner-state";
 
-export default async function TeacherGradesPage() {
-  const result = await getBerlinerStateAction();
+const fetchBerlinerState = cache(async () => getBerlinerStateAction());
+
+export async function loadBerlinerState(
+  expectedRole: UserRole
+): Promise<BerlinerState> {
+  const result = await fetchBerlinerState();
   if (!result.ok) {
     if (result.error.code === "UNAUTHENTICATED") redirect("/");
     throw new Error(result.error.message);
   }
   const role = result.data.profile.role as UserRole;
-  if (!canAccessRole(role, "teacher")) {
+  if (!canAccessRole(role, expectedRole)) {
     redirect(roleToDashboardPath(role));
   }
-  return (
-    <MobileLayout role="teacher">
-      <GradesClient state={result.data} />
-    </MobileLayout>
-  );
+  return result.data;
 }
