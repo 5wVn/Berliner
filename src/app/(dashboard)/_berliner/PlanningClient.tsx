@@ -122,21 +122,10 @@ export function PlanningClient({ state }: PlanningClientProps) {
           style={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
+            justifyContent: "flex-end",
             marginBottom: 12,
           }}
         >
-          <span
-            style={{
-              fontFamily: p.font.mono,
-              fontSize: 13,
-              color: p.ink3,
-              letterSpacing: 0.5,
-              textTransform: "uppercase",
-            }}
-          >
-            PLANNING
-          </span>
           <div
             style={{
               display: "inline-flex",

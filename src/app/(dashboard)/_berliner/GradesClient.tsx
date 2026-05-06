@@ -21,7 +21,6 @@ import {
   SectionEmpty,
 } from "@/shared/components/berliner/Shell";
 import {
-  academicYearLabel,
   colorFor,
   ditherGradient,
   termFromDate,
@@ -156,39 +155,6 @@ export function GradesClient({ state }: GradesClientProps) {
             }}
           />
           <div style={{ position: "relative" }}>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                fontFamily: p.font.mono,
-                fontSize: 13,
-                color: p.ink3,
-                textTransform: "uppercase",
-                letterSpacing: 0.5,
-                marginBottom: 14,
-              }}
-            >
-              <span>
-                NOTES · {term} {academicYearLabel()}
-              </span>
-              <span>
-                OBJ.{" "}
-                <Mono style={{ color: p.accent, fontWeight: 600 }}>14.0</Mono>
-                {delta != null && (
-                  <span
-                    style={{
-                      marginLeft: 10,
-                      color: delta >= 0 ? p.sem.ok : p.sem.bad,
-                    }}
-                  >
-                    {delta >= 0 ? "↑" : "↓"} {delta >= 0 ? "+" : ""}
-                    {delta.toFixed(1)}
-                  </span>
-                )}
-              </span>
-            </div>
-
             <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
               <Mono
                 style={{
