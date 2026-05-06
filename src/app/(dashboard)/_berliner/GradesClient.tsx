@@ -2,11 +2,12 @@
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { type BerlinerState } from "@/actions/berliner-state";
+import type { BerlinerState } from "@/actions/berliner-state";
 import {
   computeGlobalAverage,
   computeSubjectStats,
 } from "@/shared/lib/berliner-stats";
+import { useBerlinerState } from "./BerlinerStateContext";
 import {
   addGradeAction,
   deleteGradeAction,
@@ -35,13 +36,10 @@ import {
 } from "@/shared/design/primitives";
 import { BulkImportPanel } from "@/shared/components/berliner/Overlays";
 
-type GradesClientProps = {
-  state: BerlinerState;
-};
-
 type Term = "T1" | "T2" | "T3";
 
-export function GradesClient({ state }: GradesClientProps) {
+export function GradesClient() {
+  const state = useBerlinerState();
   const { palette: p } = useTheme();
   const router = useRouter();
   const isStudent = state.profile.role === "student";

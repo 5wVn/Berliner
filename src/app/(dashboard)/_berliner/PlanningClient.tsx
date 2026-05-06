@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { type BerlinerState } from "@/actions/berliner-state";
 import { useTheme } from "@/shared/design/ThemeProvider";
+import { useBerlinerState } from "./BerlinerStateContext";
 import { PageShell, SectionEmpty } from "@/shared/components/berliner/Shell";
 import {
   colorFor,
@@ -19,8 +19,6 @@ import {
 } from "@/shared/design/primitives";
 import { QRScanPanel } from "@/shared/components/berliner/Overlays";
 
-type PlanningClientProps = { state: BerlinerState };
-
 type StripDay = {
   iso: string;
   d: string; // single-letter weekday
@@ -31,7 +29,8 @@ type StripDay = {
   weekend: boolean;
 };
 
-export function PlanningClient({ state }: PlanningClientProps) {
+export function PlanningClient() {
+  const state = useBerlinerState();
   const { palette: p } = useTheme();
   const router = useRouter();
   const today = localISO(new Date());

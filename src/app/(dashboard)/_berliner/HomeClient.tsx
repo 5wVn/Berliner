@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { type BerlinerState } from "@/actions/berliner-state";
+import type { BerlinerState } from "@/actions/berliner-state";
 import { computeGlobalAverage } from "@/shared/lib/berliner-stats";
+import { useBerlinerState } from "./BerlinerStateContext";
 import { useTheme } from "@/shared/design/ThemeProvider";
 import {
   AppCard,
@@ -22,17 +23,14 @@ import {
 } from "@/shared/components/berliner/Overlays";
 import { useRouter } from "next/navigation";
 
-type HomeClientProps = {
-  state: BerlinerState;
-};
-
 type OverlayState =
   | { type: "notifs" }
   | { type: "qr"; sessionId: string; sessionTitle: string }
   | { type: "editProfile" }
   | null;
 
-export function HomeClient({ state }: HomeClientProps) {
+export function HomeClient() {
+  const state = useBerlinerState();
   const { palette: p } = useTheme();
   const router = useRouter();
   const [overlay, setOverlay] = useState<OverlayState>(null);

@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { type BerlinerState } from "@/actions/berliner-state";
 import { useTheme } from "@/shared/design/ThemeProvider";
+import { useBerlinerState } from "./BerlinerStateContext";
 import {
   AppCard,
   AppSectionLabel,
@@ -17,8 +17,6 @@ import {
   hapticPing,
 } from "@/shared/design/primitives";
 import { AppHeader } from "@/shared/components/berliner/Shell";
-
-type DevoirsClientProps = { state: BerlinerState };
 
 const PROGRESS_KEY = "berliner.devoirs.progress.v1";
 const DONE_KEY = "berliner.devoirs.done.v1";
@@ -45,7 +43,8 @@ function saveMap(key: string, value: unknown) {
   }
 }
 
-export function DevoirsClient({ state }: DevoirsClientProps) {
+export function DevoirsClient() {
+  const state = useBerlinerState();
   const { palette: p } = useTheme();
   const isStudent = state.profile.role === "student";
   const today = localISO(new Date());
