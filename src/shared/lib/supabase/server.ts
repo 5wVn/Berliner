@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { cache } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -11,15 +12,10 @@ if (!supabaseUrl || !supabaseAnonKey) {
   );
 }
 
-/**
- * Supabase client for use inside Server Components, Server Actions, and
- * Route Handlers. Reads/writes the user's session from Next.js cookies, so
- * Postgres RLS policies see the authenticated user (`auth.uid()`).
- *
- * In Server Components the cookie store is read-only — the `setAll` no-op
- * catch is intentional and matches the pattern in the @supabase/ssr docs.
- */
-export async function createClient(): Promise<SupabaseClient> {
+// Memoized per request: React.cache() ensures every Server Component / Server
+// Action in the same render reuses one Supabase client instead of allocating
+// (and re-reading cookies) on every call.
+export const createClient = cache(async (): Promise<SupabaseClient> => {
   const cookieStore = await cookies();
 
   return createServerClient(supabaseUrl!, supabaseAnonKey!, {
@@ -35,10 +31,9 @@ export async function createClient(): Promise<SupabaseClient> {
             cookieStore.set(name, value, options);
           });
         } catch {
-          // Called from a Server Component, where cookies are read-only.
-          // Middleware refreshes the session, so this is safe to ignore.
+          // Read-only cookies in Server Components; middleware refreshes session.
         }
       },
     },
   });
-}
+});
