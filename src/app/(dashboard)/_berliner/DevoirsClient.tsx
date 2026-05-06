@@ -267,8 +267,6 @@ export function DevoirsClient() {
       <GlobalAnimations />
       <AppHeader
         p={p}
-        kicker={isStudent ? "DEVOIRS" : "ÉVALUATIONS"}
-        kickerRight={<Mono>{todo.length} EN COURS</Mono>}
         title={
           <>
             {todo.length} à {isStudent ? "rendre" : "noter"}

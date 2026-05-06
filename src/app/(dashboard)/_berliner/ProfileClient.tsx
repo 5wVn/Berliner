@@ -29,15 +29,6 @@ import {
 } from "@/shared/components/berliner/Overlays";
 import { useEffect } from "react";
 
-const ROLE_LABEL: Record<string, string> = {
-  student: "Étudiant",
-  teacher: "Enseignant",
-  registrar: "Scolarité",
-  academic_head: "Responsable pédagogique",
-  company: "Entreprise",
-  super_admin: "Super administrateur",
-};
-
 const ACCENT_C: Record<AccentName, string> = {
   green: "oklch(0.72 0.16 145)",
   blue: "oklch(0.66 0.18 250)",
@@ -160,23 +151,6 @@ export function ProfileClient() {
           />
         )}
         <div style={{ position: "relative" }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              fontFamily: p.font.mono,
-              fontSize: 13,
-              color: p.ink3,
-              letterSpacing: 0.5,
-              textTransform: "uppercase",
-              marginBottom: 14,
-            }}
-          >
-            <span>PROFIL</span>
-            <span>{ROLE_LABEL[state.profile.role] ?? "Compte"}</span>
-          </div>
-
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             <div
               onClick={() => setOverlay("edit")}
