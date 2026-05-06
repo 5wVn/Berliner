@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { supabase } from "@/shared/lib/supabase/client";
+import { getSupabaseClient } from "@/shared/lib/supabase/client";
 import { UserRole } from "@/shared/types/auth";
 
 type Profile = {
@@ -47,9 +47,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchProfile = useCallback(async (userId: string) => {
     setAuthError(null);
-    const { data, error } = await supabase
+    const { data, error } = await getSupabaseClient()
       .from("profiles")
-      .select("id, establishment_id, email, role, first_name, last_name, phone")
+      .select(
+        "id, establishment_id, email, role, first_name, last_name, phone"
+      )
       .eq("id", userId)
       .maybeSingle();
 
@@ -67,7 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // (e.g. from a Server Action login) are picked up before fetching the
     // profile. Without this, refreshProfile would short-circuit whenever
     // the in-memory session is still null.
-    const { data } = await supabase.auth.getSession();
+    const { data } = await getSupabaseClient().auth.getSession();
     const nextSession = data.session ?? null;
     setSession(nextSession);
 
@@ -99,33 +101,62 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let active = true;
+    let supabase: ReturnType<typeof getSupabaseClient>;
+    try {
+      supabase = getSupabaseClient();
+    } catch (err) {
+      setAuthError(err instanceof Error ? err.message : "Supabase init failed");
+      setLoading(false);
+      return;
+    }
 
     const loadSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (!active) return;
-      setSession(data.session ?? null);
-      if (data.session?.user?.id) {
-        await fetchProfile(data.session.user.id);
-      } else {
+      try {
+        const { data } = await supabase.auth.getSession();
+        if (!active) return;
+        setSession(data.session ?? null);
+        if (data.session?.user?.id) {
+          await fetchProfile(data.session.user.id);
+        } else {
+          setProfile(null);
+          setAuthError(null);
+        }
+      } catch (err) {
+        if (!active) return;
+        // Aborted fetches are expected on unmount/navigation — don't surface.
+        if (err instanceof DOMException && err.name === "AbortError") return;
+        setAuthError(err instanceof Error ? err.message : "Session load failed");
         setProfile(null);
-        setAuthError(null);
+      } finally {
+        // Always release the loading state. The component being unmounted
+        // mid-flight is fine — React tolerates state updates on unmounted
+        // components, but leaving `loading` stuck at true blocks RequireAuth
+        // forever if cleanup raced ahead of the async resolution.
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     loadSession();
 
     const { data: listener } = supabase.auth.onAuthStateChange(
       async (_event, nextSession) => {
-        setSession(nextSession);
-        if (nextSession?.user?.id) {
-          await fetchProfile(nextSession.user.id);
-        } else {
-          setProfile(null);
-          setSelectedRole(null);
-          setAuthError(null);
+        try {
+          setSession(nextSession);
+          if (nextSession?.user?.id) {
+            await fetchProfile(nextSession.user.id);
+          } else {
+            setProfile(null);
+            setSelectedRole(null);
+            setAuthError(null);
+          }
+        } catch (err) {
+          if (err instanceof DOMException && err.name === "AbortError") return;
+          setAuthError(
+            err instanceof Error ? err.message : "Auth state change failed"
+          );
+        } finally {
+          setLoading(false);
         }
-        setLoading(false);
       }
     );
 
@@ -144,7 +175,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = useCallback(async () => {
     setSelectedRole(null);
-    await supabase.auth.signOut();
+    await getSupabaseClient().auth.signOut();
   }, [setSelectedRole]);
 
   const value = useMemo<AuthContextValue>(
