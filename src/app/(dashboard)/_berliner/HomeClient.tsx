@@ -114,10 +114,6 @@ export function HomeClient({ state }: HomeClientProps) {
       ? state.profile.email.split("@")[0].split(".")[0].replace(/^./, (c) => c.toUpperCase())
       : "toi");
 
-  const headerKicker = isStudent
-    ? `BERLINER · ${(state.profile.class_name || "ÉLÈVE").toUpperCase()}`
-    : `BERLINER · PROF${state.profile.last_name ? " · " + state.profile.last_name.toUpperCase() : ""}`;
-
   return (
     <PageShell p={p}>
       <GlobalAnimations />
@@ -145,16 +141,10 @@ export function HomeClient({ state }: HomeClientProps) {
             style={{
               display: "flex",
               alignItems: "center",
-              justifyContent: "space-between",
-              fontFamily: p.font.mono,
-              fontSize: 13,
-              color: p.ink3,
-              letterSpacing: 0.5,
-              textTransform: "uppercase",
+              justifyContent: "flex-end",
               marginBottom: 12,
             }}
           >
-            <span>{headerKicker}</span>
             <NotifBellPill
               p={p}
               unread={unreadCount}
