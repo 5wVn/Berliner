@@ -33,10 +33,21 @@ export function PlanningClient() {
   const state = useBerlinerState();
   const { palette: p } = useTheme();
   const router = useRouter();
-  const today = localISO(new Date());
   const isStudent = state.profile.role === "student";
 
-  const [day, setDay] = useState(today);
+  // Time-dependent state must come from useEffect to avoid SSR/CSR
+  // hydration mismatches (server's clock may differ from client's at
+  // hydration time, flipping liveSlot or the selected day).
+  const [tick, setTick] = useState<number | null>(null);
+  const [day, setDay] = useState("");
+  useEffect(() => {
+    const t = Date.now();
+    setTick(t);
+    setDay((d) => d || localISO(new Date(t)));
+    const id = setInterval(() => setTick(Date.now()), 60000);
+    return () => clearInterval(id);
+  }, []);
+  const today = tick != null ? localISO(new Date(tick)) : "";
   const [weekOffset, setWeekOffset] = useState(0);
   const [qrSession, setQrSession] = useState<{
     sessionId: string;
@@ -45,6 +56,7 @@ export function PlanningClient() {
 
   // 21-day strip (3 weeks centered on the active offset).
   const stripDays = useMemo<StripDay[]>(() => {
+    if (!today) return [];
     const ref = new Date(today + "T00:00");
     const monday = new Date(ref);
     monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7) + (weekOffset - 1) * 7);
@@ -73,7 +85,7 @@ export function PlanningClient() {
       .sort((a, b) => a.start.localeCompare(b.start));
   }, [state.sessions, day]);
 
-  const now = Date.now();
+  const now = tick ?? 0;
   const liveSlot = slots.find((s) => {
     const start = new Date(s.start).getTime();
     const end = new Date(s.end).getTime();
@@ -110,6 +122,17 @@ export function PlanningClient() {
     if (!el || !sc) return;
     sc.scrollTo({ left: el.offsetLeft - 16, behavior: "smooth" });
   }, [day]);
+
+  // Until the client clock is available, render an empty shell so the
+  // SSR HTML and the first client paint are byte-identical (avoids
+  // React #418 hydration mismatches around the day strip / liveSlot).
+  if (tick == null || !day) {
+    return (
+      <PageShell p={p}>
+        <GlobalAnimations />
+      </PageShell>
+    );
+  }
 
   return (
     <PageShell p={p}>
@@ -316,8 +339,8 @@ export function PlanningClient() {
                     ? p.accent
                     : empty
                     ? "transparent"
-                    : p.ink4,
-                  opacity: on ? 0.6 : w.today ? 1 : 0.5,
+                    : p.accentSecondary,
+                  opacity: on ? 0.6 : empty ? 0.5 : 1,
                 }}
               />
             </div>

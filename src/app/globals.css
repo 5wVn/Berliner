@@ -103,6 +103,12 @@
   --accent: oklch(0.66 0.22 15);
   --accent-foreground: oklch(0.32 0.08 15);
 
+  /* Slate — fixed secondary accent (theme- and primary-accent-independent) */
+  --accent-secondary: #c3cdff;
+  --accent-secondary-foreground: oklch(0.32 0.04 260);
+  --accent-secondary-soft: #c3cdff33;
+  --accent-secondary-shadow: #8e9bd9;
+
   --destructive: oklch(0.66 0.20 25);
   --destructive-foreground: #FFFFFF;
   --warning: oklch(0.78 0.16 75);
@@ -158,6 +164,12 @@
   --muted-foreground: #8A8A92;
   --accent: oklch(0.66 0.22 15);
   --accent-foreground: oklch(0.32 0.08 15);
+
+  /* Slate — fixed secondary accent (theme- and primary-accent-independent) */
+  --accent-secondary: #c3cdff;
+  --accent-secondary-foreground: oklch(0.32 0.04 260);
+  --accent-secondary-soft: #c3cdff33;
+  --accent-secondary-shadow: #8e9bd9;
 
   --destructive: oklch(0.66 0.20 25);
   --destructive-foreground: #FFFFFF;
@@ -284,6 +296,10 @@
 
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-accent-secondary-foreground: var(--accent-secondary-foreground);
+  --color-accent-secondary-soft: var(--accent-secondary-soft);
+  --color-accent-secondary-shadow: var(--accent-secondary-shadow);
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
 
