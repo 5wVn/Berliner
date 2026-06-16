@@ -14,11 +14,7 @@ type LoginData = {
 };
 
 const isUserRole = (value: unknown): value is UserRole =>
-    value === 'student' ||
-    value === 'teacher' ||
-    value === 'registrar' ||
-    value === 'academic_head' ||
-    value === 'company';
+    value === 'student' || value === 'teacher' || value === 'super_admin';
 
 const validateLoginInput = (input: LoginInput): string | null => {
     if (typeof input?.email !== 'string' || input.email.trim().length === 0) {
@@ -44,50 +40,68 @@ export async function loginAction(
         };
     }
 
-    const supabase = await createClient();
+    // Tout est encadré par un try/catch : si Supabase est injoignable,
+    // `signInWithPassword` lève une erreur réseau. Non capturée, elle ferait
+    // renvoyer une page d'erreur HTML par Next, et le client planterait avec
+    // « Unexpected token '<' ... is not valid JSON ». On renvoie plutôt une
+    // erreur propre et sérialisable.
+    try {
+        const supabase = await createClient();
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email: input.email.trim(),
-        password: input.password,
-    });
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: input.email.trim(),
+            password: input.password,
+        });
 
-    if (error || !data.session) {
+        if (error || !data.session) {
+            return {
+                ok: false,
+                error: {
+                    code: 'UNAUTHENTICATED',
+                    message: error?.message ?? 'Identifiants invalides.',
+                },
+            };
+        }
+
+        const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', data.user.id)
+            .maybeSingle();
+
+        if (profileError) {
+            return {
+                ok: false,
+                error: { code: 'INTERNAL', message: profileError.message },
+            };
+        }
+
+        if (!profile || !isUserRole(profile.role)) {
+            return {
+                ok: false,
+                error: {
+                    code: 'NOT_FOUND',
+                    message: 'Profil introuvable. Contactez un administrateur.',
+                },
+            };
+        }
+
+        return {
+            ok: true,
+            data: { userId: data.user.id, role: profile.role },
+        };
+    } catch (err) {
         return {
             ok: false,
             error: {
-                code: 'UNAUTHENTICATED',
-                message: error?.message ?? 'Identifiants invalides.',
+                code: 'INTERNAL',
+                message:
+                    err instanceof Error
+                        ? `Connexion impossible : ${err.message}`
+                        : 'Connexion au serveur impossible.',
             },
         };
     }
-
-    const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', data.user.id)
-        .maybeSingle();
-
-    if (profileError) {
-        return {
-            ok: false,
-            error: { code: 'INTERNAL', message: profileError.message },
-        };
-    }
-
-    if (!profile || !isUserRole(profile.role)) {
-        return {
-            ok: false,
-            error: {
-                code: 'NOT_FOUND',
-                message: 'Profil introuvable. Contactez un administrateur.',
-            },
-        };
-    }
-
-    return {
-        ok: true,
-        data: { userId: data.user.id, role: profile.role },
-    };
 }
 
 export async function logoutAction(): Promise<ActionEmptyResponse> {

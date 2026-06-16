@@ -1,7 +1,6 @@
 // Design tokens — Berliner mobile UI (student + teacher).
-// Ported from the Claude Design prototype (project/tokens.jsx). All values are
-// inline-ready (used by `pal()` for inline-style React components) and a
-// CSS-variable companion is exposed via `globals.css`.
+// Inline-ready values (used by `pal()` for inline-style React components),
+// with a CSS-variable companion exposed via `globals.css`.
 
 export type Theme = "light" | "dark";
 
@@ -136,21 +135,27 @@ export function pal(theme: Theme, accent: AccentName): Palette {
   };
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Subject color helper — the prototype lets each subject have a
-// "color name" (red/green/blue/...) rather than a hex; map to accents.
+// Subject color helper — each subject can have a "color name"
+// (red/green/blue/...) rather than a hex; map to accents.
 // Falls back to the active accent.
-// ─────────────────────────────────────────────────────────────────
 export function colorFor(p: Palette, name?: string | null): string {
   if (!name) return p.accent;
   const k = name.toLowerCase() as AccentName;
   return ACCENT_DEFS[k]?.c ?? p.accent;
 }
 
-// ─────────────────────────────────────────────────────────────────
+// Version sans palette : renvoie la couleur CSS d'une matière à partir de
+// son nom de couleur (green/blue/...). Sert aux composants en Tailwind qui
+// ont juste besoin d'une couleur dynamique pour une barre/un point. Repli
+// sur la couleur primaire du thème.
+export function subjectColor(name?: string | null): string {
+  if (!name) return "var(--primary)";
+  const def = ACCENT_DEFS[name.toLowerCase() as AccentName];
+  return def?.c ?? "var(--primary)";
+}
+
 // SVG Bayer dither — usage as background-image. Returns a `url("...")`
 // string suitable for inline `backgroundImage`.
-// ─────────────────────────────────────────────────────────────────
 export function ditherUrl(
   opts: { size?: number; fg?: string; alpha?: number; threshold?: number } = {}
 ): string {
@@ -186,9 +191,7 @@ export function ditherGradient(opts: { fg?: string; alpha?: number } = {}) {
   } as const;
 }
 
-// ─────────────────────────────────────────────────────────────────
 // Date helpers shared by the planning + grades pages.
-// ─────────────────────────────────────────────────────────────────
 
 /** YYYY-MM-DD in local time (avoid UTC drift from `toISOString().slice(0,10)`). */
 export function localISO(d: Date): string {

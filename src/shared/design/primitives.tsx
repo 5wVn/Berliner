@@ -11,9 +11,7 @@ import {
 } from "react";
 import type { Palette } from "./tokens";
 
-// ─────────────────────────────────────────────────────────────────
 // Tabular-numeral mono span. Used everywhere a number is displayed.
-// ─────────────────────────────────────────────────────────────────
 export function Mono({
   children,
   style,
@@ -34,11 +32,8 @@ export function Mono({
   );
 }
 
-// ─────────────────────────────────────────────────────────────────
 // Scrollable container with a fade-out top mask that activates only
-// once the user has scrolled past 2px. Matches the prototype's
-// <ScrollFade> behaviour.
-// ─────────────────────────────────────────────────────────────────
+// once the user has scrolled past 2px.
 type ScrollFadeProps = HTMLAttributes<HTMLDivElement> & {
   fadeSize?: number;
   children: ReactNode;
@@ -86,9 +81,7 @@ export const ScrollFade = forwardRef<HTMLDivElement, ScrollFadeProps>(
   }
 );
 
-// ─────────────────────────────────────────────────────────────────
 // 50×24 sparkline used in subject cards and on the dashboard.
-// ─────────────────────────────────────────────────────────────────
 export function Sparkline({
   data,
   color,
@@ -138,10 +131,8 @@ export function Sparkline({
   );
 }
 
-// ─────────────────────────────────────────────────────────────────
 // Tiny utility: trigger a transient haptic-like opacity flash on
-// mobile taps. The prototype uses this everywhere.
-// ─────────────────────────────────────────────────────────────────
+// mobile taps.
 export function hapticPing(el: HTMLElement | null | undefined) {
   if (!el) return;
   el.style.transition = "opacity 80ms ease-out";
@@ -149,31 +140,4 @@ export function hapticPing(el: HTMLElement | null | undefined) {
   window.setTimeout(() => {
     if (el) el.style.opacity = "1";
   }, 90);
-}
-
-// ─────────────────────────────────────────────────────────────────
-// Pulse animation keyframes used by the LIVE indicator. Mounted once
-// at the layout root so individual cards don't have to inline it.
-// ─────────────────────────────────────────────────────────────────
-export function GlobalAnimations() {
-  return (
-    <style>{`
-      @keyframes berliner-pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
-      }
-      @keyframes berliner-slide-up {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      @keyframes berliner-slide-down {
-        from { opacity: 0; transform: translateY(-8px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      @keyframes berliner-fade-in {
-        from { opacity: 0; }
-        to { opacity: 1; }
-      }
-    `}</style>
-  );
 }

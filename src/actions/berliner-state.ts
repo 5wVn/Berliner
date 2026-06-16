@@ -1,6 +1,8 @@
 'use server';
 
 import { createClient } from '@/shared/lib/supabase/server';
+import { canAccessRole } from '@/shared/lib/roles';
+import type { UserRole } from '@/shared/types/auth';
 import type { ActionResponse } from '@/types/api';
 
 const unauthenticated = () => ({
@@ -16,13 +18,11 @@ const internal = (message: string) => ({
 const unique = <T>(items: Array<T | null | undefined>): T[] =>
   Array.from(new Set(items.filter((item): item is T => Boolean(item))));
 
-// ─────────────────────────────────────────────────────────────────
 // Shape returned to mobile clients.
 //
 // One snapshot is fetched on each navigation (server component → page),
 // then handed to the client component that drives the interactive UI.
-// This mirrors the prototype's "hydrate everything once" pattern.
-// ─────────────────────────────────────────────────────────────────
+// Everything is hydrated once per navigation.
 export type BerlinerSubject = {
   id: string;
   name: string;
@@ -132,7 +132,11 @@ function formatLocalISO(d: Date): string {
   return `${y}-${m}-${day}`;
 }
 
-export async function getBerlinerStateAction(): Promise<ActionResponse<BerlinerState>> {
+export async function getBerlinerStateAction(
+  // Rôle de la VUE demandée (selon la page : "student" ou "teacher").
+  // Permet à un compte super_admin de consulter les deux dashboards.
+  viewAs?: UserRole
+): Promise<ActionResponse<BerlinerState>> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return unauthenticated();
@@ -140,7 +144,7 @@ export async function getBerlinerStateAction(): Promise<ActionResponse<BerlinerS
   // 1) Profile
   const { data: profile, error: profileError } = await supabase
     .from('profiles')
-    .select('id, email, first_name, last_name, role, avatar_url, establishment_id, class_id')
+    .select('id, email, first_name, last_name, role, establishment_id')
     .eq('id', user.id)
     .maybeSingle();
   if (profileError) return internal(profileError.message);
@@ -148,7 +152,11 @@ export async function getBerlinerStateAction(): Promise<ActionResponse<BerlinerS
     return { ok: false, error: { code: 'NOT_FOUND', message: 'Profil introuvable.' } };
   }
 
-  const role = profile.role as string;
+  // Rôle effectif : si la page demande une vue (viewAs) et que le compte y a
+  // droit (super_admin pour les deux), on l'utilise ; sinon le rôle réel.
+  const actualRole = profile.role as UserRole;
+  const role: string =
+    viewAs && canAccessRole(actualRole, viewAs) ? viewAs : actualRole;
   const isStudent = role === 'student';
 
   // 2) Establishment name (cosmetic).
@@ -195,9 +203,8 @@ export async function getBerlinerStateAction(): Promise<ActionResponse<BerlinerS
       .in('id', classIds);
     if (classesError) return internal(classesError.message);
     (classRows ?? []).forEach((c) => classNameById.set(c.id, c.name));
-    if (isStudent && profile.class_id) {
-      className = classNameById.get(profile.class_id);
-    } else if (isStudent && classIds.length > 0) {
+    // La classe de l'élève est déduite de ses inscriptions (table enrollments).
+    if (isStudent && classIds.length > 0) {
       className = classNameById.get(classIds[0]);
     }
   }
@@ -504,9 +511,12 @@ export async function getBerlinerStateAction(): Promise<ActionResponse<BerlinerS
       first_name: profile.first_name ?? '',
       last_name: profile.last_name ?? '',
       role,
-      avatar_url: profile.avatar_url ?? null,
+      // avatar_url et class_id ne sont pas dans le schéma de cette base :
+      // on les laisse vides (le profil affiche les initiales, la classe vient
+      // des inscriptions). Voir scripts/add-profile-columns.mjs pour les activer.
+      avatar_url: null,
       establishment_id: profile.establishment_id ?? '',
-      class_id: profile.class_id ?? undefined,
+      class_id: undefined,
       class_name: className,
     },
     establishmentName,

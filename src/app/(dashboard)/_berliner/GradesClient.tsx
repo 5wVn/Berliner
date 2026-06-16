@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useMemo, useState, useTransition, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { type BerlinerState } from "@/actions/berliner-state";
 import {
@@ -15,31 +15,37 @@ import {
 } from "@/actions/berliner";
 import { useTheme } from "@/shared/design/ThemeProvider";
 import {
-  AppCard,
-  AppSectionLabel,
-  PageShell,
-  SectionEmpty,
-} from "@/shared/components/berliner/Shell";
-import {
   academicYearLabel,
-  colorFor,
+  subjectColor,
   ditherGradient,
   termFromDate,
-  type Palette,
 } from "@/shared/design/tokens";
-import {
-  GlobalAnimations,
-  Mono,
-  ScrollFade,
-  Sparkline,
-} from "@/shared/design/primitives";
+import { ScrollFade, Sparkline } from "@/shared/design/primitives";
+import { GradeChart, type GradePoint } from "@/shared/components/berliner/GradeChart";
 import { BulkImportPanel } from "@/shared/components/berliner/Overlays";
 
-type GradesClientProps = {
-  state: BerlinerState;
-};
-
+type GradesClientProps = { state: BerlinerState };
 type Term = "T1" | "T2" | "T3";
+
+// Petit libellé de section (mono, majuscules).
+function SectionLabel({ children }: { children: ReactNode }) {
+  return (
+    <div className="mt-[18px] mb-2 px-1 font-mono text-[10.5px] font-semibold uppercase tracking-[0.6px] text-ink-3">
+      {children}
+    </div>
+  );
+}
+
+function toPoints(
+  grades: { score: number; maxScore: number; evaluationDate: string }[]
+): GradePoint[] {
+  return [...grades]
+    .sort((a, b) => a.evaluationDate.localeCompare(b.evaluationDate))
+    .map((g) => ({
+      date: g.evaluationDate,
+      note: (g.score / Math.max(g.maxScore, 1)) * 20,
+    }));
+}
 
 export function GradesClient({ state }: GradesClientProps) {
   const { palette: p } = useTheme();
@@ -97,17 +103,7 @@ export function GradesClient({ state }: GradesClientProps) {
       : null;
   const delta = termAvg != null && prevAvg != null ? termAvg - prevAvg : null;
 
-  const chartData = useMemo(
-    () =>
-      [...gradesInTerm]
-        .sort((a, b) => a.evaluationDate.localeCompare(b.evaluationDate))
-        .map((g) => ({
-          v: (g.score / Math.max(g.maxScore, 1)) * 20,
-          d: g.evaluationDate,
-          sid: g.subjectId,
-        })),
-    [gradesInTerm]
-  );
+  const chartPoints = useMemo(() => toPoints(gradesInTerm), [gradesInTerm]);
 
   const statsFiltered = subjFilter
     ? stats.filter((s) => s.subjectId === subjFilter)
@@ -127,60 +123,30 @@ export function GradesClient({ state }: GradesClientProps) {
     : [];
 
   return (
-    <PageShell p={p}>
-      <GlobalAnimations />
-
+    <div className="relative flex min-h-[100dvh] w-full flex-col text-ink">
       <ScrollFade style={{ overflowX: "hidden" }}>
-        {/* HERO */}
-        <div
-          style={{
-            position: "relative",
-            padding: "14px 20px 10px",
-            overflow: "hidden",
-          }}
-        >
+        {/* HÉRO */}
+        <div className="relative overflow-hidden px-5 pb-2.5 pt-3.5">
           <div
             aria-hidden
+            className="pointer-events-none absolute right-[-20px] top-0 h-[200px] w-3/5"
             style={{
-              position: "absolute",
-              top: 0,
-              right: -20,
-              width: "60%",
-              height: 200,
-              ...ditherGradient({ fg: p.accent, alpha: 0.5 }),
-              maskImage:
-                "radial-gradient(circle at 100% 0%, #000 0%, transparent 70%)",
+              ...ditherGradient({ fg: subjectColor("red"), alpha: 0.5 }),
+              maskImage: "radial-gradient(circle at 100% 0%, #000 0%, transparent 70%)",
               WebkitMaskImage:
                 "radial-gradient(circle at 100% 0%, #000 0%, transparent 70%)",
-              pointerEvents: "none",
             }}
           />
-          <div style={{ position: "relative" }}>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                fontFamily: p.font.mono,
-                fontSize: 11,
-                color: p.ink3,
-                textTransform: "uppercase",
-                letterSpacing: 0.5,
-                marginBottom: 14,
-              }}
-            >
+          <div className="relative">
+            <div className="mb-3.5 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.5px] text-ink-3">
               <span>
                 NOTES · {term} {academicYearLabel()}
               </span>
               <span>
-                OBJ.{" "}
-                <Mono style={{ color: p.accent, fontWeight: 600 }}>14.0</Mono>
+                OBJ. <span className="font-semibold text-primary">14.0</span>
                 {delta != null && (
                   <span
-                    style={{
-                      marginLeft: 10,
-                      color: delta >= 0 ? p.sem.ok : p.sem.bad,
-                    }}
+                    className={`ml-2.5 ${delta >= 0 ? "text-sem-ok" : "text-sem-bad"}`}
                   >
                     {delta >= 0 ? "↑" : "↓"} {delta >= 0 ? "+" : ""}
                     {delta.toFixed(1)}
@@ -189,35 +155,17 @@ export function GradesClient({ state }: GradesClientProps) {
               </span>
             </div>
 
-            <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
-              <Mono
-                style={{
-                  fontSize: 64,
-                  fontWeight: 500,
-                  letterSpacing: -2.5,
-                  lineHeight: 0.95,
-                  color: p.ink,
-                }}
-              >
+            <div className="flex items-baseline gap-1">
+              <span className="font-mono text-[64px] font-medium leading-[0.95] tracking-[-2.5px] tabular-nums text-ink">
                 {termAvg != null
                   ? termAvg.toFixed(1)
                   : globalAvg != null
                   ? globalAvg.toFixed(1)
                   : "—"}
-              </Mono>
-              <Mono style={{ fontSize: 16, color: p.ink3, fontWeight: 500 }}>
-                /20
-              </Mono>
+              </span>
+              <span className="font-mono text-[16px] font-medium text-ink-3">/20</span>
             </div>
-            <Mono
-              style={{
-                fontSize: 11,
-                color: p.ink3,
-                marginTop: 6,
-                display: "block",
-                letterSpacing: 0.3,
-              }}
-            >
+            <span className="mt-1.5 block font-mono text-[11px] tracking-[0.3px] text-ink-3">
               {termAvg != null ? (
                 <>
                   {gradesInTerm.length} note{gradesInTerm.length > 1 ? "s" : ""} ·{" "}
@@ -229,22 +177,12 @@ export function GradesClient({ state }: GradesClientProps) {
               ) : (
                 <>aucune note</>
               )}
-            </Mono>
+            </span>
           </div>
         </div>
 
-        {/* Term segments */}
-        <div
-          style={{
-            display: "flex",
-            gap: 0,
-            background: p.dark ? p.surface2 : p.chip,
-            margin: "4px 16px 10px",
-            borderRadius: 10,
-            padding: 3,
-            border: `1px solid ${p.border}`,
-          }}
-        >
+        {/* Sélecteur de trimestre */}
+        <div className="mx-4 mb-2.5 mt-1 flex gap-0 rounded-[10px] border border-border bg-chip p-[3px]">
           {(["T1", "T2", "T3"] as Term[]).map((tk) => {
             const gs = grades.filter((g) => termFromDate(g.evaluationDate) === tk);
             const avg =
@@ -254,154 +192,72 @@ export function GradesClient({ state }: GradesClientProps) {
                     0
                   ) / gs.length
                 : null;
+            const active = tk === term;
             return (
               <div
                 key={tk}
                 onClick={() => setTerm(tk)}
-                style={{
-                  flex: 1,
-                  padding: "7px 0",
-                  textAlign: "center",
-                  background: tk === term ? p.surface : "transparent",
-                  color: tk === term ? p.ink : p.ink3,
-                  border:
-                    tk === term
-                      ? `1px solid ${p.border}`
-                      : "1px solid transparent",
-                  borderRadius: 7,
-                  fontFamily: p.font.mono,
-                  fontSize: 12,
-                  fontWeight: 600,
-                  letterSpacing: 0.4,
-                  cursor: "pointer",
-                  transition: "all 150ms",
-                }}
+                className={`flex-1 cursor-pointer rounded-[7px] border py-[7px] text-center font-mono text-[12px] font-semibold tracking-[0.4px] transition-all ${
+                  active
+                    ? "border-border bg-surface text-ink"
+                    : "border-transparent text-ink-3"
+                }`}
               >
                 {tk}
-                <Mono
-                  style={{
-                    marginLeft: 6,
-                    color: tk === term ? p.ink3 : p.ink4,
-                    fontWeight: 500,
-                    fontSize: 11,
-                  }}
+                <span
+                  className={`ml-1.5 font-mono text-[11px] font-medium ${
+                    active ? "text-ink-3" : "text-ink-4"
+                  }`}
                 >
                   {avg != null ? avg.toFixed(1) : "—"}
-                </Mono>
+                </span>
               </div>
             );
           })}
         </div>
 
-        {/* Chart */}
-        {chartData.length > 1 && (
-          <div
-            style={{
-              margin: "0 16px 10px",
-              padding: "12px 14px 10px",
-              background: p.surface,
-              borderRadius: 14,
-              border: `1px solid ${p.border}`,
-              position: "relative",
-              overflow: "hidden",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                fontFamily: p.font.mono,
-                fontSize: 10.5,
-                letterSpacing: 0.6,
-                textTransform: "uppercase",
-                color: p.ink3,
-                marginBottom: 10,
-              }}
-            >
+        {/* Courbe (shadcn / recharts) */}
+        {chartPoints.length > 1 && (
+          <div className="mx-4 mb-2.5 overflow-hidden rounded-[14px] border border-border bg-surface px-3.5 pb-2.5 pt-3">
+            <div className="mb-2.5 flex items-center justify-between font-mono text-[10.5px] uppercase tracking-[0.6px] text-ink-3">
               <span>ÉVOLUTION · {term}</span>
-              <span>{chartData.length} POINTS</span>
+              <span>{chartPoints.length} POINTS</span>
             </div>
-            <GradeChart
-              data={chartData}
-              subjectColors={Object.fromEntries(
-                state.subjects.map((s) => [s.id, colorFor(p, s.color)])
-              )}
-              avg={termAvg}
-              p={p}
-            />
+            <GradeChart data={chartPoints} avg={termAvg} />
           </div>
         )}
 
-        {/* Subject filter chips */}
+        {/* Filtres matière */}
         {state.subjects.length > 0 && (
-          <div
-            style={{
-              padding: "4px 16px 6px",
-              display: "flex",
-              gap: 6,
-              overflowX: "auto",
-            }}
-          >
+          <div className="flex gap-1.5 overflow-x-auto px-4 pb-1.5 pt-1">
             <div
               onClick={() => setSubjFilter(null)}
-              style={{
-                padding: "5px 10px",
-                borderRadius: 6,
-                flexShrink: 0,
-                background: !subjFilter
-                  ? p.dark
-                    ? p.surface2
-                    : p.ink
-                  : "transparent",
-                color: !subjFilter ? (p.dark ? p.ink : "#fff") : p.ink3,
-                border: `1px solid ${
-                  !subjFilter ? (p.dark ? p.border : p.ink) : p.border
-                }`,
-                fontFamily: p.font.mono,
-                fontSize: 10.5,
-                fontWeight: 600,
-                letterSpacing: 0.3,
-                cursor: "pointer",
-                whiteSpace: "nowrap",
-                textTransform: "uppercase",
-              }}
+              className={`shrink-0 cursor-pointer whitespace-nowrap rounded-[6px] border px-2.5 py-[5px] font-mono text-[10.5px] font-semibold uppercase tracking-[0.3px] ${
+                !subjFilter
+                  ? "border-ink bg-ink text-surface dark:border-border dark:bg-surface-2 dark:text-ink"
+                  : "border-border text-ink-3"
+              }`}
             >
               Toutes
             </div>
             {state.subjects.map((s) => {
-              const c = colorFor(p, s.color);
+              const c = subjectColor(s.color);
               const active = subjFilter === s.id;
               return (
                 <div
                   key={s.id}
                   onClick={() => setSubjFilter(active ? null : s.id)}
+                  className="flex shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-[6px] border px-2.5 py-[5px] font-mono text-[10.5px] tracking-[0.3px]"
                   style={{
-                    padding: "5px 10px",
-                    borderRadius: 6,
-                    flexShrink: 0,
                     background: active ? c : "transparent",
-                    color: active ? "#fff" : p.ink3,
-                    border: `1px solid ${active ? c : p.border}`,
-                    fontFamily: p.font.mono,
-                    fontSize: 10.5,
-                    fontWeight: 500,
-                    letterSpacing: 0.3,
-                    cursor: "pointer",
-                    whiteSpace: "nowrap",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 5,
+                    color: active ? "#fff" : "var(--ink-3)",
+                    borderColor: active ? c : "var(--border)",
                   }}
                 >
                   {!active && (
                     <span
-                      style={{
-                        width: 6,
-                        height: 6,
-                        borderRadius: 3,
-                        background: c,
-                      }}
+                      className="h-1.5 w-1.5 rounded-full"
+                      style={{ background: c }}
                     />
                   )}
                   {s.name}
@@ -411,8 +267,8 @@ export function GradesClient({ state }: GradesClientProps) {
           </div>
         )}
 
-        <div style={{ padding: "4px 16px 24px" }}>
-          {/* Teacher mode: grade entry */}
+        <div className="px-4 pb-6 pt-1">
+          {/* Mode prof : saisie de note */}
           {!isStudent && (
             <TeacherGradeEntry
               state={state}
@@ -421,62 +277,45 @@ export function GradesClient({ state }: GradesClientProps) {
             />
           )}
 
-          <AppSectionLabel p={p}>
+          <SectionLabel>
             {subjFilter
               ? subjectsById.get(subjFilter)?.name?.toUpperCase() ?? "MATIÈRE"
               : `MATIÈRES (${stats.length})`}
-          </AppSectionLabel>
-          {statsFiltered.length === 0 && <SectionEmpty p={p}>AUCUNE MATIÈRE</SectionEmpty>}
+          </SectionLabel>
+          {statsFiltered.length === 0 && (
+            <div className="mb-2 rounded-[12px] border border-dashed border-border p-[18px] text-center font-mono text-[11px] uppercase tracking-[0.5px] text-ink-3">
+              AUCUNE MATIÈRE
+            </div>
+          )}
           {statsFiltered.map((s) => {
             const subj = subjectsById.get(s.subjectId);
             if (!subj) return null;
-            const c = colorFor(p, subj.color);
+            const c = subjectColor(subj.color);
             return (
               <div
                 key={s.subjectId}
                 onClick={() => setDetailSubjectId(s.subjectId)}
-                style={{
-                  background: p.surface,
-                  border: `1px solid ${p.border}`,
-                  borderRadius: 12,
-                  padding: "11px 14px",
-                  marginBottom: 8,
-                  cursor: "pointer",
-                  transition: "transform 150ms",
-                }}
+                className="mb-2 cursor-pointer rounded-[12px] border border-border bg-surface px-3.5 py-[11px]"
               >
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div className="flex items-center gap-3">
                   <div
-                    style={{
-                      width: 3,
-                      height: 28,
-                      borderRadius: 2,
-                      background: c,
-                    }}
+                    className="h-7 w-[3px] rounded-[2px]"
+                    style={{ background: c }}
                   />
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 14, fontWeight: 500 }}>
-                      {subj.name}
-                    </div>
-                    <Mono style={{ fontSize: 11, color: p.ink3 }}>
+                  <div className="flex-1">
+                    <div className="text-[14px] font-medium">{subj.name}</div>
+                    <span className="font-mono text-[11px] text-ink-3">
                       {s.count} note{s.count > 1 ? "s" : ""} · coef {subj.coef}
-                    </Mono>
+                    </span>
                   </div>
                   {s.trend.length > 0 && (
                     <Sparkline data={s.trend} color={c} p={p} />
                   )}
-                  <div style={{ textAlign: "right", minWidth: 52 }}>
-                    <Mono
-                      style={{
-                        fontSize: 18,
-                        fontWeight: 600,
-                        color: p.ink,
-                        letterSpacing: -0.4,
-                      }}
-                    >
+                  <div className="min-w-[52px] text-right">
+                    <span className="font-mono text-[18px] font-semibold tracking-[-0.4px] tabular-nums text-ink">
                       {s.avg != null ? s.avg.toFixed(1) : "—"}
-                    </Mono>
-                    <Mono style={{ fontSize: 10, color: p.ink4 }}>/20</Mono>
+                    </span>
+                    <span className="font-mono text-[10px] text-ink-4">/20</span>
                   </div>
                 </div>
               </div>
@@ -485,91 +324,42 @@ export function GradesClient({ state }: GradesClientProps) {
         </div>
       </ScrollFade>
 
-      {/* Detail overlay */}
+      {/* Vue détail matière */}
       {detailSubject && (
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: p.dark ? "#0E0E10" : "#FAFAF7",
-            zIndex: 50,
-            display: "flex",
-            flexDirection: "column",
-            animation: "berliner-slide-up 250ms ease-out",
-          }}
-        >
+        <div className="absolute inset-0 z-50 flex animate-berliner-slide-up flex-col bg-[#FAFAF7] dark:bg-[#0E0E10]">
           <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-              padding: "12px 16px",
-              borderBottom: `1px solid ${p.border}`,
-              paddingTop: "calc(env(safe-area-inset-top) + 12px)",
-            }}
+            className="flex items-center gap-3 border-b border-border px-4 py-3"
+            style={{ paddingTop: "calc(env(safe-area-inset-top) + 12px)" }}
           >
             <div
               onClick={() => setDetailSubjectId(null)}
-              style={{
-                fontFamily: p.font.mono,
-                fontSize: 12,
-                color: p.ink3,
-                cursor: "pointer",
-                letterSpacing: 0.4,
-              }}
+              className="cursor-pointer font-mono text-[12px] tracking-[0.4px] text-ink-3"
             >
               ← RETOUR
             </div>
-            <div style={{ flex: 1 }} />
+            <div className="flex-1" />
             <div
-              style={{
-                width: 8,
-                height: 8,
-                borderRadius: 4,
-                background: colorFor(p, detailSubject.color),
-              }}
+              className="h-2 w-2 rounded-full"
+              style={{ background: subjectColor(detailSubject.color) }}
             />
-            <Mono
-              style={{
-                fontSize: 11,
-                color: p.ink3,
-                textTransform: "uppercase",
-                letterSpacing: 0.5,
-              }}
-            >
+            <span className="font-mono text-[11px] uppercase tracking-[0.5px] text-ink-3">
               {detailSubject.code || detailSubject.name}
-            </Mono>
+            </span>
           </div>
-          <div
-            style={{ flex: 1, overflowY: "auto", padding: "16px 16px 100px" }}
-          >
-            <div
-              style={{
-                fontSize: 26,
-                fontWeight: 600,
-                letterSpacing: -0.5,
-                marginBottom: 4,
-              }}
-            >
+          <div className="flex-1 overflow-y-auto px-4 pb-[100px] pt-4">
+            <div className="mb-1 text-[26px] font-semibold tracking-[-0.5px]">
               {detailSubject.name}
             </div>
-            <Mono
-              style={{
-                fontSize: 11,
-                color: p.ink3,
-                letterSpacing: 0.4,
-                textTransform: "uppercase",
-              }}
-            >
+            <span className="font-mono text-[11px] uppercase tracking-[0.4px] text-ink-3">
               COEF {detailSubject.coef} · {detailGrades.length} NOTES
-            </Mono>
+            </span>
 
-            <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
+            <div className="mt-3.5 flex gap-2.5">
               {[
                 {
                   l: "MOYENNE",
                   v: detailStat?.avg != null ? detailStat.avg.toFixed(1) : "—",
-                  c: p.ink,
+                  cls: "text-ink",
                 },
                 {
                   l: "MAX",
@@ -581,7 +371,7 @@ export function GradesClient({ state }: GradesClientProps) {
                           )
                         ).toFixed(1)
                       : "—",
-                  c: p.sem.ok,
+                  cls: "text-sem-ok",
                 },
                 {
                   l: "MIN",
@@ -593,159 +383,81 @@ export function GradesClient({ state }: GradesClientProps) {
                           )
                         ).toFixed(1)
                       : "—",
-                  c: p.sem.bad,
+                  cls: "text-sem-bad",
                 },
               ].map((s) => (
                 <div
                   key={s.l}
-                  style={{
-                    flex: 1,
-                    padding: "10px 12px",
-                    background: p.surface,
-                    border: `1px solid ${p.border}`,
-                    borderRadius: 10,
-                  }}
+                  className="flex-1 rounded-[10px] border border-border bg-surface px-3 py-2.5"
                 >
-                  <Mono
-                    style={{
-                      fontSize: 9.5,
-                      color: p.ink4,
-                      letterSpacing: 0.5,
-                      textTransform: "uppercase",
-                    }}
-                  >
+                  <span className="font-mono text-[9.5px] uppercase tracking-[0.5px] text-ink-4">
                     {s.l}
-                  </Mono>
-                  <Mono
-                    style={{
-                      fontSize: 22,
-                      fontWeight: 600,
-                      color: s.c,
-                      letterSpacing: -0.5,
-                      display: "block",
-                      marginTop: 2,
-                    }}
+                  </span>
+                  <span
+                    className={`mt-0.5 block font-mono text-[22px] font-semibold tracking-[-0.5px] tabular-nums ${s.cls}`}
                   >
                     {s.v}
-                  </Mono>
+                  </span>
                 </div>
               ))}
             </div>
 
             {detailGrades.length > 1 && (
-              <div
-                style={{
-                  marginTop: 14,
-                  padding: "12px 14px",
-                  background: p.surface,
-                  border: `1px solid ${p.border}`,
-                  borderRadius: 12,
-                }}
-              >
-                <Mono
-                  style={{
-                    fontSize: 10.5,
-                    color: p.ink3,
-                    letterSpacing: 0.6,
-                    textTransform: "uppercase",
-                    display: "block",
-                    marginBottom: 8,
-                  }}
-                >
+              <div className="mt-3.5 rounded-[12px] border border-border bg-surface px-3.5 py-3">
+                <span className="mb-2 block font-mono text-[10.5px] uppercase tracking-[0.6px] text-ink-3">
                   ÉVOLUTION
-                </Mono>
+                </span>
                 <GradeChart
-                  data={[...detailGrades]
-                    .sort((a, b) =>
-                      a.evaluationDate.localeCompare(b.evaluationDate)
-                    )
-                    .map((g) => ({
-                      v: (g.score / Math.max(g.maxScore, 1)) * 20,
-                      d: g.evaluationDate,
-                      sid: g.subjectId,
-                    }))}
-                  subjectColors={Object.fromEntries(
-                    state.subjects.map((s) => [s.id, colorFor(p, s.color)])
-                  )}
+                  data={toPoints(detailGrades)}
                   avg={detailStat?.avg ?? null}
-                  p={p}
-                  forceColor={colorFor(p, detailSubject.color)}
+                  color={subjectColor(detailSubject.color)}
                 />
               </div>
             )}
 
-            <AppSectionLabel p={p}>HISTORIQUE</AppSectionLabel>
-            <AppCard p={p}>
+            <SectionLabel>HISTORIQUE</SectionLabel>
+            <div className="mb-2 overflow-hidden rounded-[12px] border border-border bg-surface">
               {[...detailGrades]
-                .sort((a, b) =>
-                  b.evaluationDate.localeCompare(a.evaluationDate)
-                )
+                .sort((a, b) => b.evaluationDate.localeCompare(a.evaluationDate))
                 .map((r, i, arr) => {
                   const note20 = (r.score / Math.max(r.maxScore, 1)) * 20;
+                  const noteCls =
+                    note20 >= 14
+                      ? "text-sem-ok"
+                      : note20 < 10
+                      ? "text-sem-bad"
+                      : "text-ink";
                   return (
                     <div
                       key={r.id}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 12,
-                        padding: "11px 14px",
-                        borderBottom:
-                          i === arr.length - 1
-                            ? "none"
-                            : `1px solid ${p.border}`,
-                      }}
+                      className={`flex items-center gap-3 px-3.5 py-[11px] ${
+                        i === arr.length - 1 ? "" : "border-b border-border"
+                      }`}
                     >
-                      <Mono
-                        style={{
-                          fontSize: 10,
-                          color: p.ink3,
-                          letterSpacing: 0.4,
-                          width: 44,
-                        }}
-                      >
+                      <span className="w-11 font-mono text-[10px] tracking-[0.4px] text-ink-3">
                         {fmtDate(r.evaluationDate)}
-                      </Mono>
-                      <Mono
-                        style={{
-                          fontSize: 11,
-                          color: p.ink2,
-                          textTransform: "uppercase",
-                          letterSpacing: 0.4,
-                          flex: 1,
-                        }}
-                      >
+                      </span>
+                      <span className="flex-1 font-mono text-[11px] uppercase tracking-[0.4px] text-ink-2">
                         {r.evaluationName} · {termFromDate(r.evaluationDate)}
-                      </Mono>
-                      <Mono
-                        style={{
-                          fontSize: 16,
-                          fontWeight: 600,
-                          letterSpacing: -0.3,
-                          color:
-                            note20 >= 14
-                              ? p.sem.ok
-                              : note20 < 10
-                              ? p.sem.bad
-                              : p.ink,
-                        }}
+                      </span>
+                      <span
+                        className={`font-mono text-[16px] font-semibold tracking-[-0.3px] ${noteCls}`}
                       >
                         {r.score}
-                      </Mono>
-                      <Mono style={{ fontSize: 11, color: p.ink4 }}>
+                      </span>
+                      <span className="font-mono text-[11px] text-ink-4">
                         /{r.maxScore}
-                      </Mono>
+                      </span>
                       {!isStudent && (
                         <DeleteGradeButton
                           gradeId={r.id}
-                          p={p}
                           onDeleted={() => router.refresh()}
                         />
                       )}
                     </div>
                   );
                 })}
-            </AppCard>
+            </div>
           </div>
         </div>
       )}
@@ -771,166 +483,11 @@ export function GradesClient({ state }: GradesClientProps) {
           onSaved={() => router.refresh()}
         />
       )}
-    </PageShell>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────
-// Inline grade chart — SVG polyline + Bayer dither area + dots.
-// ─────────────────────────────────────────────────────────────────
-function GradeChart({
-  data,
-  subjectColors,
-  avg,
-  p,
-  forceColor,
-}: {
-  data: { v: number; d: string; sid: string }[];
-  subjectColors: Record<string, string>;
-  avg: number | null;
-  p: Palette;
-  forceColor?: string;
-}) {
-  const W = 320;
-  const H = 100;
-  const PAD = 4;
-  if (!data || data.length === 0) return null;
-  const yMin = 0;
-  const yMax = 20;
-  const xStep = data.length > 1 ? (W - PAD * 2) / (data.length - 1) : 0;
-  const yFor = (v: number) => H - ((v - yMin) / (yMax - yMin)) * H;
-  const points = data.map((d, i) => `${PAD + i * xStep},${yFor(d.v)}`).join(" ");
-  const areaPoints =
-    `${PAD},${H} ` +
-    data.map((d, i) => `${PAD + i * xStep},${yFor(d.v)}`).join(" ") +
-    ` ${PAD + (data.length - 1) * xStep},${H}`;
-  const stroke = forceColor ?? p.accent;
-  const patternId = `bayer-${stroke.replace(/[^a-z0-9]/gi, "")}`;
-  return (
-    <div style={{ position: "relative" }}>
-      <svg
-        viewBox={`0 0 ${W} ${H + 18}`}
-        style={{ width: "100%", height: H + 18, display: "block" }}
-        preserveAspectRatio="none"
-      >
-        <defs>
-          <pattern id={patternId} x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
-            <rect width="4" height="4" fill="transparent" />
-            <rect x="0" y="0" width="1" height="1" fill={stroke} fillOpacity="0.6" />
-            <rect x="2" y="2" width="1" height="1" fill={stroke} fillOpacity="0.6" />
-            <rect x="1" y="3" width="1" height="1" fill={stroke} fillOpacity="0.3" />
-            <rect x="3" y="1" width="1" height="1" fill={stroke} fillOpacity="0.3" />
-          </pattern>
-        </defs>
-        {[0, 0.5, 0.7, 1].map((t) => (
-          <g key={t}>
-            <line
-              x1="0"
-              x2={W}
-              y1={H * (1 - t)}
-              y2={H * (1 - t)}
-              stroke={p.border}
-              strokeWidth="0.5"
-              strokeDasharray="2 3"
-            />
-            <text
-              x={W - 2}
-              y={H * (1 - t) - 2}
-              textAnchor="end"
-              fill={p.ink4}
-              fontSize="7"
-              fontFamily={p.font.mono}
-            >
-              {(t * 20).toFixed(0)}
-            </text>
-          </g>
-        ))}
-        {data.length > 1 && <polygon points={areaPoints} fill={`url(#${patternId})`} />}
-        <line
-          x1="0"
-          x2={W}
-          y1={yFor(14)}
-          y2={yFor(14)}
-          stroke={p.ink2}
-          strokeWidth="0.7"
-          strokeDasharray="3 3"
-          opacity="0.5"
-        />
-        {avg != null && (
-          <line
-            x1="0"
-            x2={W}
-            y1={yFor(avg)}
-            y2={yFor(avg)}
-            stroke={stroke}
-            strokeWidth="0.8"
-            strokeDasharray="4 2"
-            opacity="0.7"
-          />
-        )}
-        {data.length > 1 && (
-          <polyline
-            points={points}
-            fill="none"
-            stroke={stroke}
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        )}
-        {data.map((d, i) => {
-          const c = forceColor ?? subjectColors[d.sid] ?? stroke;
-          return (
-            <circle
-              key={i}
-              cx={PAD + i * xStep}
-              cy={yFor(d.v)}
-              r="2.5"
-              fill={p.bg}
-              stroke={c}
-              strokeWidth="1.2"
-            />
-          );
-        })}
-      </svg>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginTop: 4,
-          fontFamily: p.font.mono,
-          fontSize: 9,
-          color: p.ink4,
-          letterSpacing: 0.3,
-        }}
-      >
-        <span>
-          {data[0].d
-            ? new Date(data[0].d).toLocaleDateString("fr-FR", {
-                day: "numeric",
-                month: "short",
-              })
-            : ""}
-        </span>
-        {avg != null && (
-          <span style={{ color: stroke }}>moy {avg.toFixed(1)}</span>
-        )}
-        <span>
-          {data[data.length - 1].d
-            ? new Date(data[data.length - 1].d).toLocaleDateString("fr-FR", {
-                day: "numeric",
-                month: "short",
-              })
-            : ""}
-        </span>
-      </div>
     </div>
   );
 }
 
-// ─────────────────────────────────────────────────────────────────
-// Teacher grade-entry panel (inline, above the subject list).
-// ─────────────────────────────────────────────────────────────────
+// Panneau prof : saisie d'une note (inline, au-dessus de la liste).
 function TeacherGradeEntry({
   state,
   onSaved,
@@ -940,7 +497,6 @@ function TeacherGradeEntry({
   onSaved: () => void;
   onOpenBulk: () => void;
 }) {
-  const { palette: p } = useTheme();
   const [adding, setAdding] = useState(false);
   const [studentId, setStudentId] = useState<string | null>(null);
   const [classSubjectId, setClassSubjectId] = useState<string | null>(null);
@@ -957,26 +513,18 @@ function TeacherGradeEntry({
     [state.teacherClassSubjectIds, state.classSubjects]
   );
 
-  // Default selections.
-  useEffect(() => {
-    if (!studentId && state.students?.length) {
-      setStudentId(state.students[0].id);
-    }
-  }, [state.students, studentId]);
-  useEffect(() => {
-    if (!classSubjectId && teachableClassSubjects.length > 0) {
-      setClassSubjectId(teachableClassSubjects[0].id);
-    }
-  }, [teachableClassSubjects, classSubjectId]);
+  // Sélections par défaut, dérivées (pas d'effet nécessaire).
+  const effStudentId = studentId ?? state.students?.[0]?.id ?? null;
+  const effClassSubjectId = classSubjectId ?? teachableClassSubjects[0]?.id ?? null;
 
   const submit = () => {
-    if (!studentId || !classSubjectId || !score) return;
+    if (!effStudentId || !effClassSubjectId || !score) return;
     const numScore = parseFloat(score.replace(",", "."));
     if (Number.isNaN(numScore)) return;
     startTransition(async () => {
       const r = await addGradeAction({
-        studentId,
-        classSubjectId,
+        studentId: effStudentId,
+        classSubjectId: effClassSubjectId,
         evaluationName: evalName,
         score: numScore,
         maxScore,
@@ -991,133 +539,77 @@ function TeacherGradeEntry({
     });
   };
 
-  if (!state.students || state.students.length === 0) {
-    return null;
-  }
+  if (!state.students || state.students.length === 0) return null;
+
+  const inputCls =
+    "rounded-[6px] border border-border bg-chip px-2.5 py-1.5 text-[13px] text-ink outline-none";
 
   return (
     <>
-      <AppSectionLabel p={p}>ÉLÈVE</AppSectionLabel>
-      <div style={{ display: "flex", gap: 6, marginBottom: 10, flexWrap: "wrap" }}>
-        {state.students.map((st) => (
-          <div
-            key={st.id}
-            onClick={() => setStudentId(st.id)}
-            style={{
-              padding: "6px 10px",
-              borderRadius: 7,
-              fontSize: 12,
-              background: studentId === st.id ? p.accent : p.surface,
-              color:
-                studentId === st.id ? (p.dark ? "#0E0E10" : "#FFF") : p.ink2,
-              border: `1px solid ${studentId === st.id ? p.accent : p.border}`,
-              fontFamily: p.font.sans,
-              fontWeight: 500,
-              cursor: "pointer",
-            }}
-          >
-            {st.first_name} {st.last_name?.[0] ?? ""}.
-          </div>
-        ))}
+      <SectionLabel>ÉLÈVE</SectionLabel>
+      <div className="mb-2.5 flex flex-wrap gap-1.5">
+        {state.students.map((st) => {
+          const active = effStudentId === st.id;
+          return (
+            <div
+              key={st.id}
+              onClick={() => setStudentId(st.id)}
+              className={`cursor-pointer rounded-[7px] border px-2.5 py-1.5 text-[12px] font-medium ${
+                active
+                  ? "border-primary bg-primary text-white dark:text-[#0E0E10]"
+                  : "border-border bg-surface text-ink-2"
+              }`}
+            >
+              {st.first_name} {st.last_name?.[0] ?? ""}.
+            </div>
+          );
+        })}
       </div>
-      <div style={{ display: "flex", gap: 6, marginBottom: 8 }}>
+      <div className="mb-2 flex gap-1.5">
         <div
           onClick={() => setAdding((v) => !v)}
-          style={{
-            flex: 1,
-            padding: "9px 12px",
-            textAlign: "center",
-            background: adding ? p.accent : p.surface,
-            border: `1px solid ${adding ? p.accent : p.border}`,
-            borderRadius: 9,
-            fontFamily: p.font.mono,
-            fontSize: 11,
-            color: adding ? (p.dark ? "#0E0E10" : "#FFF") : p.ink2,
-            fontWeight: 600,
-            letterSpacing: 0.4,
-            cursor: "pointer",
-          }}
+          className={`flex-1 cursor-pointer rounded-[9px] border px-3 py-2.5 text-center font-mono text-[11px] font-semibold tracking-[0.4px] ${
+            adding
+              ? "border-primary bg-primary text-white dark:text-[#0E0E10]"
+              : "border-border bg-surface text-ink-2"
+          }`}
         >
           {adding ? "ANNULER" : "+ SAISIR UNE NOTE"}
         </div>
         <div
           onClick={onOpenBulk}
-          style={{
-            flex: 1,
-            padding: "9px 12px",
-            textAlign: "center",
-            background: p.surface,
-            border: `1px dashed ${p.border}`,
-            borderRadius: 9,
-            fontFamily: p.font.mono,
-            fontSize: 11,
-            color: p.ink2,
-            fontWeight: 600,
-            letterSpacing: 0.4,
-            cursor: "pointer",
-          }}
+          className="flex-1 cursor-pointer rounded-[9px] border border-dashed border-border bg-surface px-3 py-2.5 text-center font-mono text-[11px] font-semibold tracking-[0.4px] text-ink-2"
         >
           ↥ IMPORT CSV
         </div>
       </div>
       {adding && (
-        <div
-          style={{
-            background: p.surface,
-            border: `1px solid ${p.border}`,
-            borderRadius: 12,
-            padding: 12,
-            marginBottom: 8,
-            animation: "berliner-slide-down 200ms ease-out",
-          }}
-        >
-          <div style={{ display: "flex", gap: 6, marginBottom: 8, flexWrap: "wrap" }}>
-            {teachableClassSubjects.map((cs) => (
-              <div
-                key={cs.id}
-                onClick={() => setClassSubjectId(cs.id)}
-                style={{
-                  padding: "4px 8px",
-                  borderRadius: 6,
-                  fontSize: 11,
-                  background:
-                    classSubjectId === cs.id
-                      ? p.accent
-                      : p.dark
-                      ? p.surface2
-                      : p.chip,
-                  color:
-                    classSubjectId === cs.id
-                      ? p.dark
-                        ? "#0E0E10"
-                        : "#FFF"
-                      : p.ink2,
-                  fontFamily: p.font.mono,
-                  cursor: "pointer",
-                }}
-              >
-                {cs.subjectName} · {cs.className}
-              </div>
-            ))}
+        <div className="mb-2 animate-berliner-slide-down rounded-[12px] border border-border bg-surface p-3">
+          <div className="mb-2 flex flex-wrap gap-1.5">
+            {teachableClassSubjects.map((cs) => {
+              const active = effClassSubjectId === cs.id;
+              return (
+                <div
+                  key={cs.id}
+                  onClick={() => setClassSubjectId(cs.id)}
+                  className={`cursor-pointer rounded-[6px] px-2 py-1 font-mono text-[11px] ${
+                    active
+                      ? "bg-primary text-white dark:text-[#0E0E10]"
+                      : "bg-chip text-ink-2"
+                  }`}
+                >
+                  {cs.subjectName} · {cs.className}
+                </div>
+              );
+            })}
           </div>
           <input
             value={evalName}
             onChange={(e) => setEvalName(e.target.value)}
             placeholder="DS, contrôle, TP…"
-            style={{
-              width: "100%",
-              background: p.dark ? p.surface2 : p.chip,
-              border: `1px solid ${p.border}`,
-              borderRadius: 6,
-              padding: "6px 10px",
-              fontFamily: p.font.sans,
-              fontSize: 13,
-              color: p.ink,
-              outline: "none",
-              marginBottom: 8,
-            }}
+            className={`mb-2 w-full ${inputCls}`}
           />
-          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <div className="flex items-center gap-2">
             <input
               type="number"
               placeholder="Note"
@@ -1126,56 +618,22 @@ function TeacherGradeEntry({
               step="0.5"
               min="0"
               max={maxScore}
-              style={{
-                width: 70,
-                background: p.dark ? p.surface2 : p.chip,
-                border: `1px solid ${p.border}`,
-                borderRadius: 6,
-                padding: "6px 8px",
-                fontFamily: p.font.mono,
-                fontSize: 13,
-                color: p.ink,
-                outline: "none",
-              }}
+              className={`w-[70px] ${inputCls} font-mono`}
             />
-            <Mono style={{ color: p.ink3, fontSize: 13 }}>
-              / {maxScore}
-            </Mono>
+            <span className="font-mono text-[13px] text-ink-3">/ {maxScore}</span>
             <input
               type="number"
               value={maxScore}
               onChange={(e) => setMaxScore(parseInt(e.target.value, 10) || 20)}
               min="1"
-              style={{
-                width: 50,
-                background: p.dark ? p.surface2 : p.chip,
-                border: `1px solid ${p.border}`,
-                borderRadius: 6,
-                padding: "6px 8px",
-                fontFamily: p.font.mono,
-                fontSize: 12,
-                color: p.ink3,
-                outline: "none",
-              }}
+              className={`w-[50px] ${inputCls} font-mono text-ink-3`}
             />
-            <div style={{ flex: 1 }} />
+            <div className="flex-1" />
             <button
               type="button"
               onClick={submit}
               disabled={isPending}
-              style={{
-                background: p.accent,
-                color: p.dark ? "#0E0E10" : "#FFF",
-                border: "none",
-                borderRadius: 6,
-                padding: "6px 14px",
-                fontFamily: p.font.mono,
-                fontSize: 11,
-                fontWeight: 600,
-                cursor: isPending ? "wait" : "pointer",
-                letterSpacing: 0.4,
-                opacity: isPending ? 0.7 : 1,
-              }}
+              className="rounded-[6px] bg-primary px-3.5 py-1.5 font-mono text-[11px] font-semibold tracking-[0.4px] text-white disabled:opacity-70 dark:text-[#0E0E10]"
             >
               {isPending ? "..." : "PUBLIER"}
             </button>
@@ -1188,11 +646,9 @@ function TeacherGradeEntry({
 
 function DeleteGradeButton({
   gradeId,
-  p,
   onDeleted,
 }: {
   gradeId: string;
-  p: Palette;
   onDeleted: () => void;
 }) {
   const [isPending, startTransition] = useTransition();
@@ -1207,22 +663,9 @@ function DeleteGradeButton({
   return (
     <div
       onClick={onClick}
-      style={{
-        width: 22,
-        height: 22,
-        borderRadius: 6,
-        marginLeft: 4,
-        background: p.dark ? p.surface2 : p.chip,
-        color: p.ink3,
-        fontSize: 12,
-        fontFamily: p.font.mono,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        cursor: isPending ? "wait" : "pointer",
-        flexShrink: 0,
-        opacity: isPending ? 0.5 : 1,
-      }}
+      className={`ml-1 flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-[6px] bg-chip font-mono text-[12px] text-ink-3 ${
+        isPending ? "cursor-wait opacity-50" : "cursor-pointer"
+      }`}
     >
       ×
     </div>

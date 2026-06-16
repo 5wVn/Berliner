@@ -6,7 +6,7 @@ import { GradesClient } from "../../_berliner/GradesClient";
 import { MobileLayout } from "../../_berliner/MobileLayout";
 
 export default async function TeacherGradesPage() {
-  const result = await getBerlinerStateAction();
+  const result = await getBerlinerStateAction("teacher");
   if (!result.ok) {
     if (result.error.code === "UNAUTHENTICATED") redirect("/");
     throw new Error(result.error.message);

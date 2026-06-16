@@ -6,7 +6,7 @@ import { ProfileClient } from "../../_berliner/ProfileClient";
 import { MobileLayout } from "../../_berliner/MobileLayout";
 
 export default async function TeacherProfilePage() {
-  const result = await getBerlinerStateAction();
+  const result = await getBerlinerStateAction("teacher");
   if (!result.ok) {
     if (result.error.code === "UNAUTHENTICATED") redirect("/");
     throw new Error(result.error.message);

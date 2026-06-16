@@ -13,13 +13,6 @@ const ROLE_OPTIONS: Array<{
 }> = [
   { role: "student", label: "Etudiant", description: "Vue etudiant" },
   { role: "teacher", label: "Professeur", description: "Vue enseignant" },
-  { role: "registrar", label: "Scolarite", description: "Vue scolarite" },
-  {
-    role: "academic_head",
-    label: "Direction",
-    description: "Vue direction pedagogique",
-  },
-  { role: "company", label: "Entreprise", description: "Vue entreprise" },
 ];
 
 export default function ChooseDashboardPage() {

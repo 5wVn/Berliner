@@ -1,26 +1,19 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { type BerlinerState } from "@/actions/berliner-state";
 import { computeGlobalAverage } from "@/shared/lib/berliner-stats";
 import { logoutAction } from "@/actions/auth";
 import { useTheme } from "@/shared/design/ThemeProvider";
 import {
-  AppCard,
-  AppRow,
-  AppSectionLabel,
-  PageShell,
-} from "@/shared/components/berliner/Shell";
-import {
-  ACCENTS,
   APP_BUILD,
   APP_VERSION,
   ditherGradient,
+  subjectColor,
   termFromDate,
-  type AccentName,
 } from "@/shared/design/tokens";
-import { GlobalAnimations, Mono, ScrollFade } from "@/shared/design/primitives";
+import { ScrollFade } from "@/shared/design/primitives";
 import {
   EditProfilePanel,
   NotificationsPanel,
@@ -36,18 +29,69 @@ const ROLE_LABEL: Record<string, string> = {
   super_admin: "Super administrateur",
 };
 
-const ACCENT_C: Record<AccentName, string> = {
-  green: "oklch(0.72 0.16 145)",
-  blue: "oklch(0.66 0.18 250)",
-  orange: "oklch(0.72 0.18 50)",
-  violet: "oklch(0.66 0.20 305)",
-  lemon: "oklch(0.86 0.18 105)",
-  slate: "#c3cdff",
-  red: "oklch(0.66 0.22 15)",
-};
+// Petit libellé de section (mono, majuscules).
+function SectionLabel({ children }: { children: ReactNode }) {
+  return (
+    <div className="mt-[18px] mb-2 px-1 font-mono text-[10.5px] font-semibold uppercase tracking-[0.6px] text-ink-3">
+      {children}
+    </div>
+  );
+}
+
+// Carte générique qui contient une pile de lignes.
+function Card({ children }: { children: ReactNode }) {
+  return (
+    <div className="mb-2 overflow-hidden rounded-[12px] border border-border bg-surface">
+      {children}
+    </div>
+  );
+}
+
+// Ligne d'action avec barre de couleur, libellé, méta et slot à droite.
+function Row({
+  barColor,
+  kind,
+  title,
+  meta,
+  right,
+  onClick,
+  last,
+}: {
+  barColor: string;
+  kind: string;
+  title: string;
+  meta: ReactNode;
+  right?: ReactNode;
+  onClick?: () => void;
+  last?: boolean;
+}) {
+  return (
+    <div
+      onClick={onClick}
+      className={`flex items-center gap-3 px-3.5 py-[11px] ${
+        onClick ? "cursor-pointer" : ""
+      } ${last ? "" : "border-b border-border"}`}
+    >
+      <div
+        className="h-7 w-1 shrink-0 rounded-[2px]"
+        style={{ background: barColor }}
+      />
+      <div className="min-w-0 flex-1">
+        <div className="mb-0.5 font-mono text-[10px] uppercase tracking-[0.5px] text-ink-3">
+          {kind}
+        </div>
+        <div className="text-[14px] font-medium leading-[1.2]">{title}</div>
+        <div className="font-mono text-[10.5px] tracking-[0.3px] text-ink-3">
+          {meta}
+        </div>
+      </div>
+      {right ?? <span className="text-[18px] text-ink-3">›</span>}
+    </div>
+  );
+}
 
 export function ProfileClient({ state }: { state: BerlinerState }) {
-  const { palette: p, theme, setTheme, accent, setAccent } = useTheme();
+  const { theme, setTheme } = useTheme();
   const router = useRouter();
   const isStudent = state.profile.role === "student";
   const [overlay, setOverlay] = useState<null | "edit" | "notifs">(null);
@@ -58,13 +102,11 @@ export function ProfileClient({ state }: { state: BerlinerState }) {
     ? state.grades.filter((g) => g.studentId === state.profile.id)
     : state.grades;
 
-  // Stats
+  // Présence
   const totalAttendance = state.attendance.length;
   const presentish = state.attendance.filter((a) => {
     const v = (a.status || "").toLowerCase();
-    return (
-      v.includes("present") || v.includes("late") || v.includes("excuse")
-    );
+    return v.includes("present") || v.includes("late") || v.includes("excuse");
   }).length;
   const presencePct =
     totalAttendance > 0 ? Math.round((presentish / totalAttendance) * 100) : 0;
@@ -74,12 +116,9 @@ export function ProfileClient({ state }: { state: BerlinerState }) {
     ? state.grades.filter((g) => g.studentId === state.profile.id).length
     : state.grades.length;
 
-  const globalAvg = computeGlobalAverage({
-    subjects: state.subjects,
-    grades,
-  });
+  const globalAvg = computeGlobalAverage({ subjects: state.subjects, grades });
 
-  // T1 → T2 delta
+  // Évolution T1 → T2
   const t1 = grades.filter((g) => termFromDate(g.evaluationDate) === "T1");
   const t2 = grades.filter((g) => termFromDate(g.evaluationDate) === "T2");
   const avgT1 =
@@ -111,8 +150,7 @@ export function ProfileClient({ state }: { state: BerlinerState }) {
   ];
 
   const initials =
-    (state.profile.first_name?.[0] ?? "") +
-    (state.profile.last_name?.[0] ?? "");
+    (state.profile.first_name?.[0] ?? "") + (state.profile.last_name?.[0] ?? "");
   const displayName =
     [state.profile.first_name, state.profile.last_name].filter(Boolean).join(" ") ||
     "Mon compte";
@@ -129,126 +167,48 @@ export function ProfileClient({ state }: { state: BerlinerState }) {
   };
 
   return (
-    <PageShell p={p}>
-      <GlobalAnimations />
-
-      {/* Header */}
-      <div style={{ padding: "16px 20px 14px", position: "relative", overflow: "hidden" }}>
-        {!p.dark && (
-          <div
-            aria-hidden
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              height: 180,
-              ...ditherGradient({ fg: p.accent, alpha: 0.4 }),
-              maskImage: "linear-gradient(to bottom, #000 0%, transparent 100%)",
-              WebkitMaskImage: "linear-gradient(to bottom, #000 0%, transparent 100%)",
-              pointerEvents: "none",
-            }}
-          />
-        )}
-        <div style={{ position: "relative" }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              fontFamily: p.font.mono,
-              fontSize: 11,
-              color: p.ink3,
-              letterSpacing: 0.5,
-              textTransform: "uppercase",
-              marginBottom: 14,
-            }}
-          >
+    <div className="relative flex min-h-[100dvh] w-full flex-col text-ink">
+      {/* En-tête */}
+      <div className="relative overflow-hidden px-5 pb-3.5 pt-4">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-[180px] dark:hidden"
+          style={{
+            ...ditherGradient({ fg: subjectColor("red"), alpha: 0.4 }),
+            maskImage: "linear-gradient(to bottom, #000 0%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to bottom, #000 0%, transparent 100%)",
+          }}
+        />
+        <div className="relative">
+          <div className="mb-3.5 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.5px] text-ink-3">
             <span>PROFIL</span>
             <span>{ROLE_LABEL[state.profile.role] ?? "Compte"}</span>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <div className="flex items-center gap-4">
             <div
               onClick={() => setOverlay("edit")}
-              style={{
-                width: 88,
-                height: 88,
-                borderRadius: 44,
-                flexShrink: 0,
-                background: state.profile.avatar_url ? "#000" : p.accentSoft,
-                backgroundImage: state.profile.avatar_url
-                  ? `url(${state.profile.avatar_url})`
-                  : "none",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                color: p.accent,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontFamily: p.font.mono,
-                fontSize: 32,
-                fontWeight: 600,
-                letterSpacing: -1,
-                border: `1.5px solid ${p.border}`,
-                cursor: "pointer",
-              }}
+              className="flex h-[88px] w-[88px] shrink-0 cursor-pointer items-center justify-center rounded-full border-[1.5px] border-border bg-primary/15 font-mono text-[32px] font-semibold tracking-[-1px] text-primary"
             >
-              {!state.profile.avatar_url && initials.toUpperCase()}
+              {initials.toUpperCase()}
             </div>
-            <div style={{ minWidth: 0, flex: 1 }}>
-              <div
-                style={{
-                  fontSize: 24,
-                  fontWeight: 600,
-                  letterSpacing: -0.4,
-                  lineHeight: 1.1,
-                }}
-              >
+            <div className="min-w-0 flex-1">
+              <div className="text-[24px] font-semibold leading-[1.1] tracking-[-0.4px]">
                 {displayName}
               </div>
-              <Mono
-                style={{
-                  fontSize: 11,
-                  color: p.ink3,
-                  marginTop: 4,
-                  letterSpacing: 0.3,
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  display: "block",
-                }}
-              >
+              <div className="mt-1 block truncate font-mono text-[11px] tracking-[0.3px] text-ink-3">
                 {state.profile.email}
-              </Mono>
-              {state.profile.class_name && (
-                <Mono
-                  style={{
-                    fontSize: 10.5,
-                    color: p.accent,
-                    marginTop: 4,
-                    letterSpacing: 0.4,
-                    textTransform: "uppercase",
-                    display: "block",
-                    fontWeight: 600,
-                  }}
-                >
+              </div>
+              {state.profile.class_name ? (
+                <div className="mt-1 font-mono text-[10.5px] font-semibold uppercase tracking-[0.4px] text-primary">
                   {state.profile.class_name}
-                </Mono>
-              )}
-              {state.establishmentName && !state.profile.class_name && (
-                <Mono
-                  style={{
-                    fontSize: 10.5,
-                    color: p.ink3,
-                    marginTop: 4,
-                    letterSpacing: 0.4,
-                    textTransform: "uppercase",
-                    display: "block",
-                  }}
-                >
-                  {state.establishmentName}
-                </Mono>
+                </div>
+              ) : (
+                state.establishmentName && (
+                  <div className="mt-1 font-mono text-[10.5px] uppercase tracking-[0.4px] text-ink-3">
+                    {state.establishmentName}
+                  </div>
+                )
               )}
             </div>
           </div>
@@ -256,228 +216,98 @@ export function ProfileClient({ state }: { state: BerlinerState }) {
       </div>
 
       <ScrollFade style={{ padding: "0 16px 24px" }}>
-        <div style={{ display: "flex", gap: 8, marginBottom: 4 }}>
+        {/* Stats */}
+        <div className="mb-1 flex gap-2">
           {stats.map((s) => (
             <div
               key={s.l}
-              style={{
-                flex: 1,
-                background: p.surface,
-                border: `1px solid ${p.border}`,
-                borderRadius: 12,
-                padding: "11px 12px",
-              }}
+              className="flex-1 rounded-[12px] border border-border bg-surface px-3 py-[11px]"
             >
-              <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
-                <Mono
-                  style={{
-                    fontSize: 22,
-                    fontWeight: 600,
-                    color: p.ink,
-                    letterSpacing: -0.5,
-                    lineHeight: 1,
-                  }}
-                >
+              <div className="flex items-baseline gap-1">
+                <span className="font-mono text-[22px] font-semibold leading-none tracking-[-0.5px] tabular-nums">
                   {s.v}
-                </Mono>
+                </span>
                 {s.delta != null && (
-                  <Mono
-                    style={{
-                      fontSize: 9.5,
-                      fontWeight: 600,
-                      color: s.delta >= 0 ? p.sem.ok : p.sem.bad,
-                    }}
+                  <span
+                    className={`font-mono text-[9.5px] font-semibold ${
+                      s.delta >= 0 ? "text-sem-ok" : "text-sem-bad"
+                    }`}
                   >
                     {s.delta >= 0 ? "↑" : "↓"}
                     {Math.abs(s.delta).toFixed(1)}
-                  </Mono>
+                  </span>
                 )}
               </div>
-              <div
-                style={{
-                  fontFamily: p.font.mono,
-                  fontSize: 9.5,
-                  color: p.ink3,
-                  textTransform: "uppercase",
-                  letterSpacing: 0.5,
-                  marginTop: 6,
-                }}
-              >
+              <div className="mt-1.5 font-mono text-[9.5px] uppercase tracking-[0.5px] text-ink-3">
                 {s.l}
               </div>
-              <div style={{ fontSize: 10.5, color: p.ink4, marginTop: 1 }}>
-                {s.sub}
-              </div>
+              <div className="mt-px text-[10.5px] text-ink-4">{s.sub}</div>
             </div>
           ))}
         </div>
 
-        <AppSectionLabel p={p}>COMPTE</AppSectionLabel>
-        <AppCard p={p}>
-          <AppRow
-            p={p}
-            iconBg={p.accent}
-            title="Modifier mon profil"
+        <SectionLabel>COMPTE</SectionLabel>
+        <Card>
+          <Row
+            barColor="var(--primary)"
             kind="compte"
+            title="Modifier mon profil"
             meta="nom, photo"
             onClick={() => setOverlay("edit")}
           />
-          <AppRow
-            p={p}
-            iconBg={p.sem.warn}
-            title="Notifications"
+          <Row
+            barColor="var(--sem-warn)"
             kind="flux"
+            title="Notifications"
             meta={`${unreadCount} non lue${unreadCount > 1 ? "s" : ""}`}
             onClick={() => setOverlay("notifs")}
             last
           />
-        </AppCard>
+        </Card>
 
-        <AppSectionLabel p={p}>APPARENCE</AppSectionLabel>
-        <div
-          style={{
-            background: p.surface,
-            border: `1px solid ${p.border}`,
-            borderRadius: 14,
-            padding: "12px 14px",
-            marginBottom: 8,
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginBottom: 10,
-            }}
-          >
-            <Mono
-              style={{
-                fontSize: 11,
-                color: p.ink2,
-                letterSpacing: 0.4,
-                textTransform: "uppercase",
-                fontWeight: 600,
-              }}
-            >
+        <SectionLabel>APPARENCE</SectionLabel>
+        <div className="mb-2 rounded-[14px] border border-border bg-surface px-3.5 py-3">
+          <div className="flex items-center justify-between">
+            <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.4px] text-ink-2">
               Thème
-            </Mono>
-            <div
-              style={{
-                display: "flex",
-                background: p.dark ? p.surface2 : p.chip,
-                border: `1px solid ${p.border}`,
-                borderRadius: 7,
-                padding: 2,
-              }}
-            >
+            </span>
+            <div className="flex rounded-[7px] border border-border bg-chip p-0.5">
               {(["light", "dark"] as const).map((t) => (
                 <span
                   key={t}
                   onClick={() => setTheme(t)}
-                  style={{
-                    padding: "4px 10px",
-                    borderRadius: 5,
-                    background: theme === t ? p.surface : "transparent",
-                    color: theme === t ? p.ink : p.ink3,
-                    fontFamily: p.font.mono,
-                    fontSize: 10.5,
-                    fontWeight: 600,
-                    letterSpacing: 0.4,
-                    textTransform: "uppercase",
-                    border:
-                      theme === t
-                        ? `1px solid ${p.border}`
-                        : "1px solid transparent",
-                    cursor: "pointer",
-                  }}
+                  className={`cursor-pointer rounded-[5px] border px-2.5 py-1 font-mono text-[10.5px] font-semibold uppercase tracking-[0.4px] ${
+                    theme === t
+                      ? "border-border bg-surface text-ink"
+                      : "border-transparent text-ink-3"
+                  }`}
                 >
                   {t}
                 </span>
               ))}
             </div>
           </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <Mono
-              style={{
-                fontSize: 11,
-                color: p.ink2,
-                letterSpacing: 0.4,
-                textTransform: "uppercase",
-                fontWeight: 600,
-              }}
-            >
-              Accent
-            </Mono>
-            <div style={{ display: "flex", gap: 6 }}>
-              {ACCENTS.map((name) => {
-                const active = name === accent;
-                return (
-                  <span
-                    key={name}
-                    onClick={() => setAccent(name)}
-                    style={{
-                      width: 22,
-                      height: 22,
-                      borderRadius: 11,
-                      background: ACCENT_C[name],
-                      cursor: "pointer",
-                      border: active
-                        ? `2px solid ${p.ink}`
-                        : `1px solid ${p.border}`,
-                      transition: "all 150ms",
-                      flexShrink: 0,
-                    }}
-                  />
-                );
-              })}
-            </div>
-          </div>
         </div>
 
-        <AppSectionLabel p={p}>SESSION</AppSectionLabel>
-        <AppCard p={p}>
-          <AppRow
-            p={p}
-            iconBg={p.sem.bad}
-            title={isPending ? "Déconnexion…" : "Se déconnecter"}
+        <SectionLabel>SESSION</SectionLabel>
+        <Card>
+          <Row
+            barColor="var(--sem-bad)"
             kind="session"
+            title={isPending ? "Déconnexion…" : "Se déconnecter"}
             meta={state.profile.email}
             onClick={isPending ? undefined : onSignOut}
             right={
-              <Mono
-                style={{
-                  fontSize: 10,
-                  color: p.sem.bad,
-                  letterSpacing: 0.4,
-                }}
-              >
+              <span className="font-mono text-[10px] tracking-[0.4px] text-sem-bad">
                 EXIT
-              </Mono>
+              </span>
             }
             last
           />
-        </AppCard>
+        </Card>
 
-        <div style={{ height: 24 }} />
-        <div
-          style={{
-            fontFamily: p.font.mono,
-            fontSize: 10.5,
-            color: p.ink4,
-            textAlign: "center",
-            letterSpacing: 0.4,
-            padding: "0 16px",
-            cursor: "default",
-            userSelect: "none",
-          }}
-        >
+        <div className="h-6" />
+        <div className="select-none px-4 text-center font-mono text-[10.5px] tracking-[0.4px] text-ink-4">
           BERLINER · {APP_VERSION} · build {APP_BUILD}
         </div>
       </ScrollFade>
@@ -512,6 +342,6 @@ export function ProfileClient({ state }: { state: BerlinerState }) {
           }}
         />
       )}
-    </PageShell>
+    </div>
   );
 }

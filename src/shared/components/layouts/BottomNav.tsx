@@ -4,13 +4,10 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
   IconCalendar as Calendar,
-  IconChartBar as BarChart,
   IconChecklist as Checklist,
-  IconFileText as FileText,
   IconHome as Home,
   IconSchool as GraduationCap,
   IconUser as User,
-  IconUsersGroup as Users,
 } from "@tabler/icons-react"
 import { cn } from "@/shared/lib/utils"
 import { UserRole } from "@/shared/types/auth"
@@ -36,29 +33,14 @@ const NAV_CONFIG: Record<UserRole, NavItem[]> = {
     { label: "Devoirs", href: "/teacher/devoirs", icon: Checklist },
     { label: "Profil", href: "/teacher/profile", icon: User },
   ],
-  registrar: [
-    { label: "Accueil", href: "/registrar", icon: Home },
-    { label: "Étudiants", href: "/registrar/students", icon: Users },
-    { label: "Documents", href: "/registrar/documents", icon: FileText },
-    { label: "Profil", href: "/registrar/profile", icon: User },
-  ],
-  academic_head: [
-    { label: "Accueil", href: "/academic-head", icon: Home },
-    { label: "Analytique", href: "/academic-head/analytics", icon: BarChart },
-    { label: "Rapports", href: "/academic-head/reports", icon: FileText },
-    { label: "Profil", href: "/academic-head/profile", icon: User },
-  ],
-  company: [
-    { label: "Accueil", href: "/company", icon: Home },
-    { label: "Apprentis", href: "/company/apprentices", icon: Users },
-    { label: "Documents", href: "/company/documents", icon: FileText },
-    { label: "Profil", href: "/company/profile", icon: User },
-  ],
+  // super_admin lands on /choose-dashboard and never renders BottomNav
+  // directly; it mirrors the student nav to satisfy the typed record.
   super_admin: [
-    { label: "Accueil", href: "/academic-head", icon: Home },
-    { label: "Analytique", href: "/academic-head/analytics", icon: BarChart },
-    { label: "Rapports", href: "/academic-head/reports", icon: FileText },
-    { label: "Profil", href: "/academic-head/profile", icon: User },
+    { label: "Accueil", href: "/student", icon: Home },
+    { label: "Notes", href: "/student/grades", icon: GraduationCap },
+    { label: "Planning", href: "/student/schedule", icon: Calendar },
+    { label: "Devoirs", href: "/student/devoirs", icon: Checklist },
+    { label: "Profil", href: "/student/profile", icon: User },
   ],
 }
 

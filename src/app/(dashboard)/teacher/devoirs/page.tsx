@@ -6,7 +6,7 @@ import { DevoirsClient } from "../../_berliner/DevoirsClient";
 import { MobileLayout } from "../../_berliner/MobileLayout";
 
 export default async function TeacherDevoirsPage() {
-  const result = await getBerlinerStateAction();
+  const result = await getBerlinerStateAction("teacher");
   if (!result.ok) {
     if (result.error.code === "UNAUTHENTICATED") redirect("/");
     throw new Error(result.error.message);

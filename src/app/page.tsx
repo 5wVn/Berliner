@@ -47,11 +47,7 @@ export default function Home() {
 
     await refreshProfile();
 
-    if (result.data.role === "academic_head") {
-      router.replace("/choose-dashboard");
-    } else {
-      router.replace(roleToDashboardPath(result.data.role));
-    }
+    router.replace(roleToDashboardPath(result.data.role));
 
     setSubmitting(false);
   };

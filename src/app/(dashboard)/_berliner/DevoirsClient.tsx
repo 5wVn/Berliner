@@ -1,22 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { type BerlinerState } from "@/actions/berliner-state";
-import { useTheme } from "@/shared/design/ThemeProvider";
-import {
-  AppCard,
-  AppSectionLabel,
-  PageShell,
-  SectionEmpty,
-} from "@/shared/components/berliner/Shell";
-import { colorFor, localISO, relDue } from "@/shared/design/tokens";
-import {
-  GlobalAnimations,
-  Mono,
-  ScrollFade,
-  hapticPing,
-} from "@/shared/design/primitives";
-import { AppHeader } from "@/shared/components/berliner/Shell";
+import { subjectColor, localISO, relDue } from "@/shared/design/tokens";
+import { ScrollFade, hapticPing } from "@/shared/design/primitives";
 
 type DevoirsClientProps = { state: BerlinerState };
 
@@ -45,8 +32,16 @@ function saveMap(key: string, value: unknown) {
   }
 }
 
+// Carte générique.
+function Card({ children }: { children: ReactNode }) {
+  return (
+    <div className="mb-2 overflow-hidden rounded-[12px] border border-border bg-surface">
+      {children}
+    </div>
+  );
+}
+
 export function DevoirsClient({ state }: DevoirsClientProps) {
-  const { palette: p } = useTheme();
   const isStudent = state.profile.role === "student";
   const today = localISO(new Date());
   const todayDate = new Date(today + "T00:00");
@@ -55,7 +50,7 @@ export function DevoirsClient({ state }: DevoirsClientProps) {
   const [doneOverride, setDoneOverride] = useState<DoneMap>({});
   const [subjFilter, setSubjFilter] = useState<string | null>(null);
 
-  // Hydrate from localStorage on mount.
+  // Lecture du localStorage après le montage (évite un décalage d'hydratation).
   useEffect(() => {
     setProgress(loadMap<ProgressMap>(PROGRESS_KEY, {}));
     setDoneOverride(loadMap<DoneMap>(DONE_KEY, {}));
@@ -72,7 +67,6 @@ export function DevoirsClient({ state }: DevoirsClientProps) {
       : state.evaluations;
 
     return filtered.map((ev) => {
-      // For students, "done" is when a grade exists OR they checked it.
       const grade = isStudent
         ? state.grades.find(
             (g) => g.evaluationId === ev.id && g.studentId === state.profile.id
@@ -149,67 +143,47 @@ export function DevoirsClient({ state }: DevoirsClientProps) {
     });
   };
 
-  const renderItem = (
-    it: (typeof items)[number],
-    last: boolean
-  ) => {
+  const renderItem = (it: (typeof items)[number], last: boolean) => {
     const subj = subjectsById.get(it.evaluation.subjectId);
-    const c = subj ? colorFor(p, subj.color) : p.accent;
+    const c = subjectColor(subj?.color);
     const overdue =
       new Date(it.evaluation.date + "T00:00").getTime() < todayDate.getTime();
     return (
       <div
         key={it.evaluation.id}
-        style={{
-          padding: "12px 14px",
-          borderBottom: last ? "none" : `1px solid ${p.border}`,
-          animation: "berliner-fade-in 220ms ease-out",
-        }}
+        className={`animate-berliner-fade-in px-3.5 py-3 ${
+          last ? "" : "border-b border-border"
+        }`}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+        <div className="mb-2 flex items-center gap-3">
           <div
             onClick={(e) => {
               hapticPing(e.currentTarget);
               toggleDone(it.evaluation.id);
             }}
-            style={{
-              width: 22,
-              height: 22,
-              borderRadius: 11,
-              border: `1.5px solid ${overdue ? p.sem.bad : p.ink3}`,
-              cursor: "pointer",
-              flexShrink: 0,
-              transition: "all 150ms",
-            }}
+            className={`h-[22px] w-[22px] shrink-0 cursor-pointer rounded-full border-[1.5px] ${
+              overdue ? "border-sem-bad" : "border-ink-3"
+            }`}
           />
           <div
-            style={{
-              width: 3,
-              height: 22,
-              borderRadius: 2,
-              background: c,
-              flexShrink: 0,
-            }}
+            className="h-[22px] w-[3px] shrink-0 rounded-[2px]"
+            style={{ background: c }}
           />
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 14.5, fontWeight: 500, lineHeight: 1.2 }}>
+          <div className="min-w-0 flex-1">
+            <div className="text-[14.5px] font-medium leading-[1.2]">
               {it.evaluation.name}
             </div>
-            <Mono style={{ fontSize: 11, color: p.ink3 }}>
+            <div className="font-mono text-[11px] text-ink-3">
               {it.evaluation.subjectName}
-            </Mono>
+            </div>
           </div>
-          <Mono
-            style={{
-              fontSize: 10.5,
-              fontWeight: 600,
-              letterSpacing: 0.4,
-              textAlign: "right",
-              color: overdue ? p.sem.bad : p.accent,
-            }}
+          <span
+            className={`text-right font-mono text-[10.5px] font-semibold tracking-[0.4px] ${
+              overdue ? "text-sem-bad" : "text-primary"
+            }`}
           >
             {relDue(it.evaluation.date)}
-          </Mono>
+          </span>
         </div>
         {isStudent && (
           <div
@@ -221,26 +195,11 @@ export function DevoirsClient({ state }: DevoirsClientProps) {
               );
               setItemProgress(it.evaluation.id, pct);
             }}
-            style={{
-              height: 6,
-              borderRadius: 3,
-              cursor: "pointer",
-              background: p.dark ? p.surface2 : p.chip,
-              position: "relative",
-              overflow: "hidden",
-            }}
+            className="relative h-1.5 cursor-pointer overflow-hidden rounded-[3px] bg-chip"
           >
             <div
-              style={{
-                position: "absolute",
-                left: 0,
-                top: 0,
-                height: "100%",
-                width: `${(it.progress || 0) * 100}%`,
-                background: c,
-                borderRadius: 3,
-                transition: "width 200ms ease-out",
-              }}
+              className="absolute left-0 top-0 h-full rounded-[3px] transition-[width] duration-200 ease-out"
+              style={{ width: `${(it.progress || 0) * 100}%`, background: c }}
             />
           </div>
         )}
@@ -248,102 +207,69 @@ export function DevoirsClient({ state }: DevoirsClientProps) {
     );
   };
 
-  const renderBucket = (label: string, list: typeof todo, color?: string) => {
+  const renderBucket = (
+    label: string,
+    list: typeof todo,
+    labelClass = "text-ink-3"
+  ) => {
     if (list.length === 0) return null;
     return (
       <div key={label}>
-        <AppSectionLabel p={p}>
-          <span style={{ color: color ?? p.ink3 }}>{label}</span>
-          <Mono style={{ marginLeft: 6, color: p.ink4 }}>· {list.length}</Mono>
-        </AppSectionLabel>
-        <AppCard p={p}>
-          {list.map((it, i) => renderItem(it, i === list.length - 1))}
-        </AppCard>
+        <div className="mt-[18px] mb-2 px-1 font-mono text-[10.5px] font-semibold uppercase tracking-[0.6px]">
+          <span className={labelClass}>{label}</span>
+          <span className="ml-1.5 text-ink-4">· {list.length}</span>
+        </div>
+        <Card>{list.map((it, i) => renderItem(it, i === list.length - 1))}</Card>
       </div>
     );
   };
 
   return (
-    <PageShell p={p}>
-      <GlobalAnimations />
-      <AppHeader
-        p={p}
-        kicker={isStudent ? "DEVOIRS" : "ÉVALUATIONS"}
-        kickerRight={<Mono>{todo.length} EN COURS</Mono>}
-        title={
-          <>
-            {todo.length} à {isStudent ? "rendre" : "noter"}
-            <br />
-            <span style={{ color: p.ink3, fontWeight: 500 }}>cette semaine.</span>
-          </>
-        }
-      />
+    <div className="relative flex min-h-[100dvh] w-full flex-col text-ink">
+      {/* En-tête */}
+      <div className="px-5 pb-2 pt-3.5">
+        <div className="mb-3 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.5px] text-ink-3">
+          <span>{isStudent ? "DEVOIRS" : "ÉVALUATIONS"}</span>
+          <span>{todo.length} EN COURS</span>
+        </div>
+        <div className="text-[26px] font-semibold leading-[1.15] tracking-[-0.4px]">
+          {todo.length} à {isStudent ? "rendre" : "noter"}
+          <br />
+          <span className="font-medium text-ink-3">cette semaine.</span>
+        </div>
+      </div>
 
-      {/* Subject filter chips */}
+      {/* Filtres matière */}
       {state.subjects.length > 0 && (
-        <div
-          style={{
-            padding: "4px 16px 6px",
-            display: "flex",
-            gap: 6,
-            overflowX: "auto",
-          }}
-        >
+        <div className="flex gap-1.5 overflow-x-auto px-4 pb-1.5 pt-1">
           <div
             onClick={() => setSubjFilter(null)}
-            style={{
-              padding: "5px 10px",
-              borderRadius: 6,
-              flexShrink: 0,
-              background: !subjFilter ? (p.dark ? p.surface2 : p.ink) : "transparent",
-              color: !subjFilter ? (p.dark ? p.ink : "#fff") : p.ink3,
-              border: `1px solid ${
-                !subjFilter ? (p.dark ? p.border : p.ink) : p.border
-              }`,
-              fontFamily: p.font.mono,
-              fontSize: 10.5,
-              fontWeight: 600,
-              letterSpacing: 0.3,
-              cursor: "pointer",
-              whiteSpace: "nowrap",
-              textTransform: "uppercase",
-            }}
+            className={`shrink-0 cursor-pointer whitespace-nowrap rounded-[6px] border px-2.5 py-[5px] font-mono text-[10.5px] font-semibold uppercase tracking-[0.3px] ${
+              !subjFilter
+                ? "border-ink bg-ink text-surface dark:border-border dark:bg-surface-2 dark:text-ink"
+                : "border-border text-ink-3"
+            }`}
           >
             Toutes
           </div>
           {state.subjects.map((s) => {
-            const c = colorFor(p, s.color);
+            const c = subjectColor(s.color);
             const active = subjFilter === s.id;
             return (
               <div
                 key={s.id}
                 onClick={() => setSubjFilter(active ? null : s.id)}
+                className="flex shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-[6px] border px-2.5 py-[5px] font-mono text-[10.5px] tracking-[0.3px]"
                 style={{
-                  padding: "5px 10px",
-                  borderRadius: 6,
-                  flexShrink: 0,
                   background: active ? c : "transparent",
-                  color: active ? "#fff" : p.ink3,
-                  border: `1px solid ${active ? c : p.border}`,
-                  fontFamily: p.font.mono,
-                  fontSize: 10.5,
-                  fontWeight: 500,
-                  letterSpacing: 0.3,
-                  cursor: "pointer",
-                  whiteSpace: "nowrap",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 5,
+                  color: active ? "#fff" : "var(--ink-3)",
+                  borderColor: active ? c : "var(--border)",
                 }}
               >
                 {!active && (
                   <span
-                    style={{
-                      width: 6,
-                      height: 6,
-                      borderRadius: 3,
-                      background: c,
-                    }}
+                    className="h-1.5 w-1.5 rounded-full"
+                    style={{ background: c }}
                   />
                 )}
                 {s.name}
@@ -355,117 +281,76 @@ export function DevoirsClient({ state }: DevoirsClientProps) {
 
       <ScrollFade style={{ padding: "0 16px 24px" }}>
         {isStudent && todo.length > 0 && (
-          <Mono
-            style={{
-              fontSize: 9.5,
-              color: p.ink4,
-              padding: "2px 0 4px",
-              letterSpacing: 0.3,
-              display: "block",
-              textTransform: "uppercase",
-            }}
-          >
+          <span className="block px-0 py-1 font-mono text-[9.5px] uppercase tracking-[0.3px] text-ink-4">
             ↔ glisse la barre pour ajuster l&apos;avancement
-          </Mono>
+          </span>
         )}
 
-        {renderBucket("EN RETARD", buckets.late, p.sem.bad)}
-        {renderBucket("AUJOURD'HUI", buckets.today, p.accent)}
+        {renderBucket("EN RETARD", buckets.late, "text-sem-bad")}
+        {renderBucket("AUJOURD'HUI", buckets.today, "text-primary")}
         {renderBucket("CETTE SEMAINE", buckets.week)}
         {renderBucket("PLUS TARD", buckets.later)}
 
         {todo.length === 0 && (
-          <SectionEmpty p={p}>RIEN À RENDRE — RESPIRE.</SectionEmpty>
+          <div className="mb-2 rounded-[12px] border border-dashed border-border p-[18px] text-center font-mono text-[11px] uppercase tracking-[0.5px] text-ink-3">
+            RIEN À RENDRE — RESPIRE.
+          </div>
         )}
 
         {done.length > 0 && (
           <>
-            <AppSectionLabel p={p}>RENDUS</AppSectionLabel>
-            <AppCard p={p}>
+            <div className="mt-[18px] mb-2 px-1 font-mono text-[10.5px] font-semibold uppercase tracking-[0.6px] text-ink-3">
+              RENDUS
+            </div>
+            <Card>
               {done.map((it, i) => {
                 const subj = subjectsById.get(it.evaluation.subjectId);
-                const c = subj ? colorFor(p, subj.color) : p.accent;
+                const c = subjectColor(subj?.color);
+                const ok =
+                  it.grade != null &&
+                  (it.grade.score / Math.max(it.grade.maxScore, 1)) * 20 >= 14;
                 return (
                   <div
                     key={it.evaluation.id}
                     onClick={() => toggleDone(it.evaluation.id)}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 12,
-                      padding: "10px 14px",
-                      cursor: "pointer",
-                      borderBottom:
-                        i === done.length - 1 ? "none" : `1px solid ${p.border}`,
-                      opacity: 0.75,
-                    }}
+                    className={`flex cursor-pointer items-center gap-3 px-3.5 py-2.5 opacity-75 ${
+                      i === done.length - 1 ? "" : "border-b border-border"
+                    }`}
                   >
                     <div
-                      style={{
-                        width: 22,
-                        height: 22,
-                        borderRadius: 11,
-                        background: c + "25",
-                        color: c,
-                        fontSize: 11,
-                        fontWeight: 700,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        flexShrink: 0,
-                      }}
+                      className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full text-[11px] font-bold"
+                      style={{ background: c + "25", color: c }}
                     >
                       ✓
                     </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div
-                        style={{
-                          fontSize: 13.5,
-                          fontWeight: 500,
-                          textDecoration: "line-through",
-                          color: p.ink3,
-                          lineHeight: 1.2,
-                        }}
-                      >
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[13.5px] font-medium leading-[1.2] text-ink-3 line-through">
                         {it.evaluation.name}
                       </div>
-                      <Mono style={{ fontSize: 10.5, color: p.ink4 }}>
+                      <div className="font-mono text-[10.5px] text-ink-4">
                         {it.evaluation.subjectName} · {relDue(it.evaluation.date)}
-                      </Mono>
+                      </div>
                     </div>
                     {it.grade ? (
-                      <Mono
-                        style={{
-                          fontSize: 13,
-                          fontWeight: 600,
-                          color:
-                            (it.grade.score / Math.max(it.grade.maxScore, 1)) *
-                              20 >=
-                            14
-                              ? p.sem.ok
-                              : p.ink2,
-                        }}
+                      <span
+                        className={`font-mono text-[13px] font-semibold ${
+                          ok ? "text-sem-ok" : "text-ink-2"
+                        }`}
                       >
                         {it.grade.score}/{it.grade.maxScore}
-                      </Mono>
+                      </span>
                     ) : (
-                      <Mono
-                        style={{
-                          fontSize: 10,
-                          color: p.ink4,
-                          letterSpacing: 0.3,
-                        }}
-                      >
+                      <span className="font-mono text-[10px] tracking-[0.3px] text-ink-4">
                         note à venir
-                      </Mono>
+                      </span>
                     )}
                   </div>
                 );
               })}
-            </AppCard>
+            </Card>
           </>
         )}
       </ScrollFade>
-    </PageShell>
+    </div>
   );
 }

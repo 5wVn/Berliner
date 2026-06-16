@@ -6,7 +6,7 @@ import { PlanningClient } from "../../_berliner/PlanningClient";
 import { MobileLayout } from "../../_berliner/MobileLayout";
 
 export default async function TeacherSchedulePage() {
-  const result = await getBerlinerStateAction();
+  const result = await getBerlinerStateAction("teacher");
   if (!result.ok) {
     if (result.error.code === "UNAUTHENTICATED") redirect("/");
     throw new Error(result.error.message);

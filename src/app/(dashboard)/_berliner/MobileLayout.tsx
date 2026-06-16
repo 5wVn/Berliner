@@ -1,9 +1,11 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { BottomNav } from "@/shared/components/layouts/BottomNav";
 import type { UserRole } from "@/shared/types/auth";
 import { useTheme } from "@/shared/design/ThemeProvider";
+import { UnicornBackground } from "@/shared/components/berliner/UnicornBackground";
 
 /**
  * Page wrapper used by every Berliner mobile route. Provides:
@@ -22,17 +24,24 @@ export function MobileLayout({
   children: ReactNode;
 }) {
   const { palette: p } = useTheme();
+  const pathname = usePathname();
+  // Le fond animé s'affiche partout SAUF sur la page réglages (profil).
+  const showBackground = !pathname?.endsWith("/profile");
   return (
     <div
       style={{
         minHeight: "100dvh",
-        background: p.bg,
+        // Fond transparent : l'animation Unicorn (fixe, derrière) doit
+        // apparaître à travers les zones sans carte.
         color: p.ink,
         position: "relative",
       }}
     >
+      {showBackground && <UnicornBackground />}
       <div
         style={{
+          position: "relative",
+          zIndex: 10,
           paddingBottom:
             "calc(var(--bottom-nav-height) + env(safe-area-inset-bottom))",
         }}

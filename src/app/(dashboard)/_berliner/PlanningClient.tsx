@@ -3,27 +3,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { type BerlinerState } from "@/actions/berliner-state";
-import { useTheme } from "@/shared/design/ThemeProvider";
-import { PageShell, SectionEmpty } from "@/shared/components/berliner/Shell";
-import {
-  colorFor,
-  ditherGradient,
-  isoWeekNumber,
-  localISO,
-} from "@/shared/design/tokens";
-import {
-  GlobalAnimations,
-  Mono,
-  ScrollFade,
-  hapticPing,
-} from "@/shared/design/primitives";
+import { subjectColor, ditherGradient, isoWeekNumber, localISO } from "@/shared/design/tokens";
+import { ScrollFade, hapticPing } from "@/shared/design/primitives";
 import { QRScanPanel } from "@/shared/components/berliner/Overlays";
 
 type PlanningClientProps = { state: BerlinerState };
 
 type StripDay = {
   iso: string;
-  d: string; // single-letter weekday
+  d: string;
   full: string;
   n: number;
   slots: number;
@@ -32,7 +20,6 @@ type StripDay = {
 };
 
 export function PlanningClient({ state }: PlanningClientProps) {
-  const { palette: p } = useTheme();
   const router = useRouter();
   const today = localISO(new Date());
   const isStudent = state.profile.role === "student";
@@ -44,7 +31,7 @@ export function PlanningClient({ state }: PlanningClientProps) {
     sessionTitle: string;
   } | null>(null);
 
-  // 21-day strip (3 weeks centered on the active offset).
+  // Bande de 21 jours (3 semaines centrées sur le décalage actif).
   const stripDays = useMemo<StripDay[]>(() => {
     const ref = new Date(today + "T00:00");
     const monday = new Date(ref);
@@ -67,7 +54,6 @@ export function PlanningClient({ state }: PlanningClientProps) {
     });
   }, [today, weekOffset, state.sessions]);
 
-  // Sessions for the selected day, sorted chronologically.
   const slots = useMemo(() => {
     return [...state.sessions]
       .filter((s) => s.start.startsWith(day))
@@ -91,18 +77,15 @@ export function PlanningClient({ state }: PlanningClientProps) {
     return a?.status === "present" || a?.status === "late";
   };
 
-  const liveColor = liveSlot ? colorFor(p, liveSlot.color) : p.accent;
+  const liveColor = liveSlot ? subjectColor(liveSlot.color) : subjectColor("red");
   const minutesLeft = liveSlot
-    ? Math.max(
-        0,
-        Math.round((new Date(liveSlot.end).getTime() - now) / 60000)
-      )
+    ? Math.max(0, Math.round((new Date(liveSlot.end).getTime() - now) / 60000))
     : null;
 
   const dayLabel = `${weekday.charAt(0).toUpperCase() + weekday.slice(1)} ${dayObj.getDate()}`;
   const weekNo = isoWeekNumber(dayObj);
 
-  // Auto-scroll the strip so the selected day stays in view.
+  // Garde le jour sélectionné visible dans la bande.
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<Record<string, HTMLDivElement | null>>({});
   useEffect(() => {
@@ -113,72 +96,21 @@ export function PlanningClient({ state }: PlanningClientProps) {
   }, [day]);
 
   return (
-    <PageShell p={p}>
-      <GlobalAnimations />
-
-      {/* Header */}
-      <div style={{ padding: "12px 20px 6px" }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: 12,
-          }}
-        >
-          <span
-            style={{
-              fontFamily: p.font.mono,
-              fontSize: 11,
-              color: p.ink3,
-              letterSpacing: 0.5,
-              textTransform: "uppercase",
-            }}
-          >
+    <div className="relative flex min-h-[100dvh] w-full flex-col text-ink">
+      {/* En-tête */}
+      <div className="px-5 pb-1.5 pt-3">
+        <div className="mb-3 flex items-center justify-between">
+          <span className="font-mono text-[11px] uppercase tracking-[0.5px] text-ink-3">
             PLANNING
           </span>
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "stretch",
-              border: `1px solid ${p.borderStrong || p.border}`,
-              borderRadius: 8,
-              overflow: "hidden",
-              background: p.surface,
-            }}
-          >
+          <div className="inline-flex items-stretch overflow-hidden rounded-[8px] border border-border-strong bg-surface">
             <div
               onClick={() => setWeekOffset((o) => o - 1)}
-              style={{
-                cursor: "pointer",
-                padding: "6px 11px",
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: p.ink,
-                fontSize: 14,
-                fontWeight: 600,
-                lineHeight: 1,
-                borderRight: `1px solid ${p.border}`,
-              }}
+              className="inline-flex cursor-pointer items-center justify-center border-r border-border px-[11px] py-1.5 text-[14px] font-semibold leading-none text-ink"
             >
               ‹
             </div>
-            <div
-              style={{
-                padding: "6px 12px",
-                fontFamily: p.font.mono,
-                fontSize: 10.5,
-                fontWeight: 600,
-                color: p.ink2,
-                letterSpacing: 0.5,
-                textTransform: "uppercase",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                borderRight: `1px solid ${p.border}`,
-              }}
-            >
+            <div className="inline-flex items-center gap-1.5 border-r border-border px-3 py-1.5 font-mono text-[10.5px] font-semibold uppercase tracking-[0.5px] text-ink-2">
               <span>SEM. {weekNo}</span>
               {weekOffset !== 0 && (
                 <span
@@ -186,11 +118,7 @@ export function PlanningClient({ state }: PlanningClientProps) {
                     setWeekOffset(0);
                     setDay(today);
                   }}
-                  style={{
-                    cursor: "pointer",
-                    color: p.accent,
-                    fontWeight: 700,
-                  }}
+                  className="cursor-pointer font-bold text-primary"
                 >
                   · AUJ.
                 </span>
@@ -198,77 +126,32 @@ export function PlanningClient({ state }: PlanningClientProps) {
             </div>
             <div
               onClick={() => setWeekOffset((o) => o + 1)}
-              style={{
-                cursor: "pointer",
-                padding: "6px 11px",
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: p.ink,
-                fontSize: 14,
-                fontWeight: 600,
-                lineHeight: 1,
-              }}
+              className="inline-flex cursor-pointer items-center justify-center px-[11px] py-1.5 text-[14px] font-semibold leading-none text-ink"
             >
               ›
             </div>
           </div>
         </div>
-        <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
-          <div
-            style={{
-              fontSize: 30,
-              fontWeight: 600,
-              letterSpacing: -0.6,
-              lineHeight: 1,
-            }}
-          >
+        <div className="flex items-baseline gap-2.5">
+          <div className="text-[30px] font-semibold leading-none tracking-[-0.6px]">
             {dayLabel}
           </div>
-          <div
-            style={{
-              fontSize: 14,
-              color: p.ink3,
-              fontWeight: 500,
-              textTransform: "capitalize",
-            }}
-          >
+          <div className="text-[14px] font-medium capitalize text-ink-3">
             {month} {dayObj.getFullYear()}
           </div>
         </div>
-        <Mono
-          style={{
-            display: "block",
-            marginTop: 6,
-            fontSize: 11.5,
-            color: p.ink3,
-            letterSpacing: 0.3,
-          }}
-        >
+        <span className="mt-1.5 block font-mono text-[11.5px] tracking-[0.3px] text-ink-3">
           {slots.length === 0 ? "aucun cours" : `${slots.length} cours`}
           {isToday && slots.length > 0 && <span> · aujourd’hui</span>}
-        </Mono>
+        </span>
       </div>
 
-      {/* Day strip */}
+      {/* Bande des jours */}
       <div
         ref={scrollerRef}
-        style={{
-          display: "flex",
-          gap: 6,
-          padding: "14px 16px 10px",
-          overflowX: "auto",
-          overflowY: "hidden",
-          scrollSnapType: "x mandatory",
-          scrollPaddingLeft: 16,
-          scrollbarWidth: "none",
-          msOverflowStyle: "none",
-          WebkitOverflowScrolling: "touch",
-        }}
+        className="flex gap-1.5 overflow-x-auto overflow-y-hidden px-4 pb-2.5 pt-3.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        style={{ scrollSnapType: "x mandatory", scrollPaddingLeft: 16 }}
       >
-        <style>{`
-          div[data-strip="berliner"]::-webkit-scrollbar { display: none; }
-        `}</style>
         {stripDays.map((w) => {
           const on = w.iso === day;
           const empty = w.slots === 0;
@@ -279,56 +162,35 @@ export function PlanningClient({ state }: PlanningClientProps) {
                 itemRefs.current[w.iso] = el;
               }}
               onClick={() => setDay(w.iso)}
-              style={{
-                flex: "0 0 52px",
-                padding: "8px 0",
-                cursor: "pointer",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: 5,
-                borderRadius: 10,
-                background: on ? p.accent : "transparent",
-                color: on
-                  ? p.dark
-                    ? "#0E0E10"
-                    : "#FFFFFF"
+              className={`flex flex-[0_0_52px] cursor-pointer flex-col items-center gap-[5px] rounded-[10px] py-2 transition-colors duration-150 ${
+                on
+                  ? "bg-primary text-white dark:text-[#0E0E10]"
                   : w.weekend
-                  ? p.ink4
-                  : p.ink2,
-                transition: "background 160ms ease-out",
-                scrollSnapAlign: "start",
-                scrollSnapStop: "always",
-              }}
+                  ? "text-ink-4"
+                  : "text-ink-2"
+              }`}
+              style={{ scrollSnapAlign: "start" }}
             >
               <div
-                style={{
-                  fontFamily: p.font.mono,
-                  fontSize: 9.5,
-                  letterSpacing: 0.6,
-                  textTransform: "uppercase",
-                  opacity: on ? 0.85 : 0.6,
-                }}
+                className={`font-mono text-[9.5px] uppercase tracking-[0.6px] ${
+                  on ? "opacity-85" : "opacity-60"
+                }`}
               >
                 {w.full}
               </div>
-              <Mono style={{ fontSize: 18, fontWeight: 600, lineHeight: 1 }}>
+              <span className="font-mono text-[18px] font-semibold leading-none tabular-nums">
                 {w.n}
-              </Mono>
+              </span>
               <div
+                className="h-0.5 w-3.5 rounded-[1px]"
                 style={{
-                  width: 14,
-                  height: 2,
-                  borderRadius: 1,
                   background: on
-                    ? p.dark
-                      ? "#0E0E10"
-                      : "#FFFFFF"
+                    ? "currentColor"
                     : w.today
-                    ? p.accent
+                    ? "var(--primary)"
                     : empty
                     ? "transparent"
-                    : p.ink4,
+                    : "var(--ink-4)",
                   opacity: on ? 0.6 : w.today ? 1 : 0.5,
                 }}
               />
@@ -337,101 +199,43 @@ export function PlanningClient({ state }: PlanningClientProps) {
         })}
       </div>
 
-      {/* Day content */}
+      {/* Contenu du jour */}
       <ScrollFade key={day} style={{ padding: "6px 16px 24px" }}>
         {liveSlot && isToday && (
           <div
-            style={{
-              position: "relative",
-              marginBottom: 14,
-              background: p.surface,
-              border: `1px solid ${liveColor}40`,
-              borderRadius: 16,
-              padding: "14px 16px",
-              overflow: "hidden",
-              animation: "berliner-fade-in 280ms ease-out",
-            }}
+            className="relative mb-3.5 animate-berliner-fade-in overflow-hidden rounded-2xl bg-surface p-4"
+            style={{ border: `1px solid ${liveColor}40` }}
           >
             <div
               aria-hidden
+              className="pointer-events-none absolute inset-y-0 right-0 w-[110px]"
               style={{
-                position: "absolute",
-                top: 0,
-                right: 0,
-                bottom: 0,
-                width: 110,
                 ...ditherGradient({ fg: liveColor, alpha: 0.22 }),
                 maskImage: "linear-gradient(to left, #000, transparent)",
                 WebkitMaskImage: "linear-gradient(to left, #000, transparent)",
-                pointerEvents: "none",
               }}
             />
-            <div style={{ position: "relative" }}>
+            <div className="relative">
               <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                  marginBottom: 6,
-                  fontFamily: p.font.mono,
-                  fontSize: 10.5,
-                  fontWeight: 600,
-                  letterSpacing: 0.5,
-                  textTransform: "uppercase",
-                  color: liveColor,
-                }}
+                className="mb-1.5 flex items-center gap-2 font-mono text-[10.5px] font-semibold uppercase tracking-[0.5px]"
+                style={{ color: liveColor }}
               >
                 <span
-                  style={{
-                    width: 6,
-                    height: 6,
-                    borderRadius: 3,
-                    background: liveColor,
-                    boxShadow: `0 0 0 4px ${liveColor}25`,
-                    animation: "berliner-pulse 1.6s ease-in-out infinite",
-                  }}
+                  className="h-1.5 w-1.5 rounded-full animate-berliner-pulse"
+                  style={{ background: liveColor, boxShadow: `0 0 0 4px ${liveColor}25` }}
                 />
                 EN COURS · {liveSlot.room ?? "—"}
               </div>
-              <div
-                style={{
-                  fontSize: 21,
-                  fontWeight: 600,
-                  letterSpacing: -0.3,
-                  lineHeight: 1.15,
-                }}
-              >
+              <div className="text-[21px] font-semibold leading-[1.15] tracking-[-0.3px]">
                 {liveSlot.subjectName}
               </div>
-              <Mono
-                style={{
-                  fontSize: 11.5,
-                  color: p.ink3,
-                  marginTop: 4,
-                  display: "block",
-                }}
-              >
+              <span className="mt-1 block font-mono text-[11.5px] tabular-nums text-ink-3">
                 {timeOf(liveSlot.start)} → fin dans {minutesLeft} min
                 {liveSlot.teacherName && ` · ${liveSlot.teacherName}`}
-              </Mono>
+              </span>
               {isStudent &&
                 (isPresent(liveSlot.id) ? (
-                  <div
-                    style={{
-                      marginTop: 12,
-                      padding: "10px 14px",
-                      borderRadius: 10,
-                      background: p.sem.ok + "18",
-                      border: `1px solid ${p.sem.ok}40`,
-                      fontFamily: p.font.mono,
-                      fontSize: 11,
-                      fontWeight: 600,
-                      color: p.sem.ok,
-                      letterSpacing: 0.5,
-                      textAlign: "center",
-                      textTransform: "uppercase",
-                    }}
-                  >
+                  <div className="mt-3 rounded-[10px] border border-sem-ok/40 bg-sem-ok/10 px-3.5 py-2.5 text-center font-mono text-[11px] font-semibold uppercase tracking-[0.5px] text-sem-ok">
                     ✓ PRÉSENCE ENREGISTRÉE
                   </div>
                 ) : (
@@ -443,20 +247,8 @@ export function PlanningClient({ state }: PlanningClientProps) {
                         sessionTitle: liveSlot.subjectName,
                       });
                     }}
-                    style={{
-                      marginTop: 12,
-                      padding: "11px 14px",
-                      background: liveColor,
-                      color: p.dark ? "#0E0E10" : "#FFFFFF",
-                      borderRadius: 10,
-                      cursor: "pointer",
-                      fontFamily: p.font.mono,
-                      fontSize: 12,
-                      fontWeight: 700,
-                      letterSpacing: 0.6,
-                      textAlign: "center",
-                      textTransform: "uppercase",
-                    }}
+                    className="mt-3 cursor-pointer rounded-[10px] px-3.5 py-[11px] text-center font-mono text-xs font-bold uppercase tracking-[0.6px] text-white dark:text-[#0E0E10]"
+                    style={{ background: liveColor }}
                   >
                     SCANNER QR PRÉSENCE
                   </div>
@@ -466,148 +258,64 @@ export function PlanningClient({ state }: PlanningClientProps) {
         )}
 
         {slots.length === 0 ? (
-          <SectionEmpty p={p}>JOURNÉE LIBRE.</SectionEmpty>
+          <div className="mb-2 rounded-[12px] border border-dashed border-border p-[18px] text-center font-mono text-[11px] uppercase tracking-[0.5px] text-ink-3">
+            JOURNÉE LIBRE.
+          </div>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          <div className="flex flex-col gap-1.5">
             {slots.map((s, i) => {
               if (s.id === liveSlot?.id && isToday) return null;
-              const c = colorFor(p, s.color);
+              const c = subjectColor(s.color);
               const present = isPresent(s.id);
-              const done = new Date(s.end).getTime() < now;
+              const finished = new Date(s.end).getTime() < now;
               return (
                 <div
                   key={s.id}
+                  className="relative flex items-stretch gap-2.5 overflow-hidden rounded-[12px] border border-border bg-surface py-[11px] pr-3"
                   style={{
-                    display: "flex",
-                    gap: 10,
-                    alignItems: "stretch",
-                    padding: "11px 12px 11px 0",
-                    borderRadius: 12,
-                    background: p.surface,
-                    border: `1px solid ${p.border}`,
-                    opacity: done ? 0.55 : 1,
+                    opacity: finished ? 0.55 : 1,
                     animation: `berliner-fade-in 240ms ease-out ${i * 25}ms both`,
-                    position: "relative",
-                    overflow: "hidden",
                   }}
                 >
-                  <div
-                    style={{
-                      width: 3,
-                      alignSelf: "stretch",
-                      background: c,
-                      flexShrink: 0,
-                      marginRight: 2,
-                    }}
-                  />
-                  <div
-                    style={{
-                      flex: "0 0 56px",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                      paddingLeft: 6,
-                    }}
-                  >
-                    <Mono
-                      style={{
-                        fontSize: 14,
-                        fontWeight: 600,
-                        color: p.ink,
-                        lineHeight: 1.1,
-                        letterSpacing: -0.2,
-                      }}
-                    >
+                  <div className="w-[3px] shrink-0" style={{ background: c }} />
+                  <div className="flex flex-[0_0_56px] flex-col justify-center pl-1.5">
+                    <span className="font-mono text-[14px] font-semibold leading-[1.1] tracking-[-0.2px] tabular-nums text-ink">
                       {timeOf(s.start)}
-                    </Mono>
-                    <Mono
-                      style={{
-                        fontSize: 10.5,
-                        color: p.ink4,
-                        letterSpacing: 0.3,
-                        marginTop: 2,
-                      }}
-                    >
+                    </span>
+                    <span className="mt-0.5 font-mono text-[10.5px] tracking-[0.3px] tabular-nums text-ink-4">
                       {durOf(s.start, s.end)}
-                    </Mono>
+                    </span>
                   </div>
-                  <div
-                    style={{
-                      flex: 1,
-                      minWidth: 0,
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontSize: 14.5,
-                        fontWeight: 500,
-                        lineHeight: 1.2,
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                    >
+                  <div className="flex min-w-0 flex-1 flex-col justify-center">
+                    <div className="truncate text-[14.5px] font-medium leading-[1.2]">
                       {s.subjectName}
                     </div>
-                    <Mono
-                      style={{
-                        fontSize: 10.5,
-                        color: p.ink3,
-                        letterSpacing: 0.3,
-                        marginTop: 2,
-                        display: "flex",
-                        gap: 6,
-                        alignItems: "center",
-                      }}
-                    >
+                    <div className="mt-0.5 flex items-center gap-1.5 font-mono text-[10.5px] tracking-[0.3px] text-ink-3">
                       <span>{s.room || "—"}</span>
                       {s.className && (
                         <>
-                          <span style={{ opacity: 0.4 }}>·</span>
+                          <span className="opacity-40">·</span>
                           <span>{s.className}</span>
                         </>
                       )}
                       {s.teacherName && (
                         <>
-                          <span style={{ opacity: 0.4 }}>·</span>
+                          <span className="opacity-40">·</span>
                           <span>{s.teacherName}</span>
                         </>
                       )}
-                    </Mono>
+                    </div>
                   </div>
-                  <div
-                    style={{
-                      flex: "0 0 auto",
-                      display: "flex",
-                      alignItems: "center",
-                      paddingRight: 4,
-                    }}
-                  >
-                    {done && (
-                      <Mono
-                        style={{
-                          fontSize: 10,
-                          color: p.ink4,
-                          letterSpacing: 0.4,
-                        }}
-                      >
+                  <div className="flex shrink-0 items-center pr-1">
+                    {finished && (
+                      <span className="font-mono text-[10px] tracking-[0.4px] text-ink-4">
                         TERMINÉ
-                      </Mono>
+                      </span>
                     )}
-                    {!done && present && (
-                      <Mono
-                        style={{
-                          fontSize: 10,
-                          color: p.sem.ok,
-                          fontWeight: 700,
-                          letterSpacing: 0.4,
-                        }}
-                      >
+                    {!finished && present && (
+                      <span className="font-mono text-[10px] font-bold tracking-[0.4px] text-sem-ok">
                         ✓
-                      </Mono>
+                      </span>
                     )}
                   </div>
                 </div>
@@ -627,7 +335,7 @@ export function PlanningClient({ state }: PlanningClientProps) {
           sessionTitle={qrSession.sessionTitle}
         />
       )}
-    </PageShell>
+    </div>
   );
 }
 

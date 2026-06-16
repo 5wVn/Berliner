@@ -24,7 +24,8 @@ type ThemeContextValue = {
 const THEME_KEY = "berliner-theme";
 const ACCENT_KEY = "berliner-accent";
 
-const DEFAULTS = { theme: "dark" as Theme, accent: "green" as AccentName };
+// Couleur de marque fixée à rouge (plus de sélecteur de couleurs).
+const DEFAULTS = { theme: "dark" as Theme, accent: "red" as AccentName };
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
@@ -40,8 +41,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     try {
       const t = window.localStorage.getItem(THEME_KEY);
       if (t === "light" || t === "dark") setThemeState(t);
-      const a = window.localStorage.getItem(ACCENT_KEY);
-      if (a && (ACCENTS as string[]).includes(a)) setAccentState(a as AccentName);
+      // L'accent est figé à rouge — on ne lit plus de couleur stockée.
     } catch {
       // localStorage unavailable — fall back to defaults.
     }

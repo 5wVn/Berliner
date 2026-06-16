@@ -21,11 +21,9 @@ const validation = (message: string) => ({
 const unique = <T>(items: Array<T | null | undefined>): T[] =>
   Array.from(new Set(items.filter((item): item is T => Boolean(item))));
 
-// ─────────────────────────────────────────────────────────────
 // QR scan / attendance — student marks themselves present.
 // Real-world: a server-validated nonce would be required; for the
 // MVP we trust the session id and rely on RLS to scope writes.
-// ─────────────────────────────────────────────────────────────
 export type AttendanceStatus = 'present' | 'late' | 'absent' | 'excused';
 
 export async function markAttendanceAction(
@@ -77,11 +75,9 @@ export async function markAttendanceAction(
   return { ok: true };
 }
 
-// ─────────────────────────────────────────────────────────────
 // Update own profile (any role).
 // Avatar is stored as a public URL; clients pass a base64 data
 // URL and we store it directly in `avatar_url` (column is text).
-// ─────────────────────────────────────────────────────────────
 export type ProfileUpdate = {
   first_name?: string;
   last_name?: string;
@@ -98,7 +94,10 @@ export async function updateMyProfileAction(
   const update: Record<string, unknown> = {};
   if (typeof patch.first_name === 'string') update.first_name = patch.first_name.trim();
   if (typeof patch.last_name === 'string') update.last_name = patch.last_name.trim();
-  if ('avatar_url' in patch) update.avatar_url = patch.avatar_url ?? null;
+  // NOTE: la colonne profiles.avatar_url n'existe pas dans cette base — on
+  // n'écrit donc pas la photo (les initiales sont utilisées). Pour l'activer,
+  // lance scripts/add-profile-columns.mjs puis réintègre la ligne ci-dessous :
+  // if ('avatar_url' in patch) update.avatar_url = patch.avatar_url ?? null;
 
   if (Object.keys(update).length === 0) return { ok: true };
 
@@ -111,9 +110,7 @@ export async function updateMyProfileAction(
   return { ok: true };
 }
 
-// ─────────────────────────────────────────────────────────────
 // Teacher: add a single grade for a student on a given subject.
-// ─────────────────────────────────────────────────────────────
 export type AddGradeInput = {
   studentId: string;
   classSubjectId: string;
@@ -177,9 +174,7 @@ export async function addGradeAction(
   return { ok: true };
 }
 
-// ─────────────────────────────────────────────────────────────
 // Teacher: delete a single grade.
-// ─────────────────────────────────────────────────────────────
 export async function deleteGradeAction(
   gradeId: string
 ): Promise<ActionEmptyResponse> {
@@ -193,9 +188,7 @@ export async function deleteGradeAction(
   return { ok: true };
 }
 
-// ─────────────────────────────────────────────────────────────
 // Teacher: bulk-create one evaluation + grades from a CSV row set.
-// ─────────────────────────────────────────────────────────────
 export type BulkGradeRow = { studentId: string; score: number; maxScore: number };
 export type BulkGradesInput = {
   classSubjectId: string;
@@ -261,10 +254,8 @@ export async function bulkAddGradesAction(
   return { ok: true, data: { count: grades.length } };
 }
 
-// ─────────────────────────────────────────────────────────────
 // Teacher: list students in their classes (for grade entry +
 // CSV preview matching).
-// ─────────────────────────────────────────────────────────────
 export type TeacherStudent = {
   id: string;
   first_name: string;
@@ -333,9 +324,7 @@ export async function getTeacherStudentsAction(): Promise<
   return { ok: true, data };
 }
 
-// ─────────────────────────────────────────────────────────────
 // Teacher: list class_subjects they teach (for grade entry UI).
-// ─────────────────────────────────────────────────────────────
 export type TeacherSubject = {
   classSubjectId: string;
   subjectId: string;
@@ -388,12 +377,10 @@ export async function getTeacherSubjectsAction(): Promise<
   return { ok: true, data };
 }
 
-// ─────────────────────────────────────────────────────────────
 // Notifications feed — derived from recent grades, upcoming
 // evaluations (devoirs), and live sessions in the next hour.
 // Read-state is tracked client-side in localStorage; the action
 // just builds the candidate feed.
-// ─────────────────────────────────────────────────────────────
 export type NotifKind = 'grade' | 'homework' | 'live';
 export type NotifItem = {
   id: string;

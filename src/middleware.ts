@@ -3,14 +3,7 @@ import { updateSession } from "@/shared/lib/supabase/middleware";
 
 // Routes that require an authenticated user. Anything not listed here is
 // public (login, marketing, static assets, etc.).
-const PROTECTED_PREFIXES = [
-  "/student",
-  "/teacher",
-  "/registrar",
-  "/academic-head",
-  "/company",
-  "/choose-dashboard",
-];
+const PROTECTED_PREFIXES = ["/student", "/teacher", "/choose-dashboard"];
 
 function isProtectedPath(pathname: string): boolean {
   return PROTECTED_PREFIXES.some(

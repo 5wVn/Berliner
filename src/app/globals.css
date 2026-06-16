@@ -48,29 +48,6 @@
   .skeleton-base {
     background-color: var(--muted);
   }
-
-  /* Legacy alias — call sites migrate to <Card> over time */
-  .card-corners {
-    @apply rounded-2xl border-2 border-border bg-card;
-  }
-
-  /* Lime accent card — dark lime icon + text on lime background */
-  .card-accent {
-    @apply rounded-2xl border-2 border-primary-shadow bg-primary;
-    color: oklch(0.35 0.12 130);
-  }
-
-  .card-peek-item > * {
-    background-color: var(--card) !important;
-    box-shadow: 0 -4px 16px -4px rgba(0, 0, 0, 0.5);
-  }
-
-  @media (min-width: 768px) {
-    .card-peek-item > * {
-      background-color: unset !important;
-      box-shadow: unset;
-    }
-  }
 }
 
 /* ─────────────────────────────────────────────────────────────────
@@ -79,7 +56,6 @@
  * via the inline-style `pal()` palette plus a few CSS-variable hooks.
  * ───────────────────────────────────────────────────────────────── */
 :root {
-  --old-zinc: oklch(0.985 0 0);
   --surface-2: #F4F3EE;
 
   --background: #FAFAF7;
@@ -92,6 +68,22 @@
   --primary: oklch(0.72 0.16 145);
   --primary-foreground: #FFFFFF;
   --primary-shadow: oklch(0.55 0.13 145);
+
+  /* Berliner palette — texte (ink), surfaces et couleurs sémantiques.
+     Ces variables sont exposées comme classes Tailwind via @theme inline,
+     ex: text-ink-3, bg-surface-2, bg-chip, text-sem-bad. */
+  --ink: #0E0E0F;
+  --ink-2: #3A3A3D;
+  --ink-3: #7A7A80;
+  --ink-4: #B5B5BA;
+  --surface: #FFFFFF;
+  --surface-2: #F4F3EE;
+  --chip: #EFEEE9;
+  --border-strong: rgba(15, 15, 17, 0.14);
+  --sem-ok: oklch(0.72 0.16 145);
+  --sem-warn: oklch(0.78 0.16 75);
+  --sem-bad: oklch(0.66 0.20 25);
+  --sem-info: oklch(0.66 0.16 250);
 
   --secondary: #F4F3EE;
   --secondary-foreground: #0E0E0F;
@@ -134,7 +126,6 @@
  * DARK theme — applied via `.dark` class on <html>.
  * ───────────────────────────────────────────────────────────────── */
 .dark {
-  --old-zinc: hsl(240 5.9% 10%);
   --surface-2: hsl(240 3.7% 15.9%);
 
   --background: #0E0E10;
@@ -147,6 +138,20 @@
   --primary: oklch(0.72 0.16 145);
   --primary-foreground: #0E0E10;
   --primary-shadow: oklch(0.55 0.13 145);
+
+  /* Berliner palette — variante sombre. */
+  --ink: #F5F5F2;
+  --ink-2: #C7C7CC;
+  --ink-3: #8A8A92;
+  --ink-4: #5A5A62;
+  --surface: #16161A;
+  --surface-2: #1D1D22;
+  --chip: #23232A;
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --sem-ok: oklch(0.72 0.16 145);
+  --sem-warn: oklch(0.78 0.16 75);
+  --sem-bad: oklch(0.66 0.20 25);
+  --sem-info: oklch(0.66 0.16 250);
 
   --secondary: #1D1D22;
   --secondary-foreground: #F5F5F2;
@@ -183,63 +188,12 @@
 }
 
 /* ─────────────────────────────────────────────────────────────────
- * ACCENT swap — overrides --primary, --accent, --ring whenever a
- * non-green accent is selected. Defaults to green when no attr.
- *
- * Each pair (light + dark) exposes the same accent OKLCH value because
- * the prototype's accent palette is theme-independent.
+ * Couleur de marque = ROUGE. Override unique de l'accent (primary),
+ * appliqué en clair ET en sombre. On NE touche pas à --sem-ok (vert)
+ * qui sert aux bonnes notes.
  * ───────────────────────────────────────────────────────────────── */
-:root[data-accent="blue"], .dark[data-accent="blue"] {
-  --primary: oklch(0.66 0.18 250);
-  --primary-shadow: oklch(0.50 0.14 250);
-  --accent: oklch(0.66 0.18 250);
-  --accent-foreground: oklch(0.32 0.08 250);
-  --ring: oklch(0.66 0.18 250);
-  --chart-1: oklch(0.66 0.18 250);
-  --chart-2: oklch(0.56 0.15 250);
-  --chart-3: oklch(0.46 0.12 250);
-}
-:root[data-accent="orange"], .dark[data-accent="orange"] {
-  --primary: oklch(0.72 0.18 50);
-  --primary-shadow: oklch(0.55 0.14 50);
-  --accent: oklch(0.72 0.18 50);
-  --accent-foreground: oklch(0.34 0.08 50);
-  --ring: oklch(0.72 0.18 50);
-  --chart-1: oklch(0.72 0.18 50);
-  --chart-2: oklch(0.62 0.15 50);
-  --chart-3: oklch(0.52 0.12 50);
-}
-:root[data-accent="violet"], .dark[data-accent="violet"] {
-  --primary: oklch(0.66 0.20 305);
-  --primary-shadow: oklch(0.50 0.16 305);
-  --accent: oklch(0.66 0.20 305);
-  --accent-foreground: oklch(0.32 0.08 305);
-  --ring: oklch(0.66 0.20 305);
-  --chart-1: oklch(0.66 0.20 305);
-  --chart-2: oklch(0.56 0.16 305);
-  --chart-3: oklch(0.46 0.12 305);
-}
-:root[data-accent="lemon"], .dark[data-accent="lemon"] {
-  --primary: oklch(0.86 0.18 105);
-  --primary-shadow: oklch(0.65 0.14 105);
-  --accent: oklch(0.86 0.18 105);
-  --accent-foreground: oklch(0.32 0.08 105);
-  --ring: oklch(0.86 0.18 105);
-  --chart-1: oklch(0.86 0.18 105);
-  --chart-2: oklch(0.72 0.15 105);
-  --chart-3: oklch(0.58 0.12 105);
-}
-:root[data-accent="slate"], .dark[data-accent="slate"] {
-  --primary: #c3cdff;
-  --primary-shadow: #8e9bd9;
-  --accent: #c3cdff;
-  --accent-foreground: oklch(0.32 0.04 260);
-  --ring: #c3cdff;
-  --chart-1: #c3cdff;
-  --chart-2: #a4b1ee;
-  --chart-3: #8e9bd9;
-}
-:root[data-accent="red"], .dark[data-accent="red"] {
+:root,
+.dark {
   --primary: oklch(0.66 0.22 15);
   --primary-shadow: oklch(0.50 0.18 15);
   --accent: oklch(0.66 0.22 15);
@@ -248,9 +202,55 @@
   --chart-1: oklch(0.66 0.22 15);
   --chart-2: oklch(0.56 0.18 15);
   --chart-3: oklch(0.46 0.14 15);
+  --sidebar-primary: oklch(0.66 0.22 15);
+  --sidebar-ring: oklch(0.66 0.22 15);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+ * Animations Berliner — utilisées par la live card, les overlays et
+ * les listes. Exposées en classes via @theme inline (animate-*).
+ * ───────────────────────────────────────────────────────────────── */
+@keyframes berliner-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+@keyframes berliner-slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes berliner-slide-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes berliner-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes berliner-scan {
+  0% { top: 8%; }
+  50% { top: 92%; }
+  100% { top: 8%; }
 }
 
 @theme inline {
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-ink-4: var(--ink-4);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-chip: var(--chip);
+  --color-border-strong: var(--border-strong);
+  --color-sem-ok: var(--sem-ok);
+  --color-sem-warn: var(--sem-warn);
+  --color-sem-bad: var(--sem-bad);
+  --color-sem-info: var(--sem-info);
+
+  --animate-berliner-pulse: berliner-pulse 1.6s ease-in-out infinite;
+  --animate-berliner-fade-in: berliner-fade-in 240ms ease-out;
+  --animate-berliner-slide-up: berliner-slide-up 240ms ease-out;
+  --animate-berliner-slide-down: berliner-slide-down 200ms ease-out;
+
   --font-sans: var(--font-sans);
   --font-heading: var(--font-heading);
   --font-mono: var(--font-mono);

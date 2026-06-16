@@ -137,7 +137,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!profile) return;
-    if (profile.role !== "academic_head" && profile.role !== "super_admin") {
+    if (profile.role !== "super_admin") {
       setSelectedRole(null);
     }
   }, [profile, setSelectedRole]);
@@ -153,8 +153,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       session,
       profile,
       authError,
-      canSwitchDashboard:
-        profile?.role === "academic_head" || profile?.role === "super_admin",
+      canSwitchDashboard: profile?.role === "super_admin",
       selectedRole,
       setSelectedRole,
       refreshProfile,

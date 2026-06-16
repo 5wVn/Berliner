@@ -14,8 +14,7 @@ export default defineConfig([
   ...compat.extends("next/core-web-vitals.js", "next/typescript.js"),
   {
     rules: {
-      // Enforce the zero-`any` policy from CLAUDE.md. The codebase has zero
-      // `any` usage today; this rule prevents regressions.
+      // Zero-`any` policy: the codebase has no `any` today; keep it that way.
       "@typescript-eslint/no-explicit-any": "error",
     },
   },
